@@ -27,13 +27,18 @@
     box.style.backgroundImage = "url(" + BASE + L.poster + ")";
     if (!reduce) box.classList.add("is-folded");
     var pending = 0, order = 0;
-    function track(img) { pending++; img.decoding = "async"; img.addEventListener("load", done); img.addEventListener("error", done); }
+    function track(img, lead) {
+      img.decoding = "async";
+      if (!lead) return;
+      pending++;
+      img.addEventListener("load", done); img.addEventListener("error", done);
+    }
     function done() { if (--pending === 0) unfold(); }
 
     L.layers.forEach(function (ly) {
       var img = el("img", "layer" + (ly.id === "sky" ? "" : " pop"), { src: BASE + ly.file, alt: "", draggable: "false" });
       if (ly.id !== "sky") img.style.setProperty("--pop-delay", (0.18 * order++) + "s");
-      track(img);
+      track(img, ly.id === "sky" || ly.id === "hills");
       box.appendChild(img);
       parts.push({ node: img, depth: DEPTH[ly.id] });
       if (ly.id === "sky") {
@@ -65,7 +70,7 @@
     parts.push({ node: sprites, depth: DEPTH.sprites });
     scene.appendChild(box);
     // never wait forever on a slow connection
-    setTimeout(unfold, 4500);
+    setTimeout(unfold, 1500);
   }
 
   var unfolded = false;

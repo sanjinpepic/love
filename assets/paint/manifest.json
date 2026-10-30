@@ -120,8 +120,8 @@
  "vignettes": {
   "peony": {
    "file": "vignette-peony.webp",
-   "W": 640,
-   "H": 720
+   "W": 760,
+   "H": 860
   },
   "chairs": {
    "file": "vignette-chairs.webp",

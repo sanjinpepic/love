@@ -38,7 +38,7 @@
 
 
 :root {
-  --paper: #f7f2e6;
+  --paper: #f2efe5;
   --paper-deep: #efe6d3;
   --ink: #2e2420;
   --ink-soft: #5b4a40;
@@ -86,6 +86,8 @@ a:hover { text-decoration-color: currentColor; }
 /* ——— Gold leaf (Klimt): beaten, not printed ——— */
 .gilt {
   color: var(--gold-deep);
+  -webkit-text-stroke: .018em #6e4f16;
+  paint-order: stroke fill;
   background: url(../paint/gold-leaf.webp) 0 0 / 240px auto;
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
@@ -214,7 +216,7 @@ a:hover { text-decoration-color: currentColor; }
 .room { padding: clamp(4.5rem, 11vh, 8rem) var(--gutter); }
 .room h2 { margin: 0 0 1.1rem; font-weight: 500; font-size: clamp(2.1rem, 1.5rem + 2.2vw, 3.4rem); line-height: 1.05; letter-spacing: -.012em; text-wrap: balance; }
 .room p { max-width: var(--measure); }
-.note { font-style: italic; color: var(--ink-soft); }
+.note { font-style: italic; color: var(--ink); font-size: 1.08em; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; max-width: 74rem; margin: 0 auto; }
 .split.flip > :first-child { order: 2; }
 .vignette { margin: 0; justify-self: center; width: 100%; }
@@ -293,7 +295,8 @@ legend { padding: 0; margin-bottom: .55rem; }
 .form-status { margin: 1rem 0 0; }
 .form-status.is-error { color: #8b2d22; font-style: italic; }
 .thanks { text-align: center; padding: clamp(1.5rem, 4vw, 3rem) 0; }
-.thanks .thanks-letter { font-family: var(--font-letter); font-size: clamp(3.4rem, 2rem + 5vw, 6rem); line-height: 1; margin: 0; }
+.thanks .thanks-letter { font-family: var(--font-letter); font-size: clamp(3.4rem, 2rem + 5vw, 6rem); line-height: 1; margin: 0 auto; }
+.again { background: none; border: 0; font: inherit; color: inherit; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; min-height: 44px; padding: 0 .25rem; }
 .thanks p { margin: 1rem auto 0; max-width: 28rem; }
 .thanks:focus { outline: none; }
 
@@ -301,7 +304,7 @@ legend { padding: 0; margin-bottom: .55rem; }
 .close .monogram { width: 4.2rem; height: 4.2rem; font-size: 1.35rem; }
 .close .date-letter { justify-content: center; font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem); }
 .close p { margin: .5rem auto 0; color: var(--ink-soft); }
-.close .meadow { margin-top: 2.5rem; width: 100%; height: clamp(7rem, 17vw, 16rem); object-fit: cover; object-position: center bottom; }
+.close .meadow { margin-top: 2.5rem; margin-inline: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); max-width: none; height: clamp(7rem, 17vw, 16rem); object-fit: cover; object-position: center bottom; }
 .credits { font-size: .88rem; font-style: italic; }
 
 @media (max-width: 960px) {
@@ -324,8 +327,8 @@ legend { padding: 0; margin-bottom: .55rem; }
 }
 
 /* ——— words settle after the pop-up ——— */
-.js .settle { opacity: 0; transform: translateY(10px); filter: blur(5px); }
-.settle.is-in { opacity: 1; transform: none; filter: none; transition: opacity 1.2s var(--ease-out), transform 1.4s var(--ease-out), filter 1.2s var(--ease-out); transition-delay: var(--d, 0s); }
+.js .settle { opacity: .55; transform: translateY(6px); filter: blur(2.5px); }
+.settle.is-in { opacity: 1; transform: none; filter: none; transition: opacity .9s var(--ease-out), transform 1.1s var(--ease-out), filter .9s var(--ease-out); transition-delay: var(--d, 0s); }
 .js .reveal { opacity: 0; transform: translateY(18px); }
 .reveal.is-in { opacity: 1; transform: none; transition: opacity 1.2s var(--ease-out), transform 1.4s var(--ease-out); }
 @media (prefers-reduced-motion: reduce) {

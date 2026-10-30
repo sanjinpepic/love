@@ -66,8 +66,7 @@
   var settled = false;
   function settleAll() { if (settled) return; settled = true; settles.forEach(function (el, i) { el.style.setProperty("--d", (i * 0.12) + "s"); el.classList.add("is-in"); }); }
   var stage = document.querySelector("[data-stage]");
-  if (stage) { stage.addEventListener("unfolded", function () { setTimeout(settleAll, 700); }); setTimeout(settleAll, 2600); }
-  else settleAll();
+  requestAnimationFrame(function () { setTimeout(settleAll, 120); });
 
   // Sections rise gently into view.
   var reveals = [].slice.call(document.querySelectorAll(".reveal"));

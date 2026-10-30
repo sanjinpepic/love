@@ -1,9 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
-  <!-- Cold-pressed watercolour paper tooth. -->
+  <!-- Cold-pressed paper tooth: faint flecks, no embossed lighting. -->
   <filter id="p" x="0" y="0" width="100%" height="100%">
-    <feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" seed="9" stitchTiles="stitch" result="t"/>
-    <feDiffuseLighting in="t" surfaceScale="1.4" lighting-color="#fffaf0" result="l"><feDistantLight azimuth="235" elevation="58"/></feDiffuseLighting>
-    <feColorMatrix in="l" type="matrix" values="0 0 0 0 0.3  0 0 0 0 0.2  0 0 0 0 0.12  -0.6 0 0 0 0.62"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="9" stitchTiles="stitch" result="t"/>
+    <feColorMatrix in="t" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.38  0 0 0 0 0.3  0 0 0 0.55 -0.28"/>
   </filter>
   <rect width="300" height="300" filter="url(#p)"/>
 </svg>

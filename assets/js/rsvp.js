@@ -82,7 +82,7 @@
       '<div class="thanks" tabindex="-1">' +
         '<p class="thanks-letter gilt settle" data-i18n="thanks.word"></p>' +
         '<p class="settle" data-thanks></p>' +
-        '<p class="settle"><button type="button" class="link-quiet" data-again style="background:none;border:0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:.22em;min-height:44px" data-i18n="thanks.again"></button></p>' +
+        '<p class="settle"><button type="button" class="again" data-again data-i18n="thanks.again"></button></p>' +
       '</div>';
     var box = pane.querySelector(".thanks");
     var render = function () {

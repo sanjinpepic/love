@@ -21,6 +21,6 @@ STORY: welcome (peony vignette) → the day (two chairs vignette, preliminary sc
 
 FIRST VIEWPORT: the pop-up painting with nav and language in the sky, names/date lettered, RSVP button, scroll cue.
 
-FORM: pinned by the couple; seed: none (direction pinned by the couple). Signature interaction: the pop-up stage; sections rise gently into view; the RSVP thank-you letters in gold in the guest's language.
+FORM: pinned by the couple; seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: the pop-up stage; sections rise gently into view; the RSVP thank-you letters in gold in the guest's language.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

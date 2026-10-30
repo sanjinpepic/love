@@ -68,7 +68,7 @@ function ridge(x0, x1, yTop, yBase, color, bumps = 6, amp = 40) {
     pts.push([x0 + (x1 - x0) * t, yTop + Math.sin(t * Math.PI * bumps + rr(0, 1)) * amp * 0.5 + rr(-amp, amp) * 0.35]);
   }
   pts.push([x1, yBase]);
-  return wash(smooth(pts, true), color, 0.9);
+  return wash(smooth(pts, true), color, 0.9) + `<g transform="translate(${f(rr(-5, 5))} ${f(rr(-3, 3))})">` + ink(smooth(pts.slice(1, -1), false), 1, C.ink, 0.3) + `</g>`;
 }
 
 function conifers(x0, x1, yFn, size, count, color) {
@@ -220,8 +220,10 @@ function birch(x, yBase, h, lean = 0, spread = 1) {
   s += crown.join("");
   s += washOff(smooth([...left, ...right], true), C.birch, 1, "wc", 1);
   s += ink(smooth(left, false), 1.3, C.ink, 0.8) + ink(smooth(right.slice().reverse(), false), 1.3, C.ink, 0.8);
-  for (let i = 0; i < 18; i++) {
-    const t = rr(0.05, 0.85), px = x + lean * t, py = yBase - h * t, ww = tw * (1 - t * 0.7) * 2;
+  let tt = 0.04;
+  while (tt < 0.88) {
+    tt += rnd() < 0.35 ? rr(0.008, 0.02) : rr(0.03, 0.09);
+    const t = tt, px = x + lean * t, py = yBase - h * t, ww = tw * (1 - t * 0.7) * 2 * rr(0.5, 1.1);
     s += `<path d="M${f(px - ww / 2)} ${f(py)}q${f(ww / 2)} ${f(rr(-3, 3))} ${f(ww * rr(0.4, 1))} ${f(rr(-1, 2))}" stroke="${C.birchMark}" stroke-width="${f(rr(1.5, 4))}" fill="none" opacity=".85" filter="url(#ink)"/>`;
   }
   // weeping twigs

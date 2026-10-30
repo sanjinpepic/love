@@ -18,7 +18,7 @@ const LAYOUTS = {
     ridges: [[0, 2400, 790, 940, "#c3d0cf", 5, 40], [0, 1400, 830, 940, "#b4c4c2", 4, 30]],
     church: { x: 1260, y: 922, s: 0.62 },
     farmsFar: [[420, 918, 46], [960, 922, 40], [2220, 916, 44]],
-    river: [880, 1010],
+    river: [935, 1040],
     fence: { y: 1120, h: 105, gate: 1180 },
     birch: [2190, 1270, 1000, -40, 0.8],
     bush: [-40, 960, 520, 1200],
@@ -40,7 +40,7 @@ const LAYOUTS = {
     ridges: [[0, 1200, 1350, 1500, "#c3d0cf", 3, 36], [0, 700, 1390, 1500, "#b4c4c2", 2, 26]],
     church: { x: 300, y: 1482, s: 0.52 },
     farmsFar: [[60, 1478, 40], [640, 1482, 36]],
-    river: [1440, 1580],
+    river: [1500, 1615],
     fence: { y: 1700, h: 100, gate: 420 },
     birch: [1080, 1950, 720, -30, 0.8],
     bush: [-60, 1350, 300, 1760],
@@ -81,7 +81,8 @@ const layers = {
     let s = "";
     L.ridges.forEach((r) => { s += S.ridge(...r); });
     s += `<g opacity=".85">${S.klack(L.klack)}</g>`;
-    s += S.ridge(0, W, L.horizon - 26, L.horizon + 40, "#c9d29a", 6, 14);
+    s += S.ridge(0, W, L.horizon - 26, L.horizon + 60, "#c9d29a", 6, 14);
+    s += B.ink(B.line([[-20, L.horizon - 22], [W * 0.3, L.horizon - 30], [W * 0.6, L.horizon - 20], [W + 20, L.horizon - 26]], 2, 40), 1.1, C.ink, 0.45);
     s += S.conifers(0, W, () => L.horizon - 34, 16, 120, "#6d8a76");
     s += `<g opacity=".9">${S.spruceRow(-20, W * 0.15, L.horizon + 10, 50, 7)}${S.spruceRow(W * 0.5, W * 0.62, L.horizon + 14, 44, 5)}</g>`;
     L.farmsFar.forEach(([x, y, w]) => { s += S.smallHouse(x, y, w); });
@@ -102,6 +103,8 @@ const layers = {
     const nb = r1 - 10;
     s += wash(`M-40 ${nb}C${W * 0.35} ${nb - 16} ${W * 0.65} ${nb + 10} ${W + 40} ${nb - 6}V${L.fence.y + 30}H-40Z`, "#bccb7c", 1);
     s += S.klimtMeadow(0, W, nb + 10, L.fence.y + 10, 420);
+    s += B.ink(B.line([[-20, r0 + 12], [W * 0.3, r0 + 4], [W * 0.7, r0 + 18], [W + 20, r0 + 8]], 1.5, 50), 1, C.ink, 0.4);
+    s += B.ink(B.line([[-20, nb + 2], [W * 0.35, nb - 12], [W * 0.65, nb + 8], [W + 20, nb - 4]], 1.5, 50), 1, C.ink, 0.4);
     return svg(W, L.H, s, 2, "cut");
   },
 
@@ -164,8 +167,8 @@ function sun(r) {
 const vignettes = {
   peony() {
     B.seed(611);
-    const W = 640, H = 720;
-    let s = S.gardenBed(70, 570, 300, 700, { peonies: [[300, 360, 110], [470, 470, 74]], poppies: [[150, 300, 30, 220]], globes: [[520, 300, 20, 200], [120, 520, 18, 120]], leaves: 34 });
+    const W = 760, H = 860;
+    let s = S.gardenBed(150, 610, 330, 690, { peonies: [[370, 400, 110], [540, 510, 74]], poppies: [[220, 340, 30, 220]], globes: [[590, 340, 20, 200], [200, 560, 18, 120]], leaves: 34 });
     return { W, H, svg: svg(W, H, s, 21) };
   },
   chairs() {
@@ -191,14 +194,17 @@ const vignettes = {
   meadow() {
     B.seed(644);
     const W = 2400, H = 420;
-    let s = wash(`M-40 ${H * 0.55}C600 ${H * 0.45} 1600 ${H * 0.62} ${W + 40} ${H * 0.5}V${H + 40}H-40Z`, "#c2cf86", 1);
-    s += S.klimtMeadow(0, W, H * 0.55, H, 600);
-    s += S.grass(0, W, H, 40, 170, 220, 0.3);
-    [[200, "p"], [420, "g"], [700, "y"], [1000, "p"], [1300, "g"], [1560, "y"], [1820, "p"], [2100, "g"], [2300, "y"]].forEach(([x, k]) => {
-      if (k === "p") s += S.stem(x, H, x + 10, H - 230, -20, 2) + S.poppy(x + 10, H - 230, 30, 10);
-      if (k === "g") s += S.stem(x, H, x - 8, H - 170, 15, 1.6) + S.globeflower(x - 8, H - 180, 18);
-      if (k === "y") s += S.stem(x, H, x + 4, H - 210, 10, 2) + S.peony(x + 4, H - 220, 46, 0, 0.8);
-    });
+    let s = wash(`M-80 ${H * 0.55}C600 ${H * 0.45} 1600 ${H * 0.62} ${W + 80} ${H * 0.5}V${H + 40}H-80Z`, "#c2cf86", 1);
+    s += S.klimtMeadow(-20, W + 20, H * 0.55, H, 640);
+    s += S.grass(-20, W + 20, H, 40, 170, 240, 0.3);
+    let x = rr(40, 140);
+    while (x < W - 40) {
+      const k = B.pick(["p", "g", "g", "y", "p", "g"]), hgt = rr(140, 250);
+      if (k === "p") s += S.stem(x, H, x + rr(-12, 12), H - hgt, rr(-25, 25), 2) + S.poppy(x + rr(-12, 12), H - hgt, rr(24, 32), rr(-20, 20));
+      if (k === "g") s += S.stem(x, H, x + rr(-10, 10), H - hgt * 0.75, rr(-20, 20), 1.6) + S.globeflower(x, H - hgt * 0.75 - 10, rr(14, 20));
+      if (k === "y") s += S.stem(x, H, x + 4, H - hgt, rr(-15, 15), 2) + S.peony(x + 4, H - hgt - 10, rr(38, 50), rr(-15, 15), 0.8);
+      x += rr(120, 380);
+    }
     return { W, H, svg: svg(W, H, s, 24) };
   },
 };

@@ -21,6 +21,6 @@ STORY: names, date and place lettered into open sky → Add to calendar → wedd
 
 FIRST VIEWPORT: full-bleed painting; words top-left in the unpainted sky (desktop) or centred at the top (phone); land below the words; flowers at the bottom edge.
 
-FORM: pinned by the couple (Larsson + Klimt, Järvsö, calm and grand); seed: none (direction pinned by the couple). Signature interaction: paper layers fold up from the page back to front (pop-up book), then drift with depth on pointer/scroll; flowers sway; birds cross; the sun turns. Reduced motion: still painting.
+FORM: pinned by the couple (Larsson + Klimt, Järvsö, calm and grand); seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: paper layers fold up from the page back to front (pop-up book), then drift with depth on pointer/scroll; flowers sway; birds cross; the sun turns. Reduced motion: still painting.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
