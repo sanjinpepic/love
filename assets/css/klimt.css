@@ -174,16 +174,22 @@ legend { padding: 0; margin-bottom: .6rem; }
 .journey.is-still { height: auto; background: var(--ground); }
 .journey.is-still .journey-stage { position: relative; height: 100svh; }
 .journey.is-still .journey-intro, .journey.is-still .journey-cue { display: none; }
-/* the names stand in a pool of light between the trunks */
-.journey-intro::before { content: ""; position: absolute; z-index: -1; inset: -70% -30%; background: radial-gradient(closest-side, rgb(252 249 232 / .92), rgb(248 244 222 / .6) 50%, transparent); filter: blur(4px); }
-.journey-intro .names { color: #22302a; }
+/* titles: ivory capitals over a soft vignette, like the opening of a film */
+.journey-shade { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 42%, rgb(8 22 14 / 0) 35%, rgb(8 22 14 / .5) 100%), linear-gradient(180deg, rgb(8 22 14 / .25), rgb(8 22 14 / 0) 30%, rgb(8 22 14 / 0) 70%, rgb(8 22 14 / .35)); }
+.journey-stage::after { content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: .09; mix-blend-mode: multiply;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .18 0 0 0 0 .12 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.journey-intro { color: #f6f3e8; text-shadow: 0 2px 28px rgb(8 22 14 / .55), 0 1px 3px rgb(8 22 14 / .35); }
+.journey-intro .names { color: #f6f3e8; font-size: clamp(2.1rem, 1rem + 3.6vw, 4.4rem); letter-spacing: .34em; margin-right: -.34em; }
+.journey-intro .intro-line { margin-top: 1.6rem; font-size: .82rem; letter-spacing: .42em; opacity: .9; }
+.journey-intro .intro-line::before { content: ""; display: block; width: 3.5rem; height: 1px; margin: 0 auto 1.4rem; background: currentColor; opacity: .7; }
 /* offered when the device asks for less motion */
 .journey-motion { position: absolute; z-index: 3; left: 50%; bottom: clamp(1rem, 3vh, 2rem); transform: translateX(-50%); font: .78rem/1 var(--caps); letter-spacing: .26em; text-transform: uppercase; color: var(--slate); background: none; border: 0; min-height: 44px; padding: 0 .4rem; cursor: pointer; text-decoration: underline; text-underline-offset: .6em; text-decoration-thickness: 1px; }
 .journey-motion:hover { color: var(--violet); }
 .journey-motion[hidden] { display: none; }
 /* lines that surface as you walk */
 .journey-lines { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.jl { position: absolute; left: 50%; top: 30%; margin: 0; opacity: 0; white-space: nowrap; font: 400 clamp(1rem, .8rem + .9vw, 1.55rem)/1.2 var(--caps); letter-spacing: .3em; text-transform: uppercase; color: #241d12; text-shadow: 0 0 14px rgb(255 248 222 / .95), 0 0 34px rgb(255 244 210 / .8); will-change: transform, opacity, filter; }
+.jl { position: absolute; left: 50%; top: 30%; margin: 0; opacity: 0; white-space: nowrap; font: 400 clamp(1rem, .8rem + .9vw, 1.55rem)/1.2 var(--caps); letter-spacing: .3em; text-transform: uppercase; color: #f6f3e8; text-shadow: 0 2px 24px rgb(8 22 14 / .6), 0 1px 3px rgb(8 22 14 / .4); will-change: transform, opacity, filter; }
 .jl-big { top: 40%; font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem); letter-spacing: .3em; color: #fbf9ee; text-shadow: 0 2px 30px rgb(30 50 30 / .45); }
 /* a thin rule that fills as you walk */
 .journey-rail { position: absolute; z-index: 3; right: clamp(.9rem, 2.4vw, 2rem); top: 50%; width: 1px; height: 22vh; transform: translateY(-50%); background: rgb(251 247 228 / .28); }
@@ -200,3 +206,8 @@ html:not(.js) .journey-intro, html:not(.js) .journey-cue, html:not(.js) .journey
 html:not(.js) .journey-print, .journey.is-still .journey-print { position: relative; min-height: 100svh; }
 html:not(.js) .journey-print .label, .journey.is-still .journey-print .label { opacity: 1 !important; }
 html:not(.js) .journey-stage .top, .journey.is-still .journey-stage .top { color: var(--slate); text-shadow: none; }
+.journey-intro { width: min(94vw, 64rem); }
+.journey-intro::before { content: ""; position: absolute; z-index: -1; inset: -40% -10%; background: radial-gradient(closest-side, rgb(8 22 14 / .42), rgb(8 22 14 / .18) 60%, transparent); pointer-events: none; }
+.journey-intro .names { white-space: nowrap; }
+.journey-intro .intro-line { font-size: clamp(.85rem, .75rem + .35vw, 1.05rem); letter-spacing: .4em; text-shadow: 0 1px 2px rgb(8 22 14 / .7), 0 2px 16px rgb(8 22 14 / .6); opacity: 1; }
+@media (max-width: 600px) { .journey-intro .names { white-space: normal; } }

@@ -27,6 +27,7 @@
   }
   function hex(h) { return [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)]; }
   function jitter(c, r, amt) {
+    if (typeof c === "string") c = hex(c);
     var k = (r() - 0.5) * amt;
     return "rgb(" + Math.max(0, Math.min(255, Math.round(c[0] + k))) + "," + Math.max(0, Math.min(255, Math.round(c[1] + k))) + "," + Math.max(0, Math.min(255, Math.round(c[2] + k))) + ")";
   }
@@ -105,17 +106,17 @@
       for (var hx = 0; hx <= 1.0001; hx += 0.02) hillPoly.push([hx, sky(hx) + 0.006]);
       hillPoly.push([1, shore], [0, shore]);
       back.shapes.push({ c: "#3f763c", p: hillPoly });
-      fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, { size: s * 1.3, step: 0.62, palette: pal([["#4f8a3e", 3], ["#3a6e3a", 3], ["#4c5296", 1.2], ["#2f5a3a", 1.5]]), spread: 2, jit: 20 });
-      var forest = pal([["#a8d050", 1.4], ["#7fb84a", 2.6], ["#5a9e44", 2.8], ["#3f7f3e", 2.6], ["#2f5a3a", 2], ["#5a60aa", 1.4], ["#41468a", 1.2]]);
-      var lightPal = pal([["#d4e05a", 2], ["#b9dc5c", 3], ["#9fd04a", 2]]);
+      fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, { size: s * 1.3, step: 0.62, palette: pal([["#4d8787", 3], ["#287f7c", 3], ["#5c63a6", 1.2], ["#1f6a62", 1.5]]), spread: 2, jit: 20 });
+      var forest = pal([["#9acc6f", 1.3], ["#7ec375", 2.2], ["#68b07d", 2.6], ["#4fac7b", 2], ["#359a7e", 2.2], ["#287f7c", 2.2], ["#4d8787", 2], ["#6c6fb2", 1.4], ["#4f74a8", 0.9], ["#1f6a62", 1.2]]);
+      var lightPal = pal([["#b8dc6a", 3], ["#9acc6f", 3], ["#d8d64e", 0.8], ["#8fd08a", 1.5]]);
       crowns(r, back.dabs, function (x, y) { return y >= sky(x) - 0.004 && y < shore - 0.01 && !inMeadow(x, y) && !knoll(x, y); },
         { radius: function (y) { return 0.026 + 0.05 * Math.max(0, (y - 0.05) / 0.8); }, size: depth, palette: forest, light: lightPal, noise: n });
       // the hay meadow: discrete bright dabs, not a smear
-      fill(r, back.dabs, inMeadow, { size: s * 1.15, step: 0.62, palette: pal([["#c8de60", 3], ["#b0d652", 3], ["#d8e47a", 1.5], ["#94c64a", 1.5], ["#7fb84a", 0.6]]), spread: 0.9, angle: 0.06, ratio: 0.5, jit: 30, late: 0.02 });
-      fill(r, back.dabs, knoll, { size: s * 1.2, step: 0.62, palette: pal([["#8fd04a", 3], ["#a6dc58", 2], ["#78bf40", 1.5], ["#5a9e44", 0.5]]), spread: 1, angle: -0.15, jit: 26 });
+      fill(r, back.dabs, inMeadow, { size: s * 1.15, step: 0.62, palette: pal([["#9ee05b", 1.2], ["#88d869", 2.4], ["#78d472", 2.8], ["#65c76e", 2.4], ["#3d996f", 0.8]]), spread: 0.9, angle: 0.06, ratio: 0.5, jit: 30, late: 0.02 });
+      fill(r, back.dabs, knoll, { size: s * 1.2, step: 0.62, palette: pal([["#65c76e", 3], ["#78d472", 2], ["#88d869", 1.4], ["#3d996f", 0.8]]), spread: 1, angle: -0.15, jit: 26 });
 
       // the village, all in dabs
-      var trees = pal([["#3d6e3a", 3], ["#4f8a3e", 2], ["#2f5a34", 3], ["#2a4a3a", 2], ["#3a3f78", 1]]);
+      var trees = pal([["#289d68", 2], ["#1f8b67", 2.4], ["#0c7962", 2.4], ["#0a605a", 2], ["#1f7364", 1.6], ["#55746a", 1], ["#5a5c9e", 0.7]]);
       [[0.03, 0.755, 0.06], [0.27, 0.745, 0.05], [0.36, 0.765, 0.045], [0.53, 0.745, 0.06], [0.71, 0.755, 0.055], [0.98, 0.745, 0.06]].forEach(function (t) {
         crowns(r, mid.dabs, function (x, y) { var dx = (x - t[0]) / t[2], dy = (y - t[1]) / (t[2] * 1.1); return dx * dx + dy * dy < 1 && y < shore; },
           { y0: t[1] - t[2] * 1.1, y1: t[1] + t[2] * 1.1, radius: function () { return t[2] * 0.5; }, size: function () { return s * 1.05; }, palette: trees, light: pal([["#6faa44", 2], ["#8fc04a", 1]]), late: 0.06 });
@@ -125,7 +126,7 @@
       }
       function house(x0, x1, yb, h, wall, roof, roofH) {
         block(x0, x1, yb - h, yb, pal([[wall, 5], [wall === "#efeee6" ? "#ffffff" : "#c05a44", 1], ["#9a9a92", wall === "#efeee6" ? 0.6 : 0]]));
-        fill(r, mid.dabs, function (x, y) { var t = (yb - h - y) / roofH; return y < yb - h + 0.002 && y > yb - h - roofH && x > x0 - 0.006 + t * (x1 - x0) * 0.12 && x < x1 + 0.006 - t * (x1 - x0) * 0.12; }, { size: s * 0.75, step: 0.42, palette: pal([[roof, 4], ["#6a6c78", 1.4], ["#383a46", 1]]), spread: 0.3, jit: 16, late: 0.13 });
+        fill(r, mid.dabs, function (x, y) { var t = (yb - h - y) / roofH; return y < yb - h + 0.002 && y > yb - h - roofH && x > x0 - 0.006 + t * (x1 - x0) * 0.12 && x < x1 + 0.006 - t * (x1 - x0) * 0.12; }, { size: s * 0.75, step: 0.42, palette: pal([["#508693", 3], ["#64a0a4", 2], ["#2c6473", 2], ["#88b0ad", 1]]), spread: 0.3, jit: 16, late: 0.13 });
                 // windows: small dark panes with a pale frame, never round
         var nwin = Math.max(2, Math.round((x1 - x0) / 0.028));
         for (var k = 0; k < nwin; k++) {
@@ -145,12 +146,12 @@
       [[0.885, 0.165], [0.925, 0.2], [0.955, 0.14]].forEach(function (t) {
         fill(r, mid.dabs, function (x, y) { var hy = shore - t[1]; if (y < hy || y > shore) return false; return Math.abs(x - t[0]) < 0.022 * (y - hy) / t[1] + 0.004; }, { size: s * 0.85, step: 0.45, palette: pal([["#244a32", 3], ["#2f5a34", 3], ["#3d6e3a", 1], ["#2c2f5e", 0.8]]), spread: 0.8, angle: 1.57, late: 0.1 });
       });
-      fill(r, mid.dabs, function (x, y) { return y > shore - 0.006 && y < shore + 0.008; }, { size: s * 0.9, palette: pal([["#8fd04a", 3], ["#b9dc5c", 2]]), spread: 0.2, ratio: 0.4, late: 0.15 });
+      fill(r, mid.dabs, function (x, y) { return y > shore - 0.006 && y < shore + 0.008; }, { size: s * 0.9, palette: pal([["#9ee05b", 3], ["#d8d64e", 1.2]]), spread: 0.2, ratio: 0.4, late: 0.15 });
 
       // the river: deep, green with the hill, the village mirrored in vertical strokes
-      var wpal = pal([["#a9c4a8", 3], ["#8fb894", 2.4], ["#c3d2c2", 2], ["#9fb0c8", 1.4], ["#7aa684", 1.4], ["#d6dccf", 1]]);
+      var wpal = pal([["#b2d49c", 1.6], ["#a3c59c", 2], ["#93bf96", 2.6], ["#87bc95", 2], ["#7caf93", 2], ["#6ead93", 2], ["#5c9c8d", 1.2], ["#9aa6c8", 0.6]]);
       fill(r, water.dabs, function (x, y) { return y > shore + 0.006; }, { size: s * 1.3, step: 0.5, palette: wpal, angle: 0, spread: 0.12, ratio: 0.32, jit: 16, late: 0.18, y0: shore - 0.01 });
-      fill(r, water.dabs, function (x, y) { return y > shore + 0.006 && y < shore + 0.07 && r() < 0.5; }, { size: s * 1.2, palette: pal([["#5a9e44", 3], ["#3f7f3e", 2], ["#4c5296", 1]]), angle: 0, spread: 0.1, ratio: 0.3, jit: 18, late: 0.19, y0: shore });
+      fill(r, water.dabs, function (x, y) { return y > shore + 0.006 && y < shore + 0.07 && r() < 0.5; }, { size: s * 1.2, palette: pal([["#4fac7b", 3], ["#287f7c", 2], ["#6c6fb2", 1]]), angle: 0, spread: 0.1, ratio: 0.3, jit: 18, late: 0.19, y0: shore });
       [[0.05, 0.22, "#e6e8e0"], [0.26, 0.33, "#a8402e"], [0.405, 0.435, "#e6e8e0"], [0.43, 0.54, "#e6e8e0"], [0.6, 0.69, "#9a4232"], [0.76, 0.86, "#a24a3c"], [0.87, 0.97, "#2a4a3a"], [0.0, 0.05, "#3d6e3a"]].forEach(function (h) {
         var deep = h[1] - h[0] < 0.04 ? 0.15 : 0.09;
         fill(r, water.dabs, function (x, y) { return x > h[0] && x < h[1] && y > shore + 0.008 && y < shore + deep && r() < 0.6; }, { size: s * 1.05, palette: pal([[h[2], 3], ["#a9c4a8", 1]]), angle: 1.57, spread: 0.12, ratio: 0.26, jit: 18, late: 0.2, y0: shore });
@@ -163,7 +164,7 @@
     orchard: function () {
       var r = rng(2808), n = noise2(rng(28)), s = 0.0115;
       var back = { id: "canopy", dabs: [], shapes: [] }, mid = { id: "trunks", dabs: [], shapes: [] };
-      var canopy = pal([["#d8e05a", 1.1], ["#b4d652", 2], ["#8fc44a", 2.6], ["#64a848", 2.8], ["#3f8a52", 2.4], ["#2f6a4a", 1.6], ["#5b63b4", 0.9], ["#3e3f86", 0.6]]);
+      var canopy = pal([["#d8d64e", 0.9], ["#9acc6f", 2], ["#7ec375", 2.6], ["#4fac7b", 2.6], ["#359a7e", 2.2], ["#1f6a62", 1.6], ["#6c6fb2", 1], ["#4f74a8", 0.6]]);
       fill(r, back.dabs, function (x, y) { return y < 0.66 + 0.04 * Math.sin(x * 7); }, { size: s, palette: canopy, noise: n, dark: 1.6, spread: 2.6, jit: 28 });
       crowns(r, back.dabs, function (x, y) { return y < 0.64 + 0.04 * Math.sin(x * 7); }, { radius: function () { return 0.06; }, size: function () { return s * 1.05; }, palette: canopy, light: pal([["#e2e86a", 2], ["#c8de60", 2]]), noise: n });
       fill(r, back.dabs, function (x, y) { return y > 0.6 && y < 0.82; }, { size: s * 0.7, step: 0.5, palette: pal([["#3f8a5a", 3], ["#5b63b4", 1.4], ["#2f6a5a", 2], ["#8fc44a", 1.2], ["#c9dc5a", 0.6], ["#d06a5a", 0.3]]), spread: 2.6, jit: 30 });
