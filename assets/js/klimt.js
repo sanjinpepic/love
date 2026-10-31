@@ -49,7 +49,7 @@
     // scatter dabs over a region test function on a jittered grid
     var s = opt.size, step = s * (opt.step || 0.55), n = opt.noise, bias = opt.bias || 0;
     for (var y = opt.y0 || 0; y < (opt.y1 || 1); y += step * 0.8) {
-      for (var x = -0.01; x < 1.01; x += step) {
+      for (var x = -0.01; x < (opt.x1 || 1) + 0.01; x += step) {
         var px = x + (r() - 0.5) * step, py = y + (r() - 0.5) * step * 0.8;
         if (!region(px, py)) continue;
         var b = n ? Math.max(0, Math.min(1, (n(px * 6, py * 6) - 0.35) * 1.8)) : 0;
@@ -67,7 +67,7 @@
     var y = opt.y0 || 0;
     while (y < (opt.y1 || 1)) {
       var R = opt.radius(y), step = R * 1.25;
-      for (var x = -0.02; x < 1.02; x += step) {
+      for (var x = -0.02; x < (opt.x1 || 1) + 0.02; x += step) {
         var cx = x + (r() - 0.5) * step * 0.7, cy = y + (r() - 0.5) * step * 0.5;
         if (!region(cx, cy)) continue;
         var rad = R * (0.75 + r() * 0.5), size = opt.size(cy), count = Math.round(Math.pow(rad / size, 2) * 2.6);
@@ -85,7 +85,96 @@
     }
   }
 
+  // One palette for the whole world, between Klimt's Park and Litzlberg on the Attersee:
+  // cool greens from lime light to deep sea-green, violet in the shadows, grey flecks of sky.
+  var P = {
+    leaf: pal([["#b9d27a", 0.8], ["#9ccf6a", 1.4], ["#7cc27a", 2.2], ["#5faf72", 2.6], ["#3f9a62", 2.6], ["#2f8268", 2.2], ["#1f6a58", 1.8], ["#6c6fb2", 1.1], ["#4f8090", 0.9], ["#c9d0b8", 0.4]]),
+    light: pal([["#c9e08a", 2], ["#b9d27a", 2], ["#9ccf6a", 2], ["#d8d64e", 0.5]]),
+    dark: pal([["#3f9a62", 2], ["#2f8268", 2.4], ["#1f6a58", 2.4], ["#145a4c", 2], ["#4f6a62", 1], ["#5a5c9e", 0.7]]),
+    meadow: pal([["#a8dc62", 1.2], ["#8fd46a", 2.4], ["#78c874", 2.6], ["#62b872", 2], ["#3d996f", 0.8]]),
+    haze: pal([["#9fc4b0", 2], ["#86b4a4", 2.4], ["#a9b4d0", 1.4], ["#c4d6c8", 1], ["#6fa294", 1.2]]),
+    water: pal([["#b2d49c", 1.6], ["#a3c59c", 2], ["#93bf96", 2.6], ["#87bc95", 2], ["#7caf93", 2], ["#6ead93", 2], ["#5c9c8d", 1.2], ["#9aa6c8", 0.6]]),
+    sky: pal([["#c4cfee", 3], ["#d6ddf2", 2], ["#aebbe6", 1.4], ["#e6eaf6", 1.2]]),
+    roof: pal([["#508693", 3], ["#64a0a4", 2], ["#2c6473", 2], ["#88b0ad", 1]])
+  };
+
   var SCENES = {
+    // Järvsö dal as a wide panorama, the view you walk out of the forest into: Järvsöklack
+    // against the sky, a hay meadow across the slope, the village and the white church on the
+    // shore, the Ljusnan below. Units: y spans 0..1, x spans 0..A.
+    panorama: function () {
+      var A = 2, r = rng(2027), n = noise2(rng(270)), s = 0.0125, shore = 0.69;
+      var klack = function (x) { var d = (x - 1.56) / 0.5; return 0.12 + 0.2 * d * d; };
+      var ridge = function (x) { return 0.37 + 0.016 * Math.sin(x * 4.2) + 0.01 * Math.sin(x * 11) - (x < 0.5 ? (0.5 - x) * 0.06 : 0); };
+      var sky = function (x) { return Math.min(ridge(x), klack(x)); };
+      var mt = function (x) { return 0.48 + 0.045 * (x - 0.6) / 1.4 + 0.01 * Math.sin(x * 7); };
+      var mb = function (x) { return mt(x) + 0.036 + 0.02 * (x - 0.6) / 1.4; };
+      var inMeadow = function (x, y) { return x > 0.58 + 0.08 * (1 - Math.min(1, (y - mt(x)) / 0.04)) && y > mt(x) && y < mb(x); };
+      var knoll = function (x, y) { var dx = (x - 0.3) / 0.36, dy = (y - 0.68) / 0.085; return dx * dx + dy * dy < 1 && y < 0.68; };
+      var depth = function (y) { return s * (0.5 + 1.2 * Math.max(0, (y - 0.1) / 0.6)); };
+      var back = { id: "hill", dabs: [], shapes: [] }, mid = { id: "village", dabs: [], shapes: [] }, water = { id: "water", dabs: [], shapes: [] };
+      var X = { x1: A };
+      var o = function (extra) { for (var k in X) extra[k] = X[k]; return extra; };
+
+      // sky and clouds
+      fill(r, back.dabs, function (x, y) { return y < sky(x) + 0.012; }, o({ size: s * 1.4, palette: P.sky, spread: 0.7, angle: 0.15, jit: 18 }));
+      [[0.35, 0.09, 0.22, 0.04], [0.95, 0.05, 0.16, 0.03], [1.78, 0.1, 0.2, 0.04], [0.62, 0.2, 0.12, 0.025]].forEach(function (c) {
+        fill(r, back.dabs, function (x, y) { return y < sky(x) && Math.pow((x - c[0]) / c[2], 2) + Math.pow((y - c[1]) / c[3], 2) < 1; }, o({ size: s * 1.6, palette: pal([["#f3f4f8", 4], ["#dfe3f0", 2], ["#c9d0e8", 1]]), spread: 0.5, late: 0.04 }));
+      });
+      // the far slopes in haze, then the forested hill in crowns, larger as they come near
+      var hillPoly = [];
+      for (var hx = 0; hx <= A + 0.0001; hx += 0.02) hillPoly.push([hx, sky(hx) + 0.006]);
+      hillPoly.push([A, shore], [0, shore]);
+      back.shapes.push({ c: "#3f8a6a", p: hillPoly });
+      fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, o({ size: s * 1.2, step: 0.62, palette: P.dark, spread: 2, jit: 18 }));
+      fill(r, back.dabs, function (x, y) { return y >= sky(x) - 0.004 && y < sky(x) + 0.05; }, o({ size: s * 0.8, step: 0.6, palette: P.haze, spread: 2, jit: 16, late: 0.01 }));
+      crowns(r, back.dabs, function (x, y) { return y >= sky(x) + 0.02 && y < shore - 0.01 && !inMeadow(x, y) && !knoll(x, y); },
+        o({ y0: 0.1, radius: function (y) { return 0.02 + 0.045 * Math.max(0, (y - 0.12) / 0.6); }, size: depth, palette: P.leaf, light: P.light, noise: n }));
+      fill(r, back.dabs, inMeadow, o({ size: s * 1.1, step: 0.62, palette: P.meadow, spread: 0.9, angle: 0.04, ratio: 0.5, jit: 26, late: 0.02 }));
+      fill(r, back.dabs, knoll, o({ size: s * 1.2, step: 0.62, palette: P.meadow, spread: 1, angle: -0.12, jit: 22 }));
+
+      // the village on the shore
+      [[0.05, 0.62, 0.06], [0.36, 0.63, 0.045], [0.6, 0.625, 0.05], [0.78, 0.635, 0.04], [1.08, 0.625, 0.05], [1.33, 0.63, 0.045], [1.6, 0.625, 0.05], [1.98, 0.62, 0.06]].forEach(function (t) {
+        crowns(r, mid.dabs, function (x, y) { var dx = (x - t[0]) / t[2], dy = (y - t[1]) / (t[2] * 1.1); return dx * dx + dy * dy < 1 && y < shore; },
+          o({ y0: t[1] - t[2] * 1.1, y1: t[1] + t[2] * 1.1, radius: function () { return t[2] * 0.5; }, size: function () { return s * 1.05; }, palette: P.dark, light: P.light, late: 0.06 }));
+      });
+      function block(x0, x1, y0, y1, palette, size) {
+        fill(r, mid.dabs, function (x, y) { return x > x0 && x < x1 && y > y0 && y < y1; }, o({ size: size || s * 0.75, step: 0.42, palette: palette, spread: 0.35, jit: 16, late: 0.12 }));
+      }
+      function house(x0, x1, yb, h, wall, roofH) {
+        block(x0, x1, yb - h, yb, pal([[wall, 5], [wall === "#eef0e6" ? "#ffffff" : "#c05a44", 1], ["#9aa09a", wall === "#eef0e6" ? 0.6 : 0]]));
+        fill(r, mid.dabs, function (x, y) { var t = (yb - h - y) / roofH; return y < yb - h + 0.002 && y > yb - h - roofH && x > x0 - 0.006 + t * (x1 - x0) * 0.12 && x < x1 + 0.006 - t * (x1 - x0) * 0.12; }, o({ size: s * 0.75, step: 0.42, palette: P.roof, spread: 0.3, jit: 16, late: 0.13 }));
+        var nwin = Math.max(2, Math.round((x1 - x0) / 0.028));
+        for (var k = 0; k < nwin; k++) {
+          var wx = x0 + (x1 - x0) * ((k + 0.5) / nwin), wy = yb - h * 0.62, ww = 0.0075, wh = h * 0.34;
+          mid.shapes.push({ c: wall === "#eef0e6" ? "#c9cec0" : "#e8e2d4", p: [[wx - ww * 0.7, wy - wh * 0.12], [wx + ww * 0.7, wy - wh * 0.12], [wx + ww * 0.7, wy + wh * 1.08], [wx - ww * 0.7, wy + wh * 1.08]], late: true });
+          mid.shapes.push({ c: "#3e4e58", p: [[wx - ww / 2, wy], [wx + ww / 2, wy], [wx + ww / 2, wy + wh], [wx - ww / 2, wy + wh]], late: true });
+        }
+      }
+      house(0.12, 0.31, shore - 0.008, 0.05, "#eef0e6", 0.032);
+      house(0.4, 0.48, shore - 0.012, 0.04, "#a8402e", 0.028);
+      house(0.88, 1.0, shore - 0.01, 0.055, "#eef0e6", 0.032);
+      block(0.845, 0.875, shore - 0.155, shore - 0.01, pal([["#eef0e6", 5], ["#ffffff", 1], ["#c9d0cc", 1]]), s * 0.6);
+      fill(r, mid.dabs, function (x, y) { return y > shore - 0.2 && y < shore - 0.153 && Math.abs(x - 0.86) < 0.02 * (y - (shore - 0.2)) / 0.047 + 0.002; }, o({ size: s * 0.55, step: 0.42, palette: pal([["#2c4a58", 4], ["#4a6070", 1]]), spread: 0.3, late: 0.14 }));
+      fill(r, mid.dabs, function (x, y) { return y > shore - 0.245 && y < shore - 0.198 && Math.abs(x - 0.86) < 0.0045; }, o({ size: s * 0.45, step: 0.42, palette: pal([["#2c4a58", 1]]), spread: 0.2, angle: 1.57, late: 0.15 }));
+      house(1.16, 1.27, shore - 0.008, 0.045, "#a8402e", 0.03);
+      house(1.42, 1.54, shore - 0.01, 0.046, "#b0473a", 0.032);
+      house(1.67, 1.8, shore - 0.008, 0.044, "#eef0e6", 0.03);
+      [[1.875, 0.17], [1.915, 0.21], [1.95, 0.15]].forEach(function (t) {
+        fill(r, mid.dabs, function (x, y) { var hy = shore - t[1]; if (y < hy || y > shore) return false; return Math.abs(x - t[0]) < 0.022 * (y - hy) / t[1] + 0.004; }, o({ size: s * 0.85, step: 0.45, palette: P.dark, spread: 0.8, angle: 1.57, late: 0.1 }));
+      });
+      fill(r, mid.dabs, function (x, y) { return y > shore - 0.006 && y < shore + 0.008; }, o({ size: s * 0.9, palette: pal([["#a8dc62", 3], ["#d8d64e", 1.2]]), spread: 0.2, ratio: 0.4, late: 0.15 }));
+
+      // the river, with the village and the hill mirrored in it
+      fill(r, water.dabs, function (x, y) { return y > shore + 0.006; }, o({ size: s * 1.3, step: 0.5, palette: P.water, angle: 0, spread: 0.12, ratio: 0.32, jit: 16, late: 0.18, y0: shore - 0.01 }));
+      fill(r, water.dabs, function (x, y) { return y > shore + 0.006 && y < shore + 0.09 && r() < 0.5; }, o({ size: s * 1.2, palette: pal([["#5faf72", 3], ["#2f8268", 2], ["#6c6fb2", 1]]), angle: 0, spread: 0.1, ratio: 0.3, jit: 18, late: 0.19, y0: shore }));
+      [[0.12, 0.31, "#e6e8e0"], [0.4, 0.48, "#a8402e"], [0.845, 0.875, "#e6e8e0"], [0.88, 1.0, "#e6e8e0"], [1.16, 1.27, "#9a4232"], [1.42, 1.54, "#a24a3c"], [1.67, 1.8, "#e6e8e0"], [1.86, 1.97, "#1f6a58"]].forEach(function (h) {
+        var deep = h[1] - h[0] < 0.04 ? 0.18 : 0.1;
+        fill(r, water.dabs, function (x, y) { return x > h[0] && x < h[1] && y > shore + 0.008 && y < shore + deep && r() < 0.6; }, o({ size: s * 1.05, palette: pal([[h[2], 3], ["#a3c59c", 1]]), angle: 1.57, spread: 0.12, ratio: 0.26, jit: 18, late: 0.2, y0: shore }));
+      });
+      return { A: A, layers: [back, mid, water] };
+    },
+
     // Järvsöklack seen across the Ljusnan (after Litzlberg on the Attersee): the hillside fills
     // the square in tree crowns, crossed by a hay meadow; farms and the white church on the shore.
     jarvso: function () {
@@ -164,7 +253,7 @@
     orchard: function () {
       var r = rng(2808), n = noise2(rng(28)), s = 0.0115;
       var back = { id: "canopy", dabs: [], shapes: [] }, mid = { id: "trunks", dabs: [], shapes: [] };
-      var canopy = pal([["#d8d64e", 0.9], ["#9acc6f", 2], ["#7ec375", 2.6], ["#4fac7b", 2.6], ["#359a7e", 2.2], ["#1f6a62", 1.6], ["#6c6fb2", 1], ["#4f74a8", 0.6]]);
+      var canopy = P.leaf;
       fill(r, back.dabs, function (x, y) { return y < 0.66 + 0.04 * Math.sin(x * 7); }, { size: s, palette: canopy, noise: n, dark: 1.6, spread: 2.6, jit: 28 });
       crowns(r, back.dabs, function (x, y) { return y < 0.64 + 0.04 * Math.sin(x * 7); }, { radius: function () { return 0.06; }, size: function () { return s * 1.05; }, palette: canopy, light: pal([["#e2e86a", 2], ["#c8de60", 2]]), noise: n });
       fill(r, back.dabs, function (x, y) { return y > 0.6 && y < 0.82; }, { size: s * 0.7, step: 0.5, palette: pal([["#3f8a5a", 3], ["#5b63b4", 1.4], ["#2f6a5a", 2], ["#8fc44a", 1.2], ["#c9dc5a", 0.6], ["#d06a5a", 0.3]]), spread: 2.6, jit: 30 });
@@ -182,7 +271,7 @@
   };
 
   // shared with journey.js (the walk through the forest)
-  window.KlimtPaint = { rng: rng, noise2: noise2, pal: pal, pick: pick, jitter: jitter, fill: fill, crowns: crowns, scenes: SCENES };
+  window.KlimtPaint = { rng: rng, noise2: noise2, pal: pal, pick: pick, jitter: jitter, fill: fill, crowns: crowns, scenes: SCENES, P: P };
 
   // ——— painter ————————————————————————————————————————————————————————————
   function Painting(el) {

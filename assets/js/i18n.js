@@ -11,7 +11,7 @@ window.WEDDING = {
 window.I18N = {
   en: {
     "k.l1": "Hälsingland, late August",
-    "k.l2": "A path through the birches",
+    "k.l2": "A path through the trees",
     "k.l3": "Järvsö dal",
     "k.motion": "Walk through the forest",
     "k.cue": "Scroll to walk through the forest",
@@ -104,7 +104,7 @@ window.I18N = {
 
   sv: {
     "k.l1": "Hälsingland, sensommar",
-    "k.l2": "En stig genom björkarna",
+    "k.l2": "En stig genom träden",
     "k.l3": "Järvsö dal",
     "k.motion": "Gå genom skogen",
     "k.cue": "Skrolla för att gå genom skogen",
@@ -197,7 +197,7 @@ window.I18N = {
 
   bs: {
     "k.l1": "Hälsingland, kraj augusta",
-    "k.l2": "Staza kroz breze",
+    "k.l2": "Staza kroz drveće",
     "k.l3": "Dolina Järvsö",
     "k.motion": "Prošetajte kroz šumu",
     "k.cue": "Skrolajte da prošetate kroz šumu",

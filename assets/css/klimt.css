@@ -211,3 +211,24 @@ html:not(.js) .journey-stage .top, .journey.is-still .journey-stage .top { color
 .journey-intro .names { white-space: nowrap; }
 .journey-intro .intro-line { font-size: clamp(.85rem, .75rem + .35vw, 1.05rem); letter-spacing: .4em; text-shadow: 0 1px 2px rgb(8 22 14 / .7), 0 2px 16px rgb(8 22 14 / .6); opacity: 1; }
 @media (max-width: 600px) { .journey-intro .names { white-space: normal; } }
+/* the end of the walk: the names in the sky over Järvsö */
+.journey-final { position: absolute; z-index: 2; left: 50%; top: clamp(4.4rem, 10vh, 7rem); transform: translateX(-50%); width: min(92vw, 46rem); max-width: none; text-align: center; color: #1d2a26; opacity: 0; text-shadow: 0 0 18px rgb(238 242 250 / .9); }
+.journey-final .names { font-size: clamp(1.9rem, 1rem + 2.6vw, 3.4rem); white-space: nowrap; }
+.journey-final .names > span { display: inline !important; }
+.journey-final .subtitle, .journey-final .place, .journey-final .year, .journey-final .links { color: #1d2a26; }
+.journey-final .place { margin-top: clamp(1rem, 3vh, 1.8rem); }
+.journey-final .links { margin-top: clamp(1.2rem, 3.5vh, 2rem); }
+@media (max-width: 600px) { .journey-final .names { white-space: normal; } .journey-final { top: 4rem; } }
+html:not(.js) .journey-final, .journey.is-still .journey-final { position: relative; left: auto; transform: none; margin: 6rem auto 3rem; opacity: 1 !important; }
+.journey-final { top: clamp(3.6rem, 7vh, 5.5rem); }
+.journey-final .names { font-size: clamp(1.7rem, .9rem + 2.2vw, 3rem); }
+.journey-final .subtitle { margin-top: .5rem; }
+.journey-final .place { margin-top: .9rem; }
+.journey-final .links { margin-top: .9rem; }
+.journey-final .links a { text-shadow: 0 0 10px rgb(238 242 250 / .95), 0 0 2px rgb(238 242 250 / .9); }
+/* names in the sky, the two links on the water */
+.journey-final { top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; padding-top: clamp(3.6rem, 7vh, 5.5rem); padding-bottom: clamp(1.6rem, 5vh, 3rem); pointer-events: none; }
+.journey-final > * { pointer-events: auto; }
+.journey-final .links { margin-top: auto; padding: .2rem 1.2rem; }
+.journey-final .links a { color: #1d2a26; text-shadow: 0 0 12px rgb(214 232 214 / .95), 0 0 3px rgb(214 232 214 / .9); }
+html:not(.js) .journey-final, .journey.is-still .journey-final { display: block; padding: 0; }

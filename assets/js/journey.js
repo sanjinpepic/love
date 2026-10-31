@@ -15,7 +15,7 @@
   var canvas = section.querySelector(".journey-canvas"), ctx = canvas.getContext("2d");
   var slot = section.querySelector(".painting-slot");
   var intro = section.querySelector(".journey-intro"), cue = section.querySelector(".journey-cue");
-  var label = section.querySelector(".journey-print .label");
+  var label = section.querySelector(".journey-final");
   var lines = [].slice.call(section.querySelectorAll(".jl")).map(function (el) { return { el: el, a: +el.dataset.from, b: +el.dataset.to }; });
   var rail = section.querySelector(".journey-rail span");
   var shade = section.querySelector(".journey-shade");
@@ -84,7 +84,7 @@
     // a row of trunks with white light between them, and a band of lawn
     var r = K.rng(1910), n = K.noise2(K.rng(19)), c = off(W, H), x = c.getContext("2d"), list = [];
     var g = x.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#1f4a32"); g.addColorStop(0.5, "#3f7a46"); g.addColorStop(0.64, "#9fbf8a"); g.addColorStop(0.72, "#eef0e6"); g.addColorStop(0.82, "#e4ead8"); g.addColorStop(0.86, "#5fb04a"); g.addColorStop(1, "#3f8a42");
+    g.addColorStop(0, "#1f5a4a"); g.addColorStop(0.5, "#3f8a62"); g.addColorStop(0.64, "#9fbf8a"); g.addColorStop(0.72, "#eef0e6"); g.addColorStop(0.82, "#e4ead8"); g.addColorStop(0.86, "#78c874"); g.addColorStop(1, "#3d996f");
     x.fillStyle = g; x.fillRect(0, 0, W, H);
     var a = W / H;
     var put = function (px, py, size, col, ang, ratio, order) { list.push([px / a, py, size * (0.42 + r() * 0.36) / a, size * (0.42 + r() * 0.36) * (ratio || 0.48) / a, ang, K.jitter(col, r, 22), order]); };
@@ -104,7 +104,7 @@
       }
     }
     // the canopy: tiny leaves, lighter toward the middle, a few grey flecks of sky
-    var leaves = K.pal([["#c9d0a8", 0.7], ["#b9c86a", 1.2], ["#9ccf6a", 1.6], ["#6fb050", 2.6], ["#4f9a4a", 3], ["#2f7a4a", 2.8], ["#7a9a3a", 1.6], ["#1f5a3a", 2]]);
+    var leaves = K.P.leaf;
     var cs = 0.0075;
     for (y = -0.02; y < 0.74; y += cs * 0.38) for (xx = -0.02; xx < a + 0.02; xx += cs * 0.46) {
       var px = xx + (r() - 0.5) * cs, py = y + (r() - 0.5) * cs;
@@ -114,7 +114,7 @@
       put(px, py, cs * (1 + r() * 0.6), K.pick(leaves, r, Math.max(0, (n(px * 6, py * 6) - 0.45) * 2.2 - light * 1.2)), (r() - 0.5) * 2.8, 0.55, 0.3 + r() * 0.7);
     }
     // lawn
-    var lawn = K.pal([["#8fd060", 1.4], ["#5fb04a", 3], ["#3f9a4a", 2.4], ["#2f7a3a", 1.4]]);
+    var lawn = K.P.meadow;
     for (y = 0.85; y < 1.02; y += 0.005) for (xx = -0.02; xx < a + 0.02; xx += 0.008) put(xx + (r() - 0.5) * 0.006, y, 0.012 + (y - 0.85) * 0.03, K.pick(lawn, r, 0), (r() - 0.5) * 0.25, 0.4, 0.3 + r() * 0.6);
     enqueue(c, list, W, H, true);
     return c;
@@ -124,8 +124,9 @@
   // Each tree is a trunk sprite and a crown sprite; the wind bends them apart.
   function tree(seed, kind) {
     var r = K.rng(seed), n = K.noise2(K.rng(seed + 1)), TW = kind === "life" ? 700 : 300, TH = 1300, trunk = off(TW * RES, TH * RES), list = [];
-    var lean = (r() - 0.5) * 24, base = TW / 2, w0 = kind === "plane" ? 46 : kind === "pear" ? 38 : 30;
-    var camo = [K.pal([["#5a6a3a", 3], ["#7a7a4a", 2], ["#8a9a6a", 1.5]]), K.pal([["#3f4a2a", 3], ["#4a3a2a", 2], ["#2f3a26", 1]]), K.pal([["#a9b08a", 3], ["#c9c8a0", 1.5], ["#8f9a72", 2]])];
+    var lean = (r() - 0.5) * 20, base = TW / 2, w0 = kind === "plane" ? 60 : kind === "pear" ? 38 : 30;
+    // Park's plane bark: large patches of olive, umber and pale grey-green
+    var camo = [K.pal([["#5a6e4a", 3], ["#6e7a52", 2], ["#4f6a52", 1.5]]), K.pal([["#3a3a2a", 3], ["#4a3a2a", 2], ["#2a3428", 1.4]]), K.pal([["#a9b694", 3], ["#c4c8a8", 1.4], ["#8fa286", 2]]), K.pal([["#7a5a3a", 2], ["#8a6a42", 1.5], ["#5a4a30", 1]])];
     var bark = kind === "plane" ? null : kind === "pear" ? K.pal([["#7a6450", 4], ["#8c7660", 2], ["#5e4c3e", 2], ["#8a9a6a", 1]])
       : kind === "life" ? K.pal([["#8a6a3a", 3], ["#a77d27", 2], ["#6a5030", 2], ["#c9a043", 1]])
       : K.pal([["#eef2e8", 4], ["#d8e0d6", 3], ["#b9c9c0", 1.5], ["#8fa8a8", 1]]);
@@ -133,7 +134,7 @@
       var t = (TH - y) / TH, cx = base + lean * t + (n(y / 90, seed) - 0.5) * 10, w = w0 * (1 - t * 0.45);
       for (var k = 0; k < 3; k++) {
         var px = cx + (r() - 0.5) * w, side = (px - cx) / w;
-        var col = kind === "plane" ? K.pick(camo[Math.min(2, Math.floor(n(px / 22, y / 40) * 3.2))], r, 0)
+        var col = kind === "plane" ? K.pick(camo[Math.min(3, Math.floor(n(px / 34, y / 70) * 4.2))], r, 0)
           : side > 0.22 && kind === "birch" ? (r() < 0.6 ? "#9fb4b2" : "#7fa0a0") : K.pick(bark, r, 0);
         list.push([px / TH, y / TH, (5 + r() * 4) / TH, (2.2 + r() * 1.6) / TH, (r() - 0.5) * 0.5, K.jitter(col, r, 16), r()]);
       }
@@ -162,10 +163,10 @@
     }
     // crown
     var CW = 900, CH = 640, crown = off(CW * RES, CH * RES), cl = [];
-    var leaves = kind === "pear" ? K.pal([["#b9c86a", 1.2], ["#9ccf6a", 1.6], ["#6fb050", 2.6], ["#4f9a4a", 2.6], ["#2f7a4a", 2.4], ["#1f5a3a", 1.6]])
+    var leaves = kind === "pear" ? K.P.leaf
       : kind === "life" ? K.pal([["#e8c96a", 1.6], ["#c9a043", 1.2], ["#a8d050", 2], ["#5a9e44", 2], ["#2f5a3a", 1.4], ["#5a60aa", 1]])
-      : K.pal([["#c9d0a8", 0.6], ["#b9c86a", 1.1], ["#9ccf6a", 1.6], ["#6fb050", 2.6], ["#4f9a4a", 3], ["#2f7a4a", 2.6], ["#7a9a3a", 1.4], ["#1f5a3a", 1.8]]);
-    var lights = K.pal([["#c9d0a8", 1.4], ["#b9c86a", 2], ["#9ccf6a", 2]]);
+      : K.P.leaf;
+    var lights = K.P.light;
     for (var cI = 0; cI < 12; cI++) {
       var ccx = CW * (0.26 + r() * 0.48), ccy = CH * (0.3 + r() * 0.36), rad2 = CH * (0.12 + r() * 0.09);
       for (var j = 0; j < 1100; j++) {
@@ -186,19 +187,23 @@
   }
 
   // ——— the valley: Järvsö dal, from the square scene in klimt.js ————————————
-  function valley(S) {
-    var scene = K.scenes.jarvso(), c = off(S, S), water = null, waterDabs = null, x = c.getContext("2d");
+  function valley(H) {
+    var scene = K.scenes.panorama(), W = Math.round(H * scene.A), c = off(W, H), water = null, waterDabs = null, x = c.getContext("2d");
+    // ground colours under the dabs, so no gap is ever see-through
+    var g = x.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#d6ddf2"); g.addColorStop(0.34, "#cfd8ee"); g.addColorStop(0.38, "#3f8a6a"); g.addColorStop(0.68, "#3f8a6a"); g.addColorStop(0.7, "#9fc39a"); g.addColorStop(1, "#93bf96");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
     scene.layers.forEach(function (ly) {
-      var shape = function (sh) { x.fillStyle = sh.c; x.beginPath(); sh.p.forEach(function (p, i) { if (i) x.lineTo(p[0] * S, p[1] * S); else x.moveTo(p[0] * S, p[1] * S); }); x.closePath(); x.fill(); };
+      var shape = function (sh) { x.fillStyle = sh.c; x.beginPath(); sh.p.forEach(function (p, i) { if (i) x.lineTo(p[0] * H, p[1] * H); else x.moveTo(p[0] * H, p[1] * H); }); x.closePath(); x.fill(); };
       ly.shapes.forEach(function (sh) { if (!sh.late) shape(sh); });
-      if (ly.id === "water") { waterDabs = ly.dabs; water = off(S, S); }
+      if (ly.id === "water") { waterDabs = ly.dabs; water = off(W, H); }
       else {
-        enqueue(c, ly.dabs.slice(), S, S, true);
+        enqueue(c, ly.dabs.slice(), H, H, true);
         var late = ly.shapes.filter(function (sh) { return sh.late; });
         if (late.length) queue.push({ c: x, after: function () { late.forEach(shape); } });
       }
     });
-    return { img: c, water: water, waterDabs: waterDabs, S: S };
+    return { img: c, water: water, waterDabs: waterDabs, W: W, H: H };
   }
 
   // ——— the world ——————————————————————————————————————————————————————————
@@ -208,14 +213,13 @@
   function layout() {
     VW = stage.clientWidth; VH = stage.clientHeight;
     canvas.width = Math.round(VW * dpr); canvas.height = Math.round(VH * dpr);
-    var sr = slot.getBoundingClientRect(), st = stage.getBoundingClientRect();
-    slotRect = { x: sr.left - st.left, y: sr.top - st.top, w: sr.width, h: sr.height };
+
   }
   var steps = [];
   function build() {
     var i;
     layout();
-    var kinds = ["plane", "plane", "birch", "plane", "plane", "pear", "plane", "birch", "plane", "plane"];
+    var kinds = ["plane", "plane", "plane", "plane", "plane", "plane", "birch", "plane", "plane", "plane"];
     var slots = kinds.map(function () { return {}; });
     var liveTree = function (i) { return function () { var t = tree(500 + i * 37, kinds[i]); for (var key in t) slots[i][key] = t[key]; }; };
     var liveBackdrop = function () {
@@ -252,19 +256,18 @@
     }
     trees.sort(function (a, b) { return b.z - a.z; });
     // drifting gold: flakes, small spirals, leaves
-    var cols = ["#9ccf6a", "#b9c86a", "#6fb050", "#c9d0a8", "#4f9a4a"];
+    var cols = ["#9ccf6a", "#b9d27a", "#7cc27a", "#c9d0b8", "#5faf72"];
     for (i = 0; i < 120; i++) {
       var kindM = "leaf";
       motes.push({ x: (r() - 0.5) * 7, y: r() * 2.8 - 0.4, z: 0.4 + r() * 10, s: 0.6 + r() * 1.4, c: kindM === "sq" ? GOLDS[Math.floor(r() * GOLDS.length)] : cols[Math.floor(r() * cols.length)], ph: r() * 6.28, rot: r() * 3, kind: kindM });
     }
-    var VS = EXPORT ? 2048 : Math.round(Math.min(2048, Math.max(VW, VH) * dpr * 1.05));
-    vista = { img: off(VS, VS), water: null, waterDabs: null, S: VS };
-    var liveValley = function () { var v = valley(VS); vista.img = v.img; vista.water = v.water; vista.waterDabs = v.waterDabs; };
+    var VH2 = EXPORT ? 1400 : Math.round(Math.min(1400, VH * dpr * 1.1));
+    vista = { img: null, water: null, waterDabs: null, W: VH2 * 2, H: VH2 };
+    var liveValley = function () { var v = valley(VH2); vista.img = v.img; vista.water = v.water; vista.waterDabs = v.waterDabs; vista.W = v.W; vista.H = v.H; };
     if (A) {
-      vista.img = null;
       asset(A.valley, liveValley, function (b) { vista.img = b; });
       // the river keeps moving, so its dabs stay live
-      steps.push(function () { var sc = K.scenes.jarvso(); sc.layers.forEach(function (ly) { if (ly.id === "water") { vista.waterDabs = ly.dabs; vista.water = off(VS, VS); } }); });
+      steps.push(function () { var sc = K.scenes.panorama(); sc.layers.forEach(function (ly) { if (ly.id === "water") { vista.waterDabs = ly.dabs; vista.water = off(VH2 * sc.A, VH2); } }); });
     } else steps.push(liveValley);
   }
   var base = (document.currentScript && document.currentScript.src || "assets/js/journey.js").replace(/js\/journey\.js.*$/, "klimt/");
@@ -319,7 +322,7 @@
     tpx = tpy = 0;
     px += (tpx - px) * 0.03; py += (tpy - py) * 0.03;
 
-    var walk = smooth(0, 0.72, p), open = smooth(0.48, 0.66, p), dock = smooth(0.8, 0.98, p);
+    var walk = smooth(0, 0.72, p), open = smooth(0.48, 0.66, p), dock = smooth(0.7, 0.86, p);
     var breathe = 0;
     var camZ = walk * 10 + breathe, camX = px * 0.35, camY = py * 0.12;
     var c = ctx;
@@ -328,10 +331,8 @@
 
     // the valley waits behind the wood; at the end it docks into the print
     if (open > 0) {
-      c.globalAlpha = open; c.fillStyle = PAPER; c.fillRect(0, 0, VW, VH);
       c.globalAlpha = 1;
-      var R = cover(vista.S, vista.S, lerp(1.12, 1.0, smooth(0.48, 0.8, p)), 0.5, 0.62);
-      if (dock > 0 && slotRect) R = { x: lerp(R.x, slotRect.x, dock), y: lerp(R.y, slotRect.y, dock), w: lerp(R.w, slotRect.w, dock), h: lerp(R.h, slotRect.h, dock) };
+      var R = cover(vista.W, vista.H, lerp(1.1, 1.0, smooth(0.48, 0.86, p)), 0.47, 0.5);
       c.save(); c.beginPath(); c.rect(R.x, R.y, R.w, R.h); c.clip();
       if (ready(vista.img)) c.drawImage(vista.img, R.x, R.y, R.w, R.h);
       if (vista.water) drawWater(c, R, calm ? 0 : t);
@@ -396,7 +397,7 @@
     // words: the names in the light at the start, the label at the end
     if (intro) { var io = 1 - smooth(0.02, 0.16, p); intro.style.opacity = io.toFixed(3); intro.style.visibility = io < 0.01 ? "hidden" : "visible"; }
     if (cue) cue.style.opacity = (1 - smooth(0.0, 0.08, p)).toFixed(3);
-    if (label) { var lo = smooth(0.86, 1, p); label.style.opacity = lo.toFixed(3); label.style.pointerEvents = lo > 0.5 ? "auto" : "none"; }
+    if (label) { var lo = smooth(0.84, 0.98, p); label.style.opacity = lo.toFixed(3); label.style.transform = "translate3d(-50%," + ((1 - lo) * 18).toFixed(1) + "px,0)"; label.style.pointerEvents = lo > 0.5 ? "auto" : "none"; }
     // lines that surface and sink as you pass them
     for (var li = 0; li < lines.length; li++) {
       var L = lines[li], lt = clamp((p - L.a) / (L.b - L.a), 0, 1), lo2 = smooth(0, 0.3, lt) * (1 - smooth(0.7, 1, lt));
@@ -407,15 +408,15 @@
     }
     if (rail) { rail.style.transform = "scaleY(" + p.toFixed(4) + ")"; rail.parentNode.style.opacity = (1 - dock).toFixed(3); }
     if (shade) shade.style.opacity = (1 - open).toFixed(3);
-    stage.classList.toggle("is-paper", dock > 0.5);
+    stage.classList.toggle("is-paper", p > 0.8);
   }
   var lastWater = 0;
   function drawWater(c, R, t) {
     if (!vista.waterDrawn || (t && t - lastWater > 0.08)) {
       vista.waterDrawn = true;
       lastWater = t;
-      var S = vista.S, w = vista.water.getContext("2d"), list = vista.waterDabs;
-      w.clearRect(0, 0, S, S);
+      var S = vista.H, w = vista.water.getContext("2d"), list = vista.waterDabs;
+      w.clearRect(0, 0, vista.water.width, vista.water.height);
       for (var i = 0; i < list.length; i++) { var d = list[i]; dab(w, (d[0] + Math.sin(t * 0.6 + d[1] * 90 + d[0] * 4) * 0.0035) * S, d[1] * S, d[2] * S, d[3] * S, d[4], d[5]); }
     }
     c.drawImage(vista.water, R.x, R.y, R.w, R.h);
@@ -457,7 +458,7 @@
     window.__klimtExport = {
       trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.86), crown: sp.crown.toDataURL("image/webp", 0.86), TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, seed: sp.seed, kind: sp.kind }; }),
       backdrop: backdrop.toDataURL("image/webp", 0.8),
-      valley: vista.img.toDataURL("image/webp", 0.86),
+      valley: vista.img.toDataURL("image/webp", 0.84),
       glints: glints
     };
     return;
