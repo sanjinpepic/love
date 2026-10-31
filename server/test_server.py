@@ -47,7 +47,7 @@ class ServerTest(unittest.TestCase):
         return {"Authorization": "Basic " + base64.b64encode(f"x:{pw}".encode()).decode()}
 
     def test_pages_and_assets_served(self):
-        for p in ("/", "/wedding.html", "/assets/css/site.css", "/assets/sanjin-alma-2027-08-27.ics"):
+        for p in ("/", "/wedding.html", "/larsson/", "/larsson/wedding.html", "/assets/css/klimt.css", "/assets/css/site.css", "/assets/sanjin-alma-2027-08-27.ics"):
             self.assertEqual(self.req(p)[0], 200, p)
         self.assertIn("text/calendar", self.req("/assets/sanjin-alma-2027-08-27.ics")[1]["Content-Type"])
 

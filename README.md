@@ -5,16 +5,16 @@ words, the language switch and the RSVP:
 
 | Version | Save the Date | Wedding page | Look |
 |---|---|---|---|
-| Larsson | `/` | `/wedding.html` | a watercolour garden by the Ljusnan, paper layers that fold up like a pop-up book |
-| Klimt | `/klimt/` | `/klimt/wedding.html` | a square painting of small dabs, after Klimt's *Litzlberg* and *Pear Tree*, labelled like a museum print |
+| **Klimt** (main) | `/` | `/wedding.html` | a square painting of small dabs, after Klimt's *Litzlberg* and *Pear Tree*, labelled like a museum print |
+| Larsson | `/larsson/` | `/larsson/wedding.html` | a watercolour garden by the Ljusnan, paper layers that fold up like a pop-up book |
 
 The Larsson pages:
 
-- **`index.html`**: the Save the Date. The page is a watercolour of a garden by
+- **`larsson/index.html`**: the Save the Date. The page is a watercolour of a garden by
   the Ljusnan in Järvsö, built from paper layers that fold up like a pop-up
   book and drift with depth as you move. One quiet *Add to calendar* link
   (an `.ics` file that Apple, Google and Outlook calendars all open).
-- **`wedding.html`**: the wedding page. The same painted opening, then the day,
+- **`larsson/wedding.html`**: the wedding page. The same painted opening, then the day,
   getting to Järvsö, where to stay, and an **RSVP form that saves to SQLite**.
 
 English, Swedish and Bosnian throughout (switch at the top right).
@@ -25,8 +25,8 @@ English, Swedish and Bosnian throughout (switch at the top right).
 ADMIN_PASSWORD=choose-a-password python3 server/server.py
 ```
 
-- Save the Date: <http://localhost:8000/> (Klimt: <http://localhost:8000/klimt/>)
-- Wedding page: <http://localhost:8000/wedding.html> (Klimt: <http://localhost:8000/klimt/wedding.html>)
+- Save the Date: <http://localhost:8000/> (Larsson: <http://localhost:8000/larsson/>)
+- Wedding page: <http://localhost:8000/wedding.html> (Larsson: <http://localhost:8000/larsson/wedding.html>)
 - RSVPs: <http://localhost:8000/admin>. The username can be anything; the
   password is `ADMIN_PASSWORD`. There's a CSV download there too.
 

@@ -39,7 +39,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
-PUBLIC_FILES = {"/index.html", "/wedding.html", "/favicon.svg", "/klimt/index.html", "/klimt/wedding.html"}
+PUBLIC_FILES = {"/index.html", "/wedding.html", "/favicon.svg", "/larsson/index.html", "/larsson/wedding.html"}
 PUBLIC_DIRS = ("/assets/",)
 MAX_BODY = 16 * 1024
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]{2,}$")
@@ -264,8 +264,8 @@ class Handler(SimpleHTTPRequestHandler):
             path = "/index.html"
         if path == "/wedding":
             path = "/wedding.html"
-        if path in ("/klimt", "/klimt/"):
-            path = "/klimt/index.html"
+        if path in ("/larsson", "/larsson/"):
+            path = "/larsson/index.html"
         if path not in PUBLIC_FILES and not path.startswith(PUBLIC_DIRS):
             return self.send_error(HTTPStatus.NOT_FOUND)
         if ".." in path:

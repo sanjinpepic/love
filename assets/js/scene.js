@@ -8,7 +8,8 @@
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var tallMQ = window.matchMedia("(max-aspect-ratio: 4/5)");
   var DEPTH = { sky: 0, sun: 0.04, hills: 0.12, river: 0.24, garden: 0.5, bed: 0.85, sprites: 1 };
-  var BASE = "assets/paint/";
+  // painted layers live beside this script: <root>/assets/paint/
+  var BASE = (document.currentScript && document.currentScript.src || "assets/js/scene.js").replace(/js\/scene\.js.*$/, "paint/");
   var box = null, parts = [];
 
   function el(tag, cls, attrs) {

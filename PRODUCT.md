@@ -33,9 +33,10 @@ their own language.
 
 ## Positioning
 
-A personal wedding site whose whole world is Carl Larsson's watercolour
-Sweden — the red wooden house, the flower window, the azaleas — because the
-wedding itself is in that countryside. Not a template wedding site.
+A personal wedding site painted after Klimt's landscapes — Järvsöklack and the
+Ljusnan in thousands of small dabs — because the wedding itself is in that
+countryside. Not a template wedding site. (A Larsson watercolour version is
+kept alongside.)
 
 ## Operating Context
 
@@ -53,8 +54,11 @@ than once (save the date months ahead, wedding page closer to the day).
 
 ## Brand Commitments
 
-- Visual source, pinned by the couple: the art of **Carl Larsson** (1853–1919),
-  with **Klimt** as a second inspiration. Each page should be "a full-on
+- **Klimt is the main version** (the couple: "I love that one. focus on
+  Klimt"): square paintings of small dabs after Klimt's landscapes
+  (*Litzlberg on the Attersee*, *Pear Tree*), labelled like a museum print;
+  minimal, no buttons, one quiet calendar link. Lives at `/`.
+- The earlier **Carl Larsson** (1853–1919) version is kept at `/larsson/`. Each page should be "a full-on
   Carl-like painting as a webpage, with motion and movement", about Järvsö and
   the wedding — "calm, beautiful, Järvsö late summer, simple but grand", with
   layered pop-up-book depth. Both pages share one design language.

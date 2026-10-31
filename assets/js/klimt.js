@@ -73,9 +73,9 @@
         for (var i = 0; i < count; i++) {
           var a = r() * 6.2832, d = Math.sqrt(r()), px = cx + Math.cos(a) * d * rad, py = cy + Math.sin(a) * d * rad * 0.85;
           if (!region(px, py)) continue;
-          var rel = (py - cy) / (rad * 0.85), light = (rel < -0.25 && (px - cx) < rad * 0.2) ? 1 : 0;
+          var rel = (py - cy) / (rad * 0.85), light = (rel < -0.15 && (px - cx) < rad * 0.35) ? 1 : 0;
           var bias = Math.max(0, rel * 0.9 + 0.35) + (opt.noise ? (opt.noise(px * 5, py * 5) - 0.5) * 0.8 : 0);
-          var col = light && r() < 0.6 ? pick(opt.light, r, 0) : pick(opt.palette, r, Math.max(0, bias));
+          var col = light && r() < 0.85 ? pick(opt.light, r, 0) : pick(opt.palette, r, Math.max(0, bias * 1.6));
           var len = size * (0.42 + r() * 0.36);
           list.push([px, py, len, len * (0.46 + r() * 0.2), (r() - 0.5) * 2.4, jitter(col, r, 24), r() * 0.82 + (opt.late || 0)]);
         }
@@ -94,18 +94,22 @@
       var mb = function (x) { return mt(x) + 0.05 + 0.028 * (x - 0.28); };
       var inMeadow = function (x, y) { return x > 0.26 + 0.06 * (1 - Math.min(1, (y - mt(x)) / 0.05)) && y > mt(x) && y < mb(x); };
       var knoll = function (x, y) { var dx = (x - 0.14) / 0.2, dy = (y - 0.755) / 0.07; return dx * dx + dy * dy < 1 && y < 0.755; };
-      var depth = function (y) { return s * (0.7 + 0.75 * Math.max(0, (y - 0.05) / 0.8)); };
+      var depth = function (y) { return s * (0.55 + 1.25 * Math.max(0, (y - 0.05) / 0.8)); };
       var back = { id: "hill", dabs: [], shapes: [] }, mid = { id: "village", dabs: [], shapes: [] }, water = { id: "water", dabs: [], shapes: [] };
 
       fill(r, back.dabs, function (x, y) { return y < sky(x) + 0.01; }, { size: s * 1.3, palette: pal([["#7f8fd6", 3], ["#9aa6e0", 2], ["#6d78c4", 2]]), spread: 0.8, angle: 0.2 });
       fill(r, back.dabs, function (x, y) { return y < sky(x) && Math.pow((x - 0.7) / 0.16, 2) + Math.pow((y - 0.025) / 0.025, 2) < 1; }, { size: s * 1.6, palette: pal([["#f1f2f6", 4], ["#dfe3f0", 2]]), spread: 0.5, late: 0.05 });
       fill(r, back.dabs, function (x, y) { return y < sky(x) && Math.pow((x - 0.95) / 0.1, 2) + Math.pow((y - 0.05) / 0.03, 2) < 1; }, { size: s * 1.6, palette: pal([["#f1f2f6", 4], ["#dfe3f0", 2]]), spread: 0.5, late: 0.05 });
       // an under-layer so no paper shows between crowns
-      fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, { size: s * 1.4, step: 0.9, palette: pal([["#4f8a3e", 3], ["#3a6e3a", 3], ["#4c5296", 1]]), spread: 2, jit: 20 });
+      var hillPoly = [];
+      for (var hx = 0; hx <= 1.0001; hx += 0.02) hillPoly.push([hx, sky(hx) + 0.006]);
+      hillPoly.push([1, shore], [0, shore]);
+      back.shapes.push({ c: "#3f763c", p: hillPoly });
+      fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, { size: s * 1.3, step: 0.62, palette: pal([["#4f8a3e", 3], ["#3a6e3a", 3], ["#4c5296", 1.2], ["#2f5a3a", 1.5]]), spread: 2, jit: 20 });
       var forest = pal([["#a8d050", 1.4], ["#7fb84a", 2.6], ["#5a9e44", 2.8], ["#3f7f3e", 2.6], ["#2f5a3a", 2], ["#5a60aa", 1.4], ["#41468a", 1.2]]);
       var lightPal = pal([["#d4e05a", 2], ["#b9dc5c", 3], ["#9fd04a", 2]]);
       crowns(r, back.dabs, function (x, y) { return y >= sky(x) - 0.004 && y < shore - 0.01 && !inMeadow(x, y) && !knoll(x, y); },
-        { radius: function (y) { return 0.018 + 0.03 * Math.max(0, (y - 0.05) / 0.8); }, size: depth, palette: forest, light: lightPal, noise: n });
+        { radius: function (y) { return 0.026 + 0.05 * Math.max(0, (y - 0.05) / 0.8); }, size: depth, palette: forest, light: lightPal, noise: n });
       // the hay meadow: discrete bright dabs, not a smear
       fill(r, back.dabs, inMeadow, { size: s * 1.15, step: 0.62, palette: pal([["#c8de60", 3], ["#b0d652", 3], ["#d8e47a", 1.5], ["#94c64a", 1.5], ["#7fb84a", 0.6]]), spread: 0.9, angle: 0.06, ratio: 0.5, jit: 30, late: 0.02 });
       fill(r, back.dabs, knoll, { size: s * 1.2, step: 0.62, palette: pal([["#8fd04a", 3], ["#a6dc58", 2], ["#78bf40", 1.5], ["#5a9e44", 0.5]]), spread: 1, angle: -0.15, jit: 26 });
@@ -122,7 +126,8 @@
       function house(x0, x1, yb, h, wall, roof, roofH) {
         block(x0, x1, yb - h, yb, pal([[wall, 5], [wall === "#efeee6" ? "#ffffff" : "#c05a44", 1], ["#9a9a92", wall === "#efeee6" ? 0.6 : 0]]));
         fill(r, mid.dabs, function (x, y) { var t = (yb - h - y) / roofH; return y < yb - h + 0.002 && y > yb - h - roofH && x > x0 - 0.006 + t * (x1 - x0) * 0.12 && x < x1 + 0.006 - t * (x1 - x0) * 0.12; }, { size: s * 0.75, step: 0.42, palette: pal([[roof, 4], ["#6a6c78", 1.4], ["#383a46", 1]]), spread: 0.3, jit: 16, late: 0.13 });
-        for (var k = 0; k < Math.round((x1 - x0) / 0.03); k++) mid.dabs.push([x0 + 0.016 + k * 0.03, yb - h * 0.5, s * 0.32, s * 0.48, 0, "rgb(44,49,56)", 0.95]);
+        var nw = (x1 - x0) > 0.1 ? 2 : 1;
+        for (var k = 0; k < nw; k++) mid.dabs.push([x0 + (x1 - x0) * (0.25 + k * 0.45 + (r() - 0.5) * 0.1), yb - h * (0.45 + r() * 0.15), s * (0.3 + r() * 0.15), s * (0.42 + r() * 0.15), (r() - 0.5) * 0.5, "rgb(52,56,66)", 0.95]);
       }
       house(0.05, 0.22, shore - 0.008, 0.045, "#efeee6", "#5b5e6c", 0.03);
       house(0.26, 0.33, shore - 0.012, 0.035, "#a8402e", "#4a4c58", 0.026);
@@ -130,7 +135,6 @@
       block(0.405, 0.435, shore - 0.135, shore - 0.01, pal([["#efeee6", 5], ["#ffffff", 1], ["#c9ccd2", 1]]), s * 0.6);
       fill(r, mid.dabs, function (x, y) { return y > shore - 0.178 && y < shore - 0.133 && Math.abs(x - 0.42) < 0.02 * (y - (shore - 0.178)) / 0.045 + 0.002; }, { size: s * 0.55, step: 0.42, palette: pal([["#3e404c", 4], ["#55586a", 1]]), spread: 0.3, late: 0.14 });
       fill(r, mid.dabs, function (x, y) { return y > shore - 0.22 && y < shore - 0.176 && Math.abs(x - 0.42) < 0.0045; }, { size: s * 0.45, step: 0.42, palette: pal([["#3e404c", 1]]), spread: 0.2, angle: 1.57, late: 0.15 });
-      mid.dabs.push([0.42, shore - 0.108, s * 0.3, s * 0.45, 0, "rgb(44,49,56)", 0.96]);
       house(0.6, 0.69, shore - 0.008, 0.04, "#a8402e", "#4a4c58", 0.03);
       house(0.76, 0.86, shore - 0.01, 0.042, "#b0473a", "#3e404c", 0.032);
       [[0.885, 0.165], [0.925, 0.2], [0.955, 0.14]].forEach(function (t) {
@@ -161,8 +165,8 @@
       fill(r, back.dabs, function (x, y) { return y >= 0.82; }, { size: s * 1.2, palette: pal([["#8fd04a", 3], ["#7cc044", 2], ["#a6dc58", 1.5], ["#6aaa40", 1]]), spread: 0.5, ratio: 0.5, jit: 18 });
       for (var i = 0; i < 70; i++) { back.dabs.push([r(), r() * 0.6, s * 0.42, s * 0.36, r() * 3, "rgb(232,236,120)", 0.5 + r() * 0.4]); }
       function trunk(x, w, top, cols, lean) {
-        fill(r, mid.dabs, function (px, py) { var t = (0.97 - py) / (0.97 - top), cx = x + lean * t; return py > top && py < 0.97 && Math.abs(px - cx) < w / 2; },
-          { size: s * 0.75, step: 0.4, palette: cols, angle: 1.57, spread: 0.45, ratio: 0.38, jit: 22, late: 0.15 });
+        fill(r, mid.dabs, function (px, py) { var t = (0.97 - py) / (0.97 - top), cx = x + lean * t + (n(py * 14, x * 9) - 0.5) * w * 0.5; return py > top && py < 0.97 && Math.abs(px - cx) < w / 2 * (0.65 + 0.7 * n(py * 22, x * 13)); },
+          { size: s * 0.8, step: 0.42, palette: cols, angle: 1.45, spread: 0.9, ratio: 0.42, jit: 26, late: 0.15 });
       }
       var bark = pal([["#7a6450", 4], ["#8c7660", 2], ["#5e4c3e", 2], ["#8a9a6a", 0.8]]);
       [[0.08, 0.035, 0.62, 0.01], [0.3, 0.03, 0.66, -0.02], [0.45, 0.018, 0.7, 0.005], [0.84, 0.04, 0.6, 0.03], [0.95, 0.03, 0.63, -0.01], [0.56, 0.014, 0.72, 0]].forEach(function (t) { trunk(t[0], t[1], t[2], bark, t[3]); });

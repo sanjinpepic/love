@@ -1,13 +1,13 @@
 ---
 version: 1
-slug: "wedding-html"
-primary_target: "wedding.html"
+slug: "larsson-wedding-html"
+primary_target: "larsson/wedding.html"
 related_targets: []
 ---
 
 # Surface brief: Wedding page
 
-Scope: `wedding.html`. Mode: **Read** with one **Operate** task (RSVP). Same painted stage as the Save the Date, then sections on watercolour paper with painted vignettes. Code-led.
+Scope: `larsson/wedding.html`. Mode: **Read** with one **Operate** task (RSVP). Same painted stage as the Save the Date, then sections on watercolour paper with painted vignettes. Code-led.
 
 Content truth: Friday 27 August 2027, Järvsö. Venue, times, accommodation, dress code, deadline undecided — copy says "preliminary"/"details to follow", all in `assets/js/i18n.js`. RSVP posts to the couple's SQLite via `server/server.py`.
 

@@ -5,7 +5,7 @@ window.WEDDING = {
   // If the pages are hosted elsewhere, set this to the full URL of the server, e.g.
   // "https://rsvp.example.com/api/rsvp", and set ALLOWED_ORIGIN on the server.
   rsvpEndpoint: "/api/rsvp",
-  icsPath: "assets/sanjin-alma-2027-08-27.ics"
+  icsPath: "assets/sanjin-alma-2027-08-27.ics"  // relative to the page
 };
 
 window.I18N = {
