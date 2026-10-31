@@ -301,3 +301,24 @@ img.painting.glade { display: block; height: auto; object-fit: cover; }
 @media (max-width: 600px) { .w-close .names > span { display: block !important; } .w-close { min-height: 82svh; background-position: 38% 70%; } }
 .w-close-foot .w-close-back { margin-top: 0 !important; }
 .w-close-foot a { text-shadow: 0 0 10px rgb(214 222 236 / .95), 0 0 2px rgb(214 222 236 / .9); }
+
+/* the first view waits under a painted veil until the whole wood has arrived */
+.journey-veil { position: absolute; inset: 0; z-index: 6; pointer-events: none; background: radial-gradient(120% 90% at 50% 48%, #2f6048, #1f4a3a 60%, #173d34); transition: opacity 1.4s var(--ease-out), visibility 0s linear 1.4s; }
+.journey-veil::after { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #c9e08a; opacity: .8; }
+@media (prefers-reduced-motion: no-preference) { .journey-veil::after { animation: veilbreath 1.8s ease-in-out infinite; } }
+@keyframes veilbreath { 50% { transform: scale(2.2); opacity: .3; } }
+.journey-veil.is-up { opacity: 0; visibility: hidden; }
+html:not(.js) .journey-veil, .journey.is-still .journey-veil { display: none; }
+
+/* the Save the Date's last view: a composed title over Järvsö */
+body[data-page="std"] .journey-final .names { font-size: clamp(2.1rem, 1rem + 3.4vw, 4.4rem); letter-spacing: .34em; margin-right: -.34em; }
+body[data-page="std"] .journey-final .subtitle { margin-top: .9rem; font-size: clamp(1.15rem, 1rem + .6vw, 1.6rem); }
+body[data-page="std"] .journey-final .year { margin-top: clamp(1rem, 2.6vh, 1.6rem); font-size: clamp(1.1rem, .9rem + .7vw, 1.6rem); letter-spacing: .36em; }
+body[data-page="std"] .journey-final .place { margin-top: .6rem; font-size: .78rem; letter-spacing: .3em; }
+.std-save { margin: clamp(.9rem, 2.4vh, 1.4rem) auto 0; font-style: italic; font-size: clamp(1rem, .95rem + .25vw, 1.15rem); max-width: 26rem; }
+body[data-page="std"] .journey-final .links { gap: .3rem 2.6rem; font-size: .82rem; letter-spacing: .26em; }
+/* sky: names and date; lake: the save-the-date line, place and links */
+body[data-page="std"] .journey-final .std-save { margin-top: auto; color: #1d2a26; text-shadow: 0 0 12px rgb(214 222 236 / .95); }
+body[data-page="std"] .journey-final .place { margin-top: .8rem; text-shadow: 0 0 12px rgb(214 222 236 / .95); }
+body[data-page="std"] .journey-final .links { margin-top: clamp(.8rem, 2.4vh, 1.4rem); }
+body[data-page="std"] .journey-final .names { font-size: clamp(2rem, 1rem + 2.8vw, 3.8rem); }

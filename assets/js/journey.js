@@ -12,7 +12,8 @@
   // scrolling: no drifting gold, no breathing camera, no pointer drift, no glide.
   var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var stage = section.querySelector(".journey-stage");
-  var canvas = section.querySelector(".journey-canvas"), ctx = canvas.getContext("2d");
+  var canvas = section.querySelector(".journey-canvas"), ctx = canvas.getContext("2d", { alpha: false });
+  var veil = section.querySelector(".journey-veil"), lastDrawn = -1, lastMotes = 0;
   var slot = section.querySelector(".painting-slot");
   var intro = section.querySelector(".journey-intro"), cue = section.querySelector(".journey-cue");
   var label = section.querySelector(".journey-final");
@@ -438,7 +439,7 @@
     trees.sort(function (a, b) { return b.z - a.z; });
     // drifting gold: flakes, small spirals, leaves
     var cols = ["#9ccf6a", "#b9d27a", "#7cc27a", "#c9d0b8", "#5faf72"];
-    for (i = 0; i < 120; i++) {
+    for (i = 0; i < 60; i++) {
       var kindM = "leaf";
       motes.push({ x: (r() - 0.5) * 7, y: r() * 2.8 - 0.4, z: 0.4 + r() * 10, s: 0.6 + r() * 1.4, c: kindM === "sq" ? GOLDS[Math.floor(r() * GOLDS.length)] : cols[Math.floor(r() * cols.length)], ph: r() * 6.28, rot: r() * 3, kind: kindM });
     }
@@ -474,6 +475,12 @@
     if (shown < full * 0.6) return mip(sp, key, 0.6);
     return im;
   }
+  var resized = true;
+  function everyReady() {
+    if (steps.length || !ready(ground) || !ready(vista && vista.img)) return false;
+    for (var i = 0; i < sprites.length; i++) if (!ready(sprites[i].trunk) || (sprites[i].hasCrown && !ready(sprites[i].crown))) return false;
+    return true;
+  }
   function ready(im) { return !!im && (im.getContext || (window.ImageBitmap && im instanceof ImageBitmap) || (im.complete && im.naturalWidth > 0)); }
 
   // ——— drawing ——————————————————————————————————————————————————————————
@@ -506,6 +513,12 @@
     var pt = progress();
     p += (pt - p) * (calm ? 1 : Math.min(1, dt * 7));
     var t = now / 1000;
+    var settling = Math.abs(pt - p) > 0.0002 || Math.abs(p - lastDrawn) > 0.0002, painting = steps.length || queue.length;
+    var leaves = !calm && p < 0.8 && now - lastMotes > 33;
+    if (!settling && !painting && !leaves && lastDrawn >= 0 && !resized) return;
+    if (leaves) lastMotes = now;
+    lastDrawn = p; resized = false;
+    if (veil && !veil.classList.contains("is-up") && (now > 6500 || everyReady())) veil.classList.add("is-up");
     // wind: a slow swell with gusts
     // no wind in the trees; only a faint drift for the falling gold
     wind = 0.12 + Math.sin(t * 0.3) * 0.08;
@@ -548,7 +561,7 @@
       var sc = unit / dz, a = smooth(0.2, 0.5, dz) * (1 - smooth(10.5, 12, dz));
       if (a <= 0.01) continue;
       var baseX = cx + (tr.x - camX) * sc * 1.15, baseY = horizon + 0.95 * sc, hgt = tr.h * sc, sp = tr.sp;
-      if (baseX < -hgt * 0.7 || baseX > VW + hgt * 0.7 || hgt < 6) continue;
+      if (baseX < -hgt * 0.7 || baseX > VW + hgt * 0.7 || hgt < 9) continue;
       c.globalAlpha = a;
       c.save();
       c.translate(baseX, baseY);
@@ -786,5 +799,5 @@
   raf = requestAnimationFrame(frame);
   if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; if (visible && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }).observe(stage);
   var rt;
-  window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(layout, 120); });
+  window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { layout(); resized = true; }, 120); });
 })();
