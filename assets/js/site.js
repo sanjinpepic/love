@@ -67,4 +67,21 @@
     }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
     reveals.forEach(function (el) { io.observe(el); });
   } else reveals.forEach(function (el) { el.classList.add("is-in"); });
+
+  // Painted cut-outs drift a little against the scroll, like the layers of a stage set.
+  var drifters = [].slice.call(document.querySelectorAll("[data-drift]"));
+  if (drifters.length) {
+    var ticking = false;
+    var drift = function () {
+      ticking = false;
+      var vh = window.innerHeight;
+      drifters.forEach(function (el) {
+        var r = el.parentNode.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        el.style.transform = "translate3d(0," + ((r.top + r.height / 2 - vh / 2) * -parseFloat(el.dataset.drift)).toFixed(1) + "px,0)";
+      });
+    };
+    window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(drift); } }, { passive: true });
+    drift();
+  }
 })();

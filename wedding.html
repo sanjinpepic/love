@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/tenor-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/klimt.css?v=202610311441">
+  <link rel="stylesheet" href="assets/css/klimt.css?v=202610311450">
   <script>document.documentElement.classList.add("js")</script>
 </head>
 <body data-page="wed">
@@ -46,19 +46,23 @@
     </section>
 
 
-    <section class="section" id="welcome" aria-labelledby="welcome-title">
-      <div class="column reveal">
-        <h2 id="welcome-title" data-i18n="welcome.title">Welcome</h2>
+    <section class="w-welcome" id="welcome" aria-labelledby="welcome-title">
+      <img class="w-cut w-cut-birch" data-drift="0.1" src="assets/klimt/cut-birch.webp?v=202610311450" width="890" height="1546" alt="" loading="lazy" decoding="async">
+      <div class="w-letter reveal">
+        <h2 id="welcome-title" class="w-h" data-i18n="welcome.title">Welcome</h2>
         <p data-i18n="welcome.p1">We are getting married at the end of summer, in the green valley of the Ljusnan river in Hälsingland — and we would love to have you there.</p>
         <p data-i18n="welcome.p2">This page gathers what you need: how the day will unfold, how to find your way to Järvsö, where to stay, and a place to tell us you’re coming. We’ll add more as the details are settled.</p>
+        <p class="w-sign">Alma &amp; Sanjin</p>
       </div>
+      <img class="w-cut w-cut-fern" data-drift="0.05" src="assets/klimt/cut-fern.webp?v=202610311450" width="660" height="430" alt="" loading="lazy" decoding="async">
     </section>
 
-    <section class="section" id="day" aria-labelledby="day-title">
-      <div class="column reveal">
-        <h2 id="day-title" data-i18n="day.title">The day</h2>
+    <section class="w-day" id="day" aria-labelledby="day-title">
+      <div class="w-head reveal">
+        <h2 id="day-title" class="w-h" data-i18n="day.title">The day</h2>
         <p class="note" data-i18n="day.note">A preliminary outline — the venue and exact times come with the invitation.</p>
-        <ol class="schedule">
+      </div>
+      <ol class="day-track reveal">
             <li><time>14:30</time><div><strong data-i18n="day.1.t">Guests arrive</strong><span data-i18n="day.1.d">Find a seat, find a friend.</span></div></li>
             <li><time>15:00</time><div><strong data-i18n="day.2.t">Ceremony</strong><span data-i18n="day.2.d">The part with the vows.</span></div></li>
             <li><time>16:00</time><div><strong data-i18n="day.3.t">Toasts in the garden</strong><span data-i18n="day.3.d">Something cold to drink under the birches.</span></div></li>
@@ -66,14 +70,16 @@
             <li><time>21:30</time><div><strong data-i18n="day.5.t">Dancing</strong><span data-i18n="day.5.d">Until the August night turns blue.</span></div></li>
             <li><time>23:30</time><div><strong data-i18n="day.6.t">Late-night snack</strong><span data-i18n="day.6.d">Vickning — a Swedish wedding tradition.</span></div></li>
           </ol>
-      </div>
     </section>
 
-    <section class="section" id="travel" aria-labelledby="travel-title">
-      <div class="column reveal">
-        <h2 id="travel-title" data-i18n="travel.title">Getting to Järvsö</h2>
+    <section class="w-travel" id="travel" aria-labelledby="travel-title">
+      <img class="w-cut w-cut-spruce" data-drift="0.16" src="assets/klimt/cut-spruce.webp?v=202610311450" width="624" height="1410" alt="" loading="lazy" decoding="async">
+      <div class="w-head reveal">
+        <h2 id="travel-title" class="w-h" data-i18n="travel.title">Getting to Järvsö</h2>
         <p data-i18n="travel.intro">Järvsö lies in the Ljusnan valley in Hälsingland, a little over three hundred kilometres north of Stockholm. The train is the easy way.</p>
-        <ol class="route" aria-label="The railway north from Stockholm" data-i18n-attr="aria-label: travel.line">
+      </div>
+      <div class="w-travel-body reveal">
+        <ol class="route route-river" aria-label="The railway north from Stockholm" data-i18n-attr="aria-label: travel.line">
           <li>Stockholm C</li><li>Arlanda C</li><li>Uppsala</li><li>Gävle</li><li>Bollnäs</li><li>Järvsö</li>
         </ol>
         <div class="ways">
@@ -84,20 +90,18 @@
       </div>
     </section>
 
-    <section class="section" id="stay" aria-labelledby="stay-title">
-      <div class="pair reveal">
-        <img class="painting glade" src="assets/klimt/glade.webp?v=202610311441" width="1200" height="1200" loading="lazy" decoding="async" alt="A glade in a Hälsingland wood, after Klimt." data-i18n-attr="alt: k.orchard">
-        <div>
-          <h2 id="stay-title" data-i18n="stay.title">Where to stay</h2>
-          <p data-i18n="stay.p1">Järvsö is a small village and late August is a lovely time to be there, so it’s wise to book early.</p>
-          <p data-i18n="stay.p2">We’ll share a short list of places to stay nearby with the invitation. If you’d like to make a few days of it, the valley is made for walks, swims and long evenings.</p>
-        </div>
+    <section class="w-stay" id="stay" aria-labelledby="stay-title">
+      <img class="w-stay-img" src="assets/klimt/glade.webp?v=202610311450" width="1200" height="1200" loading="lazy" decoding="async" alt="A glade in a Hälsingland wood, after Klimt." data-i18n-attr="alt: k.orchard">
+      <div class="w-stay-text reveal">
+        <h2 id="stay-title" class="w-h" data-i18n="stay.title">Where to stay</h2>
+        <p data-i18n="stay.p1">Järvsö is a small village and late August is a lovely time to be there, so it’s wise to book early.</p>
+        <p data-i18n="stay.p2">We’ll share a short list of places to stay nearby with the invitation. If you’d like to make a few days of it, the valley is made for walks, swims and long evenings.</p>
       </div>
     </section>
 
-    <section class="section" id="rsvp" aria-labelledby="rsvp-title">
-      <div class="column reveal">
-        <h2 id="rsvp-title" data-i18n="rsvp.title">RSVP</h2>
+    <section class="w-rsvp" id="rsvp" aria-labelledby="rsvp-title">
+      <div class="w-card reveal">
+        <h2 id="rsvp-title" class="w-h" data-i18n="rsvp.title">RSVP</h2>
         <p class="note" data-i18n="rsvp.intro">Let us know whether you can come. One answer per household is perfect.</p>
         <div id="rsvp-pane">
           <form id="rsvp-form" novalidate>
@@ -161,19 +165,24 @@
     </section>
   </main>
 
-  <footer class="close">
-    <p class="caps" data-i18n-attr="aria-label: date.long" aria-label="Friday 27 August 2027">27 · 08 · 2027</p>
-    <p data-i18n="place">Järvsö, Hälsingland, Sweden</p>
-    <p><a href="index.html" data-keep-lang data-i18n="close.back">Back to the Save the Date</a></p>
-    <p class="credits" data-i18n="k.credits">Painted for Alma &amp; Sanjin, after Gustav Klimt.</p>
+  <footer class="w-close">
+    <div class="w-close-words reveal">
+      <p class="names"><span>Alma</span> <span><span class="amp">&amp;</span> Sanjin</span></p>
+      <p class="w-close-date" data-i18n-attr="aria-label: date.long" aria-label="Friday 27 August 2027">27 · 08 · 2027</p>
+      <p data-i18n="place">Järvsö, Hälsingland, Sweden</p>
+    </div>
+    <div class="w-close-foot">
+      <p class="w-close-back"><a href="index.html" data-keep-lang data-i18n="close.back">Back to the Save the Date</a></p>
+      <p class="credits" data-i18n="k.credits">Painted for Alma &amp; Sanjin, after Gustav Klimt.</p>
+    </div>
   </footer>
 
-  <script src="assets/js/i18n.js?v=202610311441"></script>
+  <script src="assets/js/i18n.js?v=202610311450"></script>
   <script>window.WEDDING.rsvpEndpoint = "/api/rsvp";</script>
-  <script src="assets/js/site.js?v=202610311441"></script>
-  <script src="assets/js/klimt.js?v=202610311441"></script>
-  <script src="assets/klimt/assets.js?v=202610311441"></script>
-  <script src="assets/js/journey.js?v=202610311441"></script>
-  <script src="assets/js/rsvp.js?v=202610311441"></script>
+  <script src="assets/js/site.js?v=202610311450"></script>
+  <script src="assets/js/klimt.js?v=202610311450"></script>
+  <script src="assets/klimt/assets.js?v=202610311450"></script>
+  <script src="assets/js/journey.js?v=202610311450"></script>
+  <script src="assets/js/rsvp.js?v=202610311450"></script>
 </body>
 </html>

@@ -689,8 +689,42 @@
     if (window.console) console.error("journey:", err);
     return;
   }
+  // Painted pieces for the rest of the wedding page (export only).
+  function composeCut(kind, H, seedPick) {
+    var l = sprites.filter(function (sp) { return sp.kind === kind; }), sp = l[seedPick % l.length];
+    var twd = H * sp.TW / sp.TH, cw = H * (sp.cwk || 1), ch = cw * sp.CH / sp.CW;
+    var crowned = sp.hasCrown && sp.crown, top = crowned ? H * (sp.at || 0.74) + ch * (sp.ay || 0.72) : H, W = Math.ceil((crowned ? Math.max(twd, cw) : twd) + 20), Hc = Math.ceil(Math.max(H, top) + 10);
+    var c = off(W, Hc), x = c.getContext("2d");
+    x.translate(W / 2, Hc - 4);
+    x.drawImage(sp.trunk, -twd / 2, -H, twd, H);
+    if (sp.hasCrown && sp.crown) { x.translate(sp.lean / sp.TW * twd * 0.8, -H * (sp.at || 0.74)); x.drawImage(sp.crown, -cw / 2, -ch * (sp.ay || 0.72), cw, ch); }
+    return c;
+  }
+  // A ribbon of dabs whose colour runs through the given stops along its length.
+  function ribbon(W, H, stops, vertical, seed) {
+    var r = K.rng(seed), c = off(vertical ? H : W, vertical ? W : H), x = c.getContext("2d"), n = Math.round(W * H / 30);
+    for (var i = 0; i < n; i++) {
+      var u = r(), v = r(), edge = Math.abs(v - 0.5) * 2;
+      if (r() < Math.pow(edge, 2.2)) continue;
+      var f = u * (stops.length - 1), k = Math.min(stops.length - 2, Math.floor(f)), t = f - k + (r() - 0.5) * 0.6;
+      var pal = t < 0.5 ? stops[k] : stops[k + 1], col = K.jitter(pal[Math.floor(r() * pal.length)], r, 22);
+      var sz = H * (0.09 + r() * 0.08), px = u * W, py = v * H, a = (r() - 0.5) * 1.2;
+      if (vertical) dab(x, py, px, sz, sz * 0.5, a + 1.57, col); else dab(x, px, py, sz, sz * 0.5, a, col);
+    }
+    return c;
+  }
+  function woodBand(W, H) {
+    var r = K.rng(808), c = off(W, H), x = c.getContext("2d");
+    var g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#173d34"); g.addColorStop(1, "#1f4a3a");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    var pal = K.pal([["#173d34", 3], ["#1f4a3a", 3], ["#24503e", 2.4], ["#2f6048", 1.6], ["#3a4a7a", 0.8], ["#3f7a52", 0.8], ["#6aa262", 0.25]]);
+    for (var i = 0; i < W * H / 22; i++) { var sz = 4 + r() * 6; dab(x, r() * W, r() * H, sz, sz * 0.5, (r() - 0.5) * 2.8, K.jitter(K.pick(pal, r, 0), r, 16)); }
+    return c;
+  }
   // The glade for the wedding page's "Stay" section, composed once (export only) from the
   // same painted trees as the walk: far wood, a few trees in the glade, ferns and flowers in front.
+  // the day, from afternoon light through golden evening to the blue August night
+  var DAY = [["#d8d64e", "#b9d27a", "#9ccf6a", "#c9e08a"], ["#e2c25a", "#d8d64e", "#b9d27a"], ["#e8b07a", "#e2c25a", "#d98aa0"], ["#a8b4e2", "#8f9fd8", "#d98aa0"], ["#6c6fb2", "#8f9fd8", "#4f74a8"], ["#3a3f78", "#2c2f5e", "#4f5a9e"]];
   function composeGlade(S) {
     var r = K.rng(3131), c = off(S, S), x = c.getContext("2d");
     var of = function (k) { return sprites.filter(function (sp) { return sp.kind === k; }); };
@@ -741,6 +775,10 @@
       trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.8), crown: sp.crown ? sp.crown.toDataURL("image/webp", 0.8) : null, TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, cwk: sp.cwk, at: sp.at, ay: sp.ay, seed: sp.seed, kind: sp.kind }; }),
       ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.8),
       valley: vista.img.toDataURL("image/webp", 0.84), glade: composeGlade(1200).toDataURL("image/webp", 0.84),
+      cutBirch: composeCut("birch", 1500, 1).toDataURL("image/webp", 0.82), cutSpruce: composeCut("spruce", 1400, 2).toDataURL("image/webp", 0.82), cutFern: composeCut("fern", 420, 0).toDataURL("image/webp", 0.82),
+      dayH: ribbon(2400, 110, DAY, false, 41).toDataURL("image/webp", 0.84), dayV: ribbon(1600, 90, DAY, true, 42).toDataURL("image/webp", 0.84),
+      river: ribbon(2400, 46, [["#b9bcd6", "#a9b0cc", "#c4c8dc"], ["#a3bcb0", "#9aa4c0", "#b9bcd6"], ["#8fb0a4", "#a9b0cc", "#6c6fb2"]], false, 43).toDataURL("image/webp", 0.84),
+      wood: woodBand(2000, 1300).toDataURL("image/webp", 0.8),
       glints: []
     };
     return;

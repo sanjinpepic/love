@@ -166,7 +166,7 @@ legend { padding: 0; margin-bottom: .6rem; }
   .journey-print { align-content: center; }
   .painting-slot { width: min(100%, 52svh); justify-self: center; }
 }
-.journey-cue { position: absolute; z-index: 2; left: 50%; bottom: clamp(1.2rem, 4vh, 2.2rem); transform: translateX(-50%); margin: 0; font: .72rem/1 var(--caps); letter-spacing: .28em; text-transform: uppercase; color: #fbf9ee; text-shadow: 0 1px 8px rgb(40 30 10 / .6); white-space: nowrap; pointer-events: none; }
+.journey-cue { position: absolute; z-index: 2; left: 50%; bottom: clamp(1.2rem, 4vh, 2.2rem); transform: translateX(-50%); margin: 0; font: .72rem/1 var(--caps); letter-spacing: .28em; text-transform: uppercase; color: #fbf9ee; white-space: nowrap; pointer-events: none; }
 .journey-cue::after { content: ""; display: block; width: 1px; height: 2.2rem; margin: .8rem auto 0; background: currentColor; transform-origin: top; }
 @media (prefers-reduced-motion: no-preference) { .journey-cue::after { animation: walk 2.6s var(--ease-out) infinite; } }
 @keyframes walk { 0% { transform: scaleY(0); opacity: 1; } 70% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
@@ -233,3 +233,71 @@ html:not(.js) .journey-final, .journey.is-still .journey-final { position: relat
 .journey-final .links a { color: #1d2a26; text-shadow: 0 0 12px rgb(214 232 214 / .95), 0 0 3px rgb(214 232 214 / .9); }
 html:not(.js) .journey-final, .journey.is-still .journey-final { display: block; padding: 0; }
 img.painting.glade { display: block; height: auto; object-fit: cover; }
+
+/* ——— the wedding page after the walk: the same painted world, room by room ——— */
+.w-h { margin: 0 0 1.6rem; font: 400 clamp(1.5rem, 1rem + 1.6vw, 2.5rem)/1.2 var(--caps); letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; color: var(--slate); text-wrap: balance; }
+.w-head { text-align: center; max-width: 38rem; margin: 0 auto; }
+.w-head p { font-size: clamp(1.08rem, 1rem + .3vw, 1.25rem); line-height: 1.7; }
+.w-cut { position: absolute; pointer-events: none; user-select: none; height: auto; will-change: transform; }
+@media (max-width: 1179px) { .w-cut-birch, .w-cut-spruce { display: none; } }
+
+.w-welcome { position: relative; min-height: 92svh; display: grid; place-items: center; padding: clamp(5rem, 14vh, 9rem) var(--gutter); overflow: hidden; }
+.w-letter { max-width: 34rem; text-align: center; }
+.w-letter p { font-size: clamp(1.15rem, 1.02rem + .45vw, 1.42rem); line-height: 1.75; margin: 0 0 1.1rem; }
+.w-sign { margin-top: 2.2rem !important; font: 400 clamp(1rem, .9rem + .4vw, 1.25rem)/1 var(--caps) !important; letter-spacing: .32em; text-transform: uppercase; }
+.w-cut-birch { right: calc(50% + 19rem); bottom: -2%; height: min(96svh, 980px); width: auto; }
+.w-cut-fern { right: max(2vw, calc(50% - 42rem)); bottom: -1rem; height: clamp(7rem, 16vw, 13rem); width: auto; }
+
+.w-day { padding: clamp(5rem, 13vh, 9rem) var(--gutter); }
+.day-track { list-style: none; margin: clamp(3rem, 8vh, 5.5rem) auto 0; padding: 0; max-width: 76rem; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); position: relative; }
+.day-track::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 48px; background: url(../klimt/day-ribbon.webp) center / 100% 100% no-repeat; }
+.day-track li { position: relative; text-align: center; padding: 5rem .7rem 0; }
+.day-track li::before { content: ""; position: absolute; left: 50%; top: 18px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--ground); box-shadow: 0 0 0 1.5px var(--slate); }
+.day-track time { display: block; font: 400 clamp(1.3rem, 1rem + .9vw, 1.9rem)/1 var(--caps); letter-spacing: .1em; color: var(--slate); font-variant-numeric: tabular-nums; }
+.day-track strong { display: block; margin-top: 1rem; font: 400 .8rem/1.4 var(--caps); letter-spacing: .2em; text-transform: uppercase; }
+.day-track span { display: block; margin-top: .5rem; font-style: italic; color: var(--slate-soft); line-height: 1.45; }
+@media (max-width: 860px) {
+  .day-track { grid-template-columns: 1fr; max-width: 30rem; }
+  .day-track::before { right: auto; width: 40px; height: auto; bottom: 0; background-image: url(../klimt/day-ribbon-v.webp); }
+  .day-track li { text-align: left; padding: .2rem 0 2.2rem 4.2rem; }
+  .day-track li::before { left: 20px; top: .45rem; }
+}
+
+.w-travel { position: relative; padding: clamp(5rem, 13vh, 9rem) var(--gutter) clamp(6rem, 15vh, 10rem); overflow: hidden; }
+.w-travel-body { max-width: 52rem; margin: 0 auto; }
+.route-river { margin: clamp(3rem, 7vh, 4.5rem) 0; }
+.route-river::before { border: 0 !important; height: 24px; top: -.15rem; background: url(../klimt/river-ribbon.webp) center / 100% 100% no-repeat; opacity: 1; }
+.route-river li::before { background: var(--ground); border-color: var(--slate); }
+.w-travel .ways { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem clamp(1.5rem, 4vw, 3.5rem); display: grid; }
+.w-travel .ways p { line-height: 1.65; }
+.w-cut-spruce { left: calc(50% + 28rem); bottom: -3%; height: min(80svh, 780px); width: auto; }
+@media (max-width: 860px) {
+  .w-travel .ways { grid-template-columns: 1fr; }
+  .route-river::before { width: 1px; height: auto; background: var(--slate); }
+}
+
+.w-stay { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); min-height: 88svh; }
+.w-stay-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.w-stay-text { align-self: center; padding: clamp(3rem, 8vw, 7rem); max-width: 38rem; }
+.w-stay-text p { font-size: clamp(1.08rem, 1rem + .3vw, 1.25rem); line-height: 1.7; }
+.w-stay-text .w-h { text-align: left; }
+@media (max-width: 860px) { .w-stay { grid-template-columns: 1fr; } .w-stay-img { aspect-ratio: 1; height: auto; } .w-stay-text .w-h { text-align: center; } }
+
+.w-rsvp { padding: clamp(5rem, 13vh, 9rem) var(--gutter); background: #1f4a3a url(../klimt/wood-band.webp) center / cover; }
+.w-card { position: relative; max-width: 40rem; margin: 0 auto; background: var(--ground); padding: clamp(2.2rem, 6vw, 4rem) clamp(1.5rem, 5vw, 3.5rem); box-shadow: 0 2px 4px rgb(8 22 14 / .25), 0 34px 70px -28px rgb(8 22 14 / .7); }
+.w-card::before { content: ""; position: absolute; inset: 12px; border: 1px solid var(--line); pointer-events: none; }
+.w-card .w-h { text-align: center; }
+
+.w-close { position: relative; min-height: min(88svh, 52vw + 4rem); display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; padding: clamp(4rem, 10vh, 7rem) var(--gutter) clamp(1.5rem, 4vh, 2.5rem); background: #b9bcd6 url(../klimt/valley.webp) center 60% / cover; color: #1d2a26; }
+.w-close-words { text-shadow: 0 0 18px rgb(238 242 250 / .9); }
+.w-close .names { font-size: clamp(1.8rem, 1rem + 2.4vw, 3.2rem); margin: 0; }
+.w-close .names > span { white-space: nowrap; display: inline !important; }
+.w-close-foot { display: grid; gap: .3rem; justify-items: center; }
+.w-close-date { margin: 1.2rem 0 .4rem; font: 400 1rem/1 var(--caps); letter-spacing: .32em; }
+.w-close p { margin-top: .4rem; }
+.w-close-back { margin-top: 1.4rem !important; font: .8rem/1 var(--caps); letter-spacing: .22em; text-transform: uppercase; }
+.w-close-back a { display: inline-flex; min-height: 44px; align-items: center; }
+.w-close .credits { margin: 0; color: #1d2a26; text-shadow: 0 0 10px rgb(214 222 236 / .9); }
+@media (max-width: 600px) { .w-close .names > span { display: block !important; } .w-close { min-height: 82svh; background-position: 38% 70%; } }
+.w-close-foot .w-close-back { margin-top: 0 !important; }
+.w-close-foot a { text-shadow: 0 0 10px rgb(214 222 236 / .95), 0 0 2px rgb(214 222 236 / .9); }
