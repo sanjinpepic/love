@@ -255,10 +255,11 @@
       var back = { id: "canopy", dabs: [], shapes: [] }, mid = { id: "trunks", dabs: [], shapes: [] };
       var canopy = P.leaf;
       fill(r, back.dabs, function (x, y) { return y < 0.66 + 0.04 * Math.sin(x * 7); }, { size: s, palette: canopy, noise: n, dark: 1.6, spread: 2.6, jit: 28 });
-      crowns(r, back.dabs, function (x, y) { return y < 0.64 + 0.04 * Math.sin(x * 7); }, { radius: function () { return 0.06; }, size: function () { return s * 1.05; }, palette: canopy, light: pal([["#e2e86a", 2], ["#c8de60", 2]]), noise: n });
-      fill(r, back.dabs, function (x, y) { return y > 0.6 && y < 0.82; }, { size: s * 0.7, step: 0.5, palette: pal([["#3f8a5a", 3], ["#5b63b4", 1.4], ["#2f6a5a", 2], ["#8fc44a", 1.2], ["#c9dc5a", 0.6], ["#d06a5a", 0.3]]), spread: 2.6, jit: 30 });
-      fill(r, back.dabs, function (x, y) { return y >= 0.82; }, { size: s * 1.2, palette: pal([["#8fd04a", 3], ["#7cc044", 2], ["#a6dc58", 1.5], ["#6aaa40", 1]]), spread: 0.5, ratio: 0.5, jit: 18 });
-      for (var i = 0; i < 70; i++) { back.dabs.push([r(), r() * 0.6, s * 0.42, s * 0.36, r() * 3, "rgb(232,236,120)", 0.5 + r() * 0.4]); }
+      crowns(r, back.dabs, function (x, y) { return y < 0.64 + 0.04 * Math.sin(x * 7); }, { radius: function () { return 0.06; }, size: function () { return s * 1.05; }, palette: canopy, light: P.light, noise: n });
+      fill(r, back.dabs, function (x, y) { return y > 0.6 && y < 0.82; }, { size: s * 0.7, step: 0.5, palette: P.dark, spread: 2.6, jit: 30 });
+      fill(r, back.dabs, function (x, y) { return y >= 0.8; }, { size: s * 1.1, palette: pal([["#3f6e42", 3], ["#4f7a3e", 2.4], ["#2f5a3a", 2], ["#6a7a3a", 1.4], ["#a8964a", 1], ["#5a5c9e", 0.5]]), spread: 1.2, ratio: 0.5, jit: 20 });
+      for (var fI = 0; fI < 40; fI++) { var fc = ["#c8352a", "#f2f2ea", "#3a5ab8", "#e8c43a"][Math.floor(r() * 4)], fy2 = 0.86 + r() * 0.12, fs = s * (0.35 + r() * 0.25); back.dabs.push([r(), fy2, fs, fs * 0.8, 0, fc, 0.9 + r() * 0.08]); }
+      for (var i = 0; i < 70; i++) { back.dabs.push([r(), r() * 0.6, s * 0.42, s * 0.36, r() * 3, "rgb(214,222,120)", 0.5 + r() * 0.4]); }
       function trunk(x, w, top, cols, lean) {
         fill(r, mid.dabs, function (px, py) { var t = (0.97 - py) / (0.97 - top), cx = x + lean * t + (n(py * 14, x * 9) - 0.5) * w * 0.5; return py > top && py < 0.97 && Math.abs(px - cx) < w / 2 * (0.65 + 0.7 * n(py * 22, x * 13)); },
           { size: s * 0.8, step: 0.42, palette: cols, angle: 1.45, spread: 0.9, ratio: 0.42, jit: 26, late: 0.15 });
