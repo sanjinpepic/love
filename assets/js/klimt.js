@@ -77,8 +77,9 @@
           var rel = (py - cy) / (rad * 0.85), light = (rel < -0.15 && (px - cx) < rad * 0.35) ? 1 : 0;
           var bias = Math.max(0, rel * 0.9 + 0.35) + (opt.noise ? (opt.noise(px * 5, py * 5) - 0.5) * 0.8 : 0);
           var col = light && r() < 0.85 ? pick(opt.light, r, 0) : pick(opt.palette, r, Math.max(0, bias * 1.6));
-          var len = size * (0.42 + r() * 0.36);
-          list.push([px, py, len, len * (0.46 + r() * 0.2), (r() - 0.5) * 2.4, jitter(col, r, 24), r() * 0.82 + (opt.late || 0)]);
+          var len = size * (0.42 + r() * 0.36), ang = (r() - 0.5) * 2.4, ord = r() * 0.82 + (opt.late || 0);
+          if (opt.rim && r() < opt.rim) list.push([px, py, len * 1.3, len * 0.66, ang, jitter(pick(P.dark, r, 0.8), r, 12), ord]);
+          list.push([px, py, len, len * (0.46 + r() * 0.2), ang, jitter(col, r, 24), ord + 0.0001]);
         }
       }
       y += step * 0.62;
@@ -93,7 +94,7 @@
     dark: pal([["#3f9a62", 2], ["#2f8268", 2.4], ["#1f6a58", 2.4], ["#145a4c", 2], ["#4f6a62", 1], ["#5a5c9e", 0.7]]),
     meadow: pal([["#a8dc62", 1.2], ["#8fd46a", 2.4], ["#78c874", 2.6], ["#62b872", 2], ["#3d996f", 0.8]]),
     haze: pal([["#9fc4b0", 2], ["#86b4a4", 2.4], ["#a9b4d0", 1.4], ["#c4d6c8", 1], ["#6fa294", 1.2]]),
-    water: pal([["#b2d49c", 1.6], ["#a3c59c", 2], ["#93bf96", 2.6], ["#87bc95", 2], ["#7caf93", 2], ["#6ead93", 2], ["#5c9c8d", 1.2], ["#9aa6c8", 0.6]]),
+    water: pal([["#b9bcd6", 2], ["#a9b0cc", 2.4], ["#c4c8dc", 1.6], ["#9aa4c0", 1.6], ["#a3bcb0", 1.4], ["#8fb0a4", 1.1], ["#d4d6e4", 0.8]]),
     sky: pal([["#c4cfee", 3], ["#d6ddf2", 2], ["#aebbe6", 1.4], ["#e6eaf6", 1.2]]),
     roof: pal([["#508693", 3], ["#64a0a4", 2], ["#2c6473", 2], ["#88b0ad", 1]])
   };
@@ -129,9 +130,27 @@
       fill(r, back.dabs, function (x, y) { return y >= sky(x) && y < shore && !inMeadow(x, y); }, o({ size: s * 1.2, step: 0.62, palette: P.dark, spread: 2, jit: 18 }));
       fill(r, back.dabs, function (x, y) { return y >= sky(x) - 0.004 && y < sky(x) + 0.05; }, o({ size: s * 0.8, step: 0.6, palette: P.haze, spread: 2, jit: 16, late: 0.01 }));
       crowns(r, back.dabs, function (x, y) { return y >= sky(x) + 0.02 && y < shore - 0.01 && !inMeadow(x, y) && !knoll(x, y); },
-        o({ y0: 0.1, radius: function (y) { return 0.02 + 0.045 * Math.max(0, (y - 0.12) / 0.6); }, size: depth, palette: P.leaf, light: P.light, noise: n }));
+        o({ y0: 0.1, radius: function (y) { return 0.02 + 0.045 * Math.max(0, (y - 0.12) / 0.6); }, size: depth, palette: P.leaf, light: P.light, noise: n, rim: 0.28 }));
+      for (var yd = 0; yd < 90; yd++) { // Litzlberg's yellow discs, scattered over the wooded hill
+        var dxp = r() * A, dyp = sky(dxp) + 0.03 + r() * (shore - sky(dxp) - 0.1);
+        if (inMeadow(dxp, dyp)) continue;
+        var dsz = s * (0.35 + r() * 0.3) * (0.6 + dyp);
+        back.dabs.push([dxp, dyp, dsz * 1.25, dsz * 1.15, 0, "rgb(64,96,74)", 0.95]); back.dabs.push([dxp, dyp, dsz, dsz * 0.92, 0, jitter("#d8d64e", r, 20), 0.96]);
+      }
       fill(r, back.dabs, inMeadow, o({ size: s * 1.1, step: 0.62, palette: P.meadow, spread: 0.9, angle: 0.04, ratio: 0.5, jit: 26, late: 0.02 }));
       fill(r, back.dabs, knoll, o({ size: s * 1.2, step: 0.62, palette: P.meadow, spread: 1, angle: -0.12, jit: 22 }));
+      // rows of small round trees on the meadow, each outlined, as on Klimt's hillsides
+      function roundTree(tx, ty, R) {
+        back.dabs.push([tx, ty + R * 0.95, R * 0.12, R * 0.4, 1.57, "rgb(70,62,50)", 0.9]);
+        back.dabs.push([tx, ty, R * 1.12, R, 0, jitter(pick(P.dark, r, 0.9), r, 10), 0.9]);
+        for (var k = 0; k < 26; k++) { var a = r() * 6.283, d = Math.sqrt(r()) * R * 0.85, px = tx + Math.cos(a) * d, py = ty + Math.sin(a) * d * 0.9, up = (ty - py) / R;
+          back.dabs.push([px, py, R * 0.28, R * 0.18, (r() - 0.5) * 2.4, jitter(up > 0.15 ? pick(P.light, r, 0) : pick(P.leaf, r, 0.5), r, 18), 0.91 + r() * 0.04]); }
+      }
+      for (var row = 0; row < 3; row++) for (var tx2 = 0.62 + r() * 0.05; tx2 < A - 0.05; tx2 += 0.05 + r() * 0.06) {
+        var ty2 = mt(tx2) + 0.012 + row * 0.012;
+        if (ty2 < mb(tx2) - 0.004 && r() < 0.7) roundTree(tx2, ty2, s * (0.7 + row * 0.18 + r() * 0.2));
+      }
+      for (var kt = 0; kt < 14; kt++) { var kx = 0.08 + r() * 0.44, ky = 0.62 + r() * 0.05; if (knoll(kx, ky)) roundTree(kx, ky, s * (1 + r() * 0.4)); }
 
       // the village on the shore
       [[0.05, 0.62, 0.06], [0.36, 0.63, 0.045], [0.6, 0.625, 0.05], [0.78, 0.635, 0.04], [1.08, 0.625, 0.05], [1.33, 0.63, 0.045], [1.6, 0.625, 0.05], [1.98, 0.62, 0.06]].forEach(function (t) {
@@ -157,10 +176,17 @@
       block(0.845, 0.875, shore - 0.155, shore - 0.01, pal([["#eef0e6", 5], ["#ffffff", 1], ["#c9d0cc", 1]]), s * 0.6);
       fill(r, mid.dabs, function (x, y) { return y > shore - 0.2 && y < shore - 0.153 && Math.abs(x - 0.86) < 0.02 * (y - (shore - 0.2)) / 0.047 + 0.002; }, o({ size: s * 0.55, step: 0.42, palette: pal([["#2c4a58", 4], ["#4a6070", 1]]), spread: 0.3, late: 0.14 }));
       fill(r, mid.dabs, function (x, y) { return y > shore - 0.245 && y < shore - 0.198 && Math.abs(x - 0.86) < 0.0045; }, o({ size: s * 0.45, step: 0.42, palette: pal([["#2c4a58", 1]]), spread: 0.2, angle: 1.57, late: 0.15 }));
+      // a second row behind, and a yellow farm up on the slope
+      house(0.53, 0.59, shore - 0.05, 0.03, "#a8402e", 0.022);
+      house(0.64, 0.72, shore - 0.055, 0.034, "#d9b45a", 0.024);
+      house(1.04, 1.11, shore - 0.05, 0.03, "#eef0e6", 0.022);
+      house(1.3, 1.37, shore - 0.055, 0.03, "#b0473a", 0.022);
+      house(1.22, 1.34, mb(1.28) + 0.02, 0.036, "#d9b45a", 0.024);
+      house(0.32, 0.38, shore - 0.052, 0.028, "#eef0e6", 0.02);
       house(1.16, 1.27, shore - 0.008, 0.045, "#a8402e", 0.03);
       house(1.42, 1.54, shore - 0.01, 0.046, "#b0473a", 0.032);
       house(1.67, 1.8, shore - 0.008, 0.044, "#eef0e6", 0.03);
-      [[1.875, 0.17], [1.915, 0.21], [1.95, 0.15]].forEach(function (t) {
+      [[1.875, 0.17], [1.915, 0.21], [1.95, 0.15], [0.355, 0.15], [0.385, 0.12], [0.56, 0.17], [1.12, 0.14], [1.6, 0.18], [1.635, 0.13], [0.04, 0.16]].forEach(function (t) {
         fill(r, mid.dabs, function (x, y) { var hy = shore - t[1]; if (y < hy || y > shore) return false; return Math.abs(x - t[0]) < 0.022 * (y - hy) / t[1] + 0.004; }, o({ size: s * 0.85, step: 0.45, palette: P.dark, spread: 0.8, angle: 1.57, late: 0.1 }));
       });
       fill(r, mid.dabs, function (x, y) { return y > shore - 0.006 && y < shore + 0.008; }, o({ size: s * 0.9, palette: pal([["#a8dc62", 3], ["#d8d64e", 1.2]]), spread: 0.2, ratio: 0.4, late: 0.15 }));

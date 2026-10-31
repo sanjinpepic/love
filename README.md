@@ -92,7 +92,9 @@ node tools/paint/render.js && python3 tools/paint/publish.py
 
 ## The Klimt walk and its assets
 
-The Klimt pages open with a walk through a birch forest (`assets/js/journey.js`).
+The Klimt pages open with a walk through a Hälsingland forest (`assets/js/journey.js`):
+birch, aspen, rowan with berries, copper-topped pine and spruce, ferns and flowers on
+the floor, out onto Järvsö dal and its lilac lake.
 The trees, the deep wood and the valley are **painted once, offline**, with a
 fuller brush than a browser could afford, and saved in `assets/klimt/`. The site
 only places and moves those images, so it is light and looks the same everywhere.

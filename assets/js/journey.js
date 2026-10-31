@@ -23,7 +23,7 @@
   // ?export=1 paints the trees, the wood and the valley once at high resolution with the
   // full brush, for tools/klimt/export.js to save as images. Otherwise the saved images
   // (window.KLIMT_ASSETS) are used, and live painting is only the fallback.
-  var EXPORT = /[?&]export=1\b/.test(location.search), RES = EXPORT ? 1.7 : 1;
+  var EXPORT = /[?&]export=1\b/.test(location.search), RES = EXPORT ? 1.15 : 1;
   var A = EXPORT ? null : window.KLIMT_ASSETS;
   var GOLDS = ["#c9a043", "#d9b44a", "#e8c96a", "#b8902f", "#f0d890", "#a77d27"];
 
@@ -94,9 +94,13 @@
     var r = K.rng(4410), n = K.noise2(K.rng(441)), c = off(W, H), x = c.getContext("2d"), list = [];
     x.fillStyle = "#35603f"; x.fillRect(0, 0, W, H);
     var moss = K.pal([["#2f5a3a", 3], ["#3f6e42", 3], ["#4f7a3e", 2.4], ["#5f8a46", 1.6], ["#24483a", 1.6], ["#5a5c9e", 0.6]]);
-    var fallen = K.pal([["#a8964a", 2], ["#c2a85a", 1.4], ["#6a7a3a", 2.4], ["#8a7a42", 1.4], ["#5a4a32", 1], ["#b9d27a", 0.8]]);
-    for (var i = 0; i < 26000; i++) {
+    var fallen = K.pal([["#a8964a", 2], ["#c2a85a", 1.4], ["#6a7a3a", 2.4], ["#8a7a42", 1.4], ["#5a4a32", 1], ["#b9d27a", 0.8], ["#b8642e", 0.9], ["#c8783a", 0.6]]);
+    var sun = K.pal([["#8faa52", 2], ["#a8b85a", 1.6], ["#c2c46a", 1], ["#7a9a4a", 1.4]]), n2 = K.noise2(K.rng(442));
+    for (var i = 0; i < 30000; i++) {
       var u = r(), v = r(), m = n(u * 8, v * 5), leaf = m > 0.58 || r() < 0.12;
+      if (n2(u * 5, v * 3) > 0.66 && r() < 0.8) { // dappled sunlight on the floor
+        var ss = 0.004 + r() * 0.005; tile(list, [u, v, ss, ss * 0.5, (r() - 0.5) * 1.2, K.jitter(K.pick(sun, r, 0), r, 18), r()]); continue;
+      }
       var size = 0.004 + r() * 0.005;
       tile(list, [u, v, size, size * (0.4 + r() * 0.25), (r() - 0.5) * 1.2, K.jitter(K.pick(leaf ? fallen : moss, r, 0), r, 22), r()]);
     }
@@ -160,12 +164,14 @@
     var lit = K.pal([["#3a6a4a", 3], ["#4f7e56", 2], ["#2f5a44", 2], ["#6a9a6a", 0.8]]);
     // trunk below the lowest tier
     for (var ty = bottom - tierH; ty < TH; ty += 4) for (var k = 0; k < 2; k++) list.push([(cx + (r() - 0.5) * 14) / TH, ty / TH, 5 / TH, 2.4 / TH, 1.57 + (r() - 0.5) * 0.3, K.jitter(r() < 0.5 ? "#3a3428" : "#4a3e2e", r, 14), 0]);
+    var sideL = [], sideR = [];
+    for (var ti = 0; ti <= tiers; ti++) { sideL.push(0.72 + r() * 0.5); sideR.push(0.72 + r() * 0.5); }
     for (var y = top; y < bottom; y += 3) {
-      var g = (y - top) / (bottom - top), f = ((y - top) % tierH) / tierH, wob = 0.85 + 0.3 * n(y / 60, seed);
+      var g = (y - top) / (bottom - top), f = ((y - top) % tierH) / tierH, wob = 0.85 + 0.3 * n(y / 60, seed), tI = Math.floor((y - top) / tierH);
       var half = maxW * Math.pow(g, 0.95) * (0.42 + 0.58 * f) * wob + 6;
       var count = Math.max(1, Math.round(half / 5));
       for (var j = 0; j < count; j++) {
-        var u = (r() * 2 - 1), x = cx + u * half, droop = Math.abs(u) * Math.abs(u) * tierH * 0.35;
+        var u = (r() * 2 - 1), x = cx + u * half * (u < 0 ? sideL[tI] : sideR[tI]), droop = Math.abs(u) * Math.abs(u) * tierH * 0.5;
         var col = f < 0.45 && r() < 0.75 ? K.pick(lit, r, 0) : K.pick(shade, r, 0);
         list.push([x / TH, (y + droop) / TH, (5 + r() * 5) / TH, (2.2 + r() * 1.8) / TH, u * 0.6 + (r() - 0.5) * 0.6, K.jitter(col, r, 18), r()]);
       }
@@ -198,93 +204,152 @@
   // The deep wood, painted once in dabs: shaded foliage all round, an opening at the end of
   // the path. Drawn scaled up from that opening as you walk, so the opening widens.
   function deepWood(W, H) {
-    // painted at screen size, a dab at a time through the queue, so it is never enlarged
-    var r = K.rng(9101), c = off(W, H), list = [];
-    var pal = K.pal([["#1f4a3a", 3], ["#24503e", 3], ["#2f6048", 2.4], ["#3f7a52", 1.6], ["#3a4a7a", 0.9], ["#5f8a5a", 0.8]]);
-    var ox = 0.5, oy = 0.5, rx = 0.07, ry = 0.09 * W / H, n = Math.round(W * H * 0.035);
+    // painted at screen size, so it is never enlarged: solid shade with an opening at the end of
+    // the path, its edge broken up with dabs
+    var r = K.rng(9101), c = off(W, H), x = c.getContext("2d"), list = [];
+    var ox = W * 0.5, oy = H * 0.5, rad = Math.min(W, H) * 0.16;
+    var g = x.createRadialGradient(ox, oy, rad * 0.8, ox, oy, rad * 2.6);
+    g.addColorStop(0, "rgba(36,80,62,0)"); g.addColorStop(0.35, "rgba(36,80,62,.85)"); g.addColorStop(1, "rgba(30,70,54,1)");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    var pal = K.pal([["#1f4a3a", 3], ["#24503e", 3], ["#2f6048", 2.4], ["#3f7a52", 1.8], ["#3a4a7a", 0.9], ["#5f8a5a", 1], ["#7aa65a", 0.5]]);
+    var n = Math.round(W * H * 0.03);
     for (var i = 0; i < n; i++) {
-      var px = r(), py = r(), d = Math.hypot((px - ox) / rx, (py - oy) / (ry * H / W));
-      if (d < 1 || r() > (d - 1) / 1.6) continue;
+      var px = r() * W, py = r() * H, d = Math.hypot(px - ox, (py - oy) * 1.2) / rad;
+      if (d < 1 || r() > (d - 1) / 1.2) continue;
       var sz = (3 + r() * 4) / W;
-      list.push([px, py, sz, sz * 0.5, (r() - 0.5) * 2.8, K.jitter(K.pick(pal, r, 0), r, 20), r()]);
+      list.push([px / W, py / H, sz, sz * 0.5, (r() - 0.5) * 2.8, K.jitter(K.pick(pal, r, 0), r, 20), r()]);
     }
     enqueue(c, list, W, H, true, true);
     return c;
   }
 
+
   // ——— trees ————————————————————————————————————————————————————————————
-  // Each tree is a trunk sprite and a crown sprite; the wind bends them apart.
+  // Hälsingland trees in Klimt's hand. Each is a trunk sprite and a crown sprite:
+  // birch (dark cracked foot), aspen (blue-grey with eyes, after Beech Forest),
+  // plane (Park's camouflage bark), rowan (red berries in late August), pine (copper top).
+  var KIND = {
+    birch: { w0: 42, cwk: 0.58, bark: [["#f2f2ea", 4], ["#e4e6de", 3], ["#cfd5cf", 1.4]], shade: "#a3b0b0", lobes: 8, leaf: "birch" },
+    aspen: { w0: 52, cwk: 0.72, bark: [["#a9b4b0", 3], ["#8f9fa2", 3], ["#b9c2b8", 1.6], ["#6f8288", 1.2]], shade: "#5a6c72", lobes: 11, leaf: "leaf" },
+    plane: { w0: 64, cwk: 0.8, bark: null, shade: "#3a4232", lobes: 12, leaf: "leaf" },
+    rowan: { w0: 32, cwk: 0.62, bark: [["#8a8678", 3], ["#9a9686", 2], ["#6e6a5e", 1.5]], shade: "#4f4c44", lobes: 8, leaf: "rowan" },
+    pine: { w0: 40, cwk: 0.62, bark: [["#c47a3e", 3], ["#d08a48", 2], ["#a8622e", 2], ["#e09a58", 1]], shade: "#7a4426", lobes: 7, leaf: "pine" }
+  };
+  function rgbOf(col) {
+    var m = /rgb\((\d+),(\d+),(\d+)\)/.exec(col);
+    return m ? [+m[1], +m[2], +m[3]] : [parseInt(col.slice(1, 3), 16), parseInt(col.slice(3, 5), 16), parseInt(col.slice(5, 7), 16)];
+  }
+  function mixc(a, b, k) { var x = rgbOf(a), y = rgbOf(b); return "rgb(" + x.map(function (v, i) { return Math.round(v + (y[i] - v) * k); }).join(",") + ")"; }
+  var LEAVES = {
+    birch: function () { return [K.pal([["#b9d27a", 1.4], ["#9ccf6a", 2], ["#7cc27a", 2.4], ["#5faf72", 2], ["#3f9a62", 1.2], ["#d8d64e", 0.7], ["#e2c25a", 0.35]]), K.pal([["#d4e48a", 2], ["#c9e08a", 2], ["#e2dc6a", 1]])]; },
+    leaf: function () { return [K.P.leaf, K.P.light]; },
+    rowan: function () { return [K.pal([["#7cc27a", 2], ["#5faf72", 2.6], ["#3f9a62", 2.4], ["#2f8268", 1.6], ["#9ccf6a", 1]]), K.P.light]; },
+    pine: function () { return [K.pal([["#2f6a4e", 3], ["#3a7a52", 3], ["#245a44", 2], ["#4f8a56", 1.6], ["#4f6a8a", 0.25]]), K.pal([["#6aa262", 2], ["#86b266", 1.2]])]; }
+  };
   function tree(seed, kind) {
-    var r = K.rng(seed), n = K.noise2(K.rng(seed + 1)), TW = kind === "life" ? 700 : 300, TH = 1300, trunk = off(TW * RES, TH * RES), list = [];
-    var lean = (r() - 0.5) * 20, base = TW / 2, w0 = kind === "plane" ? 60 : kind === "pear" ? 38 : 30;
-    // Park's plane bark: large patches of olive, umber and pale grey-green
+    var r = K.rng(seed), n = K.noise2(K.rng(seed + 1)), cfg = KIND[kind] || KIND.aspen;
+    var TW = 300, TH = 1300, trunk = off(TW * RES, TH * RES), list = [];
+    var lean = (r() - 0.5) * 22, base = TW / 2, w0 = cfg.w0 * (0.85 + r() * 0.3), bend = (r() - 0.5) * 16;
     var camo = [K.pal([["#5a6e4a", 3], ["#6e7a52", 2], ["#4f6a52", 1.5]]), K.pal([["#3a3a2a", 3], ["#4a3a2a", 2], ["#2a3428", 1.4]]), K.pal([["#a9b694", 3], ["#c4c8a8", 1.4], ["#8fa286", 2]]), K.pal([["#7a5a3a", 2], ["#8a6a42", 1.5], ["#5a4a30", 1]])];
-    var bark = kind === "plane" ? null : kind === "pear" ? K.pal([["#7a6450", 4], ["#8c7660", 2], ["#5e4c3e", 2], ["#8a9a6a", 1]])
-      : kind === "life" ? K.pal([["#8a6a3a", 3], ["#a77d27", 2], ["#6a5030", 2], ["#c9a043", 1]])
-      : K.pal([["#eef2e8", 4], ["#d8e0d6", 3], ["#b9c9c0", 1.5], ["#8fa8a8", 1]]);
-    var tc0 = trunk.getContext("2d"), sil = [], silR = [];
-    for (var sy = TH * 0.1; sy <= TH; sy += 20) {
-      var st = (TH - sy) / TH, scx = base + lean * st + (n(sy / 90, seed) - 0.5) * 10, sw = w0 * (1 - st * 0.45) * 0.42;
-      sil.push([(scx - sw) * RES, sy * RES]); silR.unshift([(scx + sw) * RES, sy * RES]);
+    var bark = cfg.bark ? K.pal(cfg.bark) : null, foot = K.pal([["#6a6a62", 3], ["#4f4e48", 2], ["#8a8a80", 1.4]]);
+    var cxAt = function (y) { var t = (TH - y) / TH; return base + lean * t + bend * Math.sin(t * 3.1) + (n(y / 110, seed) - 0.5) * 8; };
+    var wAt = function (y) { var t = (TH - y) / TH, flare = y > TH * 0.9 ? Math.pow((y - TH * 0.9) / (TH * 0.1), 2) * 0.55 : 0; return w0 * (1 - t * 0.5) * (1 + flare); };
+    // the silhouette first, so no gap shows between strokes
+    var tc0 = trunk.getContext("2d"), L = [], Rr = [];
+    for (var sy = TH * 0.08; sy <= TH; sy += 16) { var hw = wAt(sy) * 0.46; L.push([(cxAt(sy) - hw) * RES, sy * RES]); Rr.unshift([(cxAt(sy) + hw) * RES, sy * RES]); }
+    tc0.fillStyle = cfg.shade; tc0.beginPath(); L.concat(Rr).forEach(function (q, i) { if (i) tc0.lineTo(q[0], q[1]); else tc0.moveTo(q[0], q[1]); }); tc0.closePath(); tc0.fill();
+    for (var y = TH * 0.08; y < TH; y += 3.2) {
+      var cx = cxAt(y), w = wAt(y), t = (TH - y) / TH, count = Math.max(2, Math.round(w / 8));
+      for (var k = 0; k < count; k++) {
+        var u = r() * 2 - 1, px = cx + u * w * 0.44, lit = -u * 0.85 + (r() - 0.5) * 0.5, col;
+        if (kind === "plane") col = K.pick(camo[Math.min(3, Math.floor(n(px / 34, y / 70) * 4.2))], r, 0);
+        else if (kind === "pine" && t < 0.42) col = K.pick(foot, r, 0);
+        else col = K.pick(bark, r, 0);
+        if (lit < -0.4) col = mixc(col, cfg.shade, 0.5); else if (lit > 0.6) col = mixc(col, "#ffffff", 0.12);
+        var hz = kind === "birch", ang = hz ? (r() - 0.5) * 0.3 : 1.57 + (r() - 0.5) * 0.35;
+        list.push([px / TH, y / TH, (hz ? 4 + r() * 5 : 6 + r() * 7) / TH, (hz ? 1.6 + r() * 1.2 : 1.8 + r() * 1.4) / TH, ang, K.jitter(col, r, 14), r()]);
+      }
+      var dark = function (wd, ht, col) { list.push([(cx + (r() - 0.5) * w * 0.6) / TH, y / TH, wd / TH, ht / TH, (r() - 0.5) * 0.25, col, 1.05 + r() * 0.1]); };
+      if (kind === "birch") {
+        if (r() < 0.12) dark(3 + r() * 6, 0.9, "rgb(70,70,66)");                         // lenticels
+        if (r() < 0.04) dark(6 + r() * 10, 2.4 + r() * 2, "rgb(36,34,30)");              // Klimt's eyes
+        if (t < 0.16 && r() < 0.55 * (1 - t / 0.16)) dark(8 + r() * 12, 2 + r() * 3, r() < 0.6 ? "rgb(40,40,36)" : "rgb(78,78,70)"); // dark cracked foot
+      }
+      if (kind === "aspen" && r() < 0.045) dark(8 + r() * 8, 3 + r() * 2.5, "rgb(46,52,56)");
+      if (kind === "pine" && t < 0.42 && r() < 0.3) list.push([(cx + (r() - 0.5) * w * 0.7) / TH, y / TH, (8 + r() * 10) / TH, 1.1 / TH, 1.57, "rgb(52,46,40)", 1.05]);
+      if (kind === "rowan" && r() < 0.05) dark(4 + r() * 4, 1, "rgb(170,166,150)");
     }
-    tc0.fillStyle = kind === "birch" ? "#d8e0d6" : kind === "plane" ? "#4f5e44" : "#6a5844";
-    tc0.beginPath(); sil.concat(silR).forEach(function (q, i) { if (i) tc0.lineTo(q[0], q[1]); else tc0.moveTo(q[0], q[1]); }); tc0.closePath(); tc0.fill();
-    for (var y = TH * 0.1; y < TH; y += 4) {
-      var t = (TH - y) / TH, cx = base + lean * t + (n(y / 90, seed) - 0.5) * 10, w = w0 * (1 - t * 0.45);
-      for (var k = 0; k < 3; k++) {
-        var px = cx + (r() - 0.5) * w, side = (px - cx) / w;
-        var col = kind === "plane" ? K.pick(camo[Math.min(3, Math.floor(n(px / 34, y / 70) * 4.2))], r, 0)
-          : side > 0.22 && kind === "birch" ? (r() < 0.6 ? "#9fb4b2" : "#7fa0a0") : K.pick(bark, r, 0);
-        list.push([px / TH, y / TH, (5 + r() * 4) / TH, (2.2 + r() * 1.6) / TH, (r() - 0.5) * 0.5, K.jitter(col, r, 16), r()]);
-      }
-      if (kind === "birch" && r() < 0.08) { // lenticels: fine dark dashes across the bark
-        list.push([(cx + (r() - 0.5) * w * 0.8) / TH, y / TH, (3 + r() * 6) / TH, 0.9 / TH, (r() - 0.5) * 0.15, "rgb(70,70,66)", 1.1]);
-      }
-      if (kind === "birch" && r() < 0.06) { // Klimt's almond eyes in the bark
-        var ex = cx + (r() - 0.5) * w * 0.5, ew = 6 + r() * 8;
-        list.push([ex / TH, y / TH, ew / TH, (2.4 + r() * 1.4) / TH, (r() - 0.5) * 0.2, "rgb(36,34,30)", 1.2]);
-        if (r() < 0.5) list.push([ex / TH, y / TH, 1.8 / TH, 1.8 / TH, 0, "rgb(217,180,74)", 1.3]);
-      }
-    }
-    enqueue(trunk, list, TH * RES, TH * RES, false, true);
-    // Tree of Life: gold spirals curling from the upper trunk (Stoclet frieze)
-    var spirals = [];
-    if (kind === "life") {
-      for (var b = 0; b < 12; b++) {
-        var by = TH * (0.1 + r() * 0.5), dir = b % 2 ? -1 : 1, len = 120 + r() * 150, turns = 1.6 + r() * 1.4, pts = [];
-        var x0 = base + lean * ((TH - by) / TH);
-        for (var sI = 0; sI <= 60; sI++) {
-          var u = sI / 60, rad = len * (1 - u * 0.85), ang = dir * u * turns * 6.283;
-          pts.push([Math.max(8, Math.min(TW - 8, x0 + dir * len * 0.9 * u + Math.cos(ang) * rad * 0.45 * u)), by - len * 0.3 * u + Math.sin(ang) * rad * 0.45 * u]);
-        }
-        spirals.push({ pts: pts, col: r() < 0.6 ? "#d9b44a" : "#f0d890", w: 7 + r() * 5 });
+    enqueue(trunk, list, TH * RES, TH * RES, true, true);
+
+    // the crown: limbs glimpsed through clumps of leaves, lit from the upper left
+    // the sprite's attach point (88% down it) sits 40% up the trunk, so leaves start low
+    var CW = 900, CH = 1100, crown = off(CW * RES, CH * RES), cl = [];
+    var ax = CW * 0.5, ay = CH * 0.88, high = kind === "pine";
+    var cy0 = high ? CH * 0.24 : CH * 0.47, ry0 = high ? CH * 0.15 : CH * 0.35, rx0 = CW * (high ? 0.36 : 0.4) * (0.85 + r() * 0.3);
+    var limbCol = kind === "birch" ? "#d8dcd4" : kind === "pine" ? "#b8703a" : kind === "aspen" ? "#7f8f92" : "#4f4a40", tips = [];
+    for (var b = 0; b < cfg.lobes; b++) {
+      var a = -Math.PI / 2 + (b / (cfg.lobes - 1) - 0.5) * 2.5 + (r() - 0.5) * 0.3, reach = 0.55 + r() * 0.45;
+      var tx = ax + Math.cos(a) * rx0 * reach, ty = cy0 + Math.sin(a) * ry0 * reach * 0.9 + ry0 * 0.15, lw = kind === "birch" || kind === "rowan" ? 5 : 9;
+      tips.push([tx, ty]);
+      var sy0 = high ? cy0 + ry0 * 1.1 : ay, steps = Math.max(12, Math.round(Math.hypot(tx - ax, ty - sy0) / 3.5));
+      for (var s2 = 0; s2 <= steps; s2++) {
+        var uu = s2 / steps, bx = ax + (tx - ax) * uu + Math.sin(uu * 3 + b) * 8, by = sy0 + (ty - sy0) * Math.pow(uu, 0.8);
+        cl.push([bx / CH, by / CH, lw * (1 - uu * 0.7) / CH, lw * 0.55 * (1 - uu * 0.7) / CH, Math.atan2(ty - ay, tx - ax), K.jitter(limbCol, r, 12), 0.01 * uu]);
       }
     }
-    // crown
-    var CW = 900, CH = 640, crown = off(CW * RES, CH * RES), cl = [];
-    var leaves = kind === "pear" ? K.P.leaf
-      : kind === "life" ? K.pal([["#e8c96a", 1.6], ["#c9a043", 1.2], ["#a8d050", 2], ["#5a9e44", 2], ["#2f5a3a", 1.4], ["#5a60aa", 1]])
-      : K.P.leaf;
-    var lights = K.P.light;
-    var lobes = kind === "birch" ? 7 : 10;
-    for (var cI = 0; cI < lobes; cI++) {
-      var ang0 = (cI / lobes) * 6.283, ccx = CW * (0.5 + Math.cos(ang0) * 0.2 * r() * 1.2), ccy = CH * (0.53 + Math.sin(ang0) * 0.12 * r()), rad2 = CH * (0.14 + r() * 0.07);
-      for (var j = 0; j < 1300; j++) {
-        var an = r() * 6.2832, dd = Math.sqrt(r()), qx = ccx + Math.cos(an) * dd * rad2 * 1.35, qy = ccy + Math.sin(an) * dd * rad2;
-        var relC = (qy - CH * 0.53) / (CH * 0.28), rel = (qy - ccy) / rad2;
-        var c2 = relC < -0.35 && r() < 0.75 ? K.pick(lights, r, 0) : relC > 0.45 && r() < 0.7 ? K.pick(K.P.dark, r, 0) : K.pick(leaves, r, Math.max(0, rel + 0.4));
-        cl.push([qx / CH, qy / CH, (4 + r() * 4) / CH, (2.2 + r() * 2) / CH, (r() - 0.5) * 2.8, K.jitter(c2, r, 22), r()]);
+    var clumps = tips.map(function (q) { return [q[0], q[1], CW * (0.1 + r() * 0.06)]; });
+    for (var f = 0; f < cfg.lobes * 1.5; f++) { var fa = r() * 6.283, fd = Math.sqrt(r()) * 0.75; clumps.push([ax + Math.cos(fa) * fd * rx0, cy0 + Math.sin(fa) * fd * ry0, CW * (0.11 + r() * 0.06)]); }
+    var pals = LEAVES[cfg.leaf](), mids = pals[0], lights = pals[1], darks = K.P.dark;
+    clumps.forEach(function (cm) {
+      var R = cm[2], cnt = Math.round(R * R * 0.062 * (cfg.leaf === "rowan" ? 1.3 : 1));
+      cl.push([cm[0] / CH, (cm[1] + R * 0.12) / CH, R * 0.78 / CH, R * 0.62 / CH, 0, K.jitter(K.pick(darks, r, 0.8), r, 10), 0.02]); // shade inside the clump
+      for (var j = 0; j < cnt; j++) {
+        var an = r() * 6.2832, dd = Math.pow(r(), 0.6), qx = cm[0] + Math.cos(an) * dd * R * 1.15, qy = cm[1] + Math.sin(an) * dd * R * 0.92;
+        var lx = (qx - cm[0]) / R, ly = (qy - cm[1]) / R, light = -(lx * 0.55 + ly * 0.85) + (cy0 - qy) / ry0 * 0.4 + (r() - 0.5) * 0.5;
+        var col = light > 0.55 ? K.pick(lights, r, 0) : light < -0.45 ? K.pick(darks, r, 0) : K.pick(mids, r, 0);
+        var sz = cfg.leaf === "rowan" ? 3 + r() * 2.5 : cfg.leaf === "pine" ? 4 + r() * 3 : 4.5 + r() * 4;
+        var ratio = cfg.leaf === "rowan" ? 0.36 : cfg.leaf === "pine" ? 0.3 : 0.5 + r() * 0.15, ang2 = (r() - 0.5) * 2.8, ord = 0.03 + r() * 0.95;
+        if (cfg.leaf !== "pine" && r() < 0.3) cl.push([qx / CH, qy / CH, sz * 1.3 / CH, sz * ratio * 1.45 / CH, ang2, K.jitter(K.pick(darks, r, 0.6), r, 12), ord]); // Klimt's dark rim
+        cl.push([qx / CH, qy / CH, sz / CH, sz * ratio / CH, ang2, K.jitter(col, r, 20), ord + 0.0001]);
       }
+    });
+    if (kind === "birch") clumps.forEach(function (cm) { // the hanging strands of a Hälsingland birch
+      for (var hs = 0; hs < 5; hs++) { var hx = cm[0] + (r() - 0.5) * cm[2] * 1.6, hy = cm[1] + cm[2] * (0.4 + r() * 0.4), hl = 6 + Math.floor(r() * 7);
+        for (var hk = 0; hk < hl; hk++) { var hc = hk / hl > 0.5 ? K.pick(mids, r, 0.6) : K.pick(mids, r, 0); cl.push([(hx + Math.sin(hk * 0.5) * 3) / CH, (hy + hk * 7) / CH, 4.5 / CH, 2.2 / CH, 1.4 + (r() - 0.5) * 0.4, K.jitter(hc, r, 16), 0.5 + r() * 0.45]); } }
+    });
+    if (cfg.leaf === "leaf") for (var dI = 0; dI < 5 + r() * 5; dI++) { // Litzlberg's yellow discs
+      var dc = clumps[Math.floor(r() * clumps.length)], dx = dc[0] + (r() - 0.6) * dc[2], dy = dc[1] - r() * dc[2] * 0.7, ds = 7 + r() * 5;
+      cl.push([dx / CH, dy / CH, ds * 1.25 / CH, ds * 1.15 / CH, 0, "rgb(70,96,70)", 0.99]); cl.push([dx / CH, dy / CH, ds / CH, ds * 0.92 / CH, 0, K.jitter("#d8d64e", r, 18), 0.995]);
+    }
+    if (kind === "rowan") for (var bI = 0; bI < 9 + r() * 5; bI++) { // berry clusters
+      var bc = clumps[Math.floor(r() * clumps.length)], bx2 = bc[0] + (r() - 0.5) * bc[2] * 1.4, by2 = bc[1] + (r() - 0.2) * bc[2] * 0.9;
+      for (var q = 0; q < 10 + r() * 8; q++) { var br = 2 + r() * 1.4; cl.push([(bx2 + (r() - 0.5) * 18) / CH, (by2 + (r() - 0.3) * 14) / CH, br / CH, br / CH, 0, K.jitter(["#d8452e", "#e8602a", "#c43a26"][Math.floor(r() * 3)], r, 14), 0.996]); }
     }
     enqueue(crown, cl, CH * RES, CH * RES, true);
-    var sp = { trunk: trunk, crown: crown, TW: TW, TH: TH, CW: CW, CH: CH, lean: lean, hasCrown: true, seed: seed, kind: kind };
-    // spirals go on after the bark is painted
-    if (spirals.length) queue.splice(1, 0, { c: trunk.getContext("2d"), list: [], w: 0, h: 0, i: 0, after: function (tc) {
-      tc.save(); tc.scale(RES, RES); tc.lineCap = "round";
-      spirals.forEach(function (s) { tc.strokeStyle = s.col; tc.lineWidth = s.w; tc.beginPath(); s.pts.forEach(function (pt, i) { if (i) tc.lineTo(pt[0], pt[1]); else tc.moveTo(pt[0], pt[1]); }); tc.stroke(); });
-      tc.restore();
-    } });
-    return sp;
+    return { trunk: trunk, crown: crown, TW: TW, TH: TH, CW: CW, CH: CH, lean: lean, hasCrown: true, cwk: cfg.cwk, at: 0.4, ay: 0.88, seed: seed, kind: kind };
+  }
+  // A bracken fern, turning at the tips in late August.
+  function fern(seed) {
+    var r = K.rng(seed), TW = 640, TH = 420, c = off(TW * RES, TH * RES), list = [];
+    var green = K.pal([["#3f7e46", 3], ["#4f8e4a", 2.4], ["#5f9a4e", 2], ["#2f6a42", 1.6], ["#7aa652", 1]]), turned = K.pal([["#b9a84a", 2], ["#c8a04a", 1.6], ["#a88a3a", 1.2], ["#8a9a42", 1.4]]);
+    var fronds = 6 + Math.floor(r() * 4);
+    for (var f = 0; f < fronds; f++) {
+      var a = -Math.PI / 2 + (f / (fronds - 1) - 0.5) * 2.6 + (r() - 0.5) * 0.25, L = 200 + r() * 140, droop = 0.25 + r() * 0.3;
+      var pal = r() < 0.25 ? turned : green, x0 = TW / 2 + (r() - 0.5) * 30, y0 = TH - 8;
+      var tx = x0 + Math.cos(a) * L, ty = y0 + Math.sin(a) * L * 0.85, mx = x0 + Math.cos(a) * L * 0.55, my = y0 + Math.sin(a) * L * 0.85 - L * droop;
+      for (var s = 0; s <= 1; s += 0.025) {
+        var px = (1 - s) * (1 - s) * x0 + 2 * (1 - s) * s * mx + s * s * tx, py = (1 - s) * (1 - s) * y0 + 2 * (1 - s) * s * my + s * s * ty;
+        var dx = 2 * (1 - s) * (mx - x0) + 2 * s * (tx - mx), dy = 2 * (1 - s) * (my - y0) + 2 * s * (ty - my), dir = Math.atan2(dy, dx);
+        list.push([px / TH, py / TH, 3 / TH, 1.4 / TH, dir, K.jitter("#5a7a3a", r, 10), 0.1]);
+        var pl = L * 0.17 * Math.sin(Math.PI * Math.min(1, s * 1.15)) * (1 - s * 0.3);
+        if (s > 0.08) for (var side = -1; side <= 1; side += 2) {
+          var pa = dir + side * (1.25 + r() * 0.2), ex = px + Math.cos(pa) * pl * 0.5, ey = py + Math.sin(pa) * pl * 0.5;
+          list.push([ex / TH, ey / TH, pl * 0.5 / TH, pl * 0.13 / TH, pa, K.jitter(K.pick(pal, r, 0), r, 18), 0.2 + r() * 0.7]);
+        }
+      }
+    }
+    enqueue(c, list, TH * RES, TH * RES, true, true);
+    return { trunk: c, crown: null, TW: TW, TH: TH, CW: 1, CH: 1, lean: 0, hasCrown: false, seed: seed, kind: "fern" };
   }
 
   // ——— the valley: Järvsö dal, from the square scene in klimt.js ————————————
@@ -320,15 +385,15 @@
   function build() {
     var i;
     layout();
-    var kinds = ["plane", "plane", "plane", "plane", "plane", "plane", "birch", "plane", "plane", "plane", "spruce", "spruce", "spruce", "flowers", "flowers", "flowers"];
+    var kinds = ["birch", "birch", "birch", "birch", "aspen", "aspen", "aspen", "plane", "rowan", "rowan", "pine", "pine", "spruce", "spruce", "spruce", "spruce", "flowers", "flowers", "flowers", "fern", "fern", "fern"];
     var slots = kinds.map(function () { return {}; });
     var liveTree = function (i) { return function () {
-      var k = kinds[i], sd = 500 + i * 37, t = k === "spruce" ? spruce(sd) : k === "flowers" ? flowers(sd) : tree(sd, k);
+      var k = kinds[i], sd = 500 + i * 37, t = k === "spruce" ? spruce(sd) : k === "flowers" ? flowers(sd) : k === "fern" ? fern(sd) : tree(sd, k);
       for (var key in t) slots[i][key] = t[key];
     }; };
     var liveSurfaces = function () {
       var G = EXPORT ? [2400, 1600] : [1200, 800], Pp = EXPORT ? [480, 1600] : [240, 800], C = EXPORT ? [3000, 1300] : [1600, 700];
-      ground = groundTile(G[0], G[1]); path = pathTile(Pp[0], Pp[1]); ceiling = ceilingTile(G[0], G[1]);
+      ground = groundTile(G[0], G[1]); path = pathTile(Pp[0], Pp[1]);
     };
     if (A) {
       // the painted assets: load them; any that fail are painted live instead
@@ -341,7 +406,6 @@
       if (A.ground) {
         asset(A.ground, liveSurfaces, function (b) { ground = b; });
         asset(A.path, null, function (b) { path = b; });
-        if (A.ceiling) asset(A.ceiling, null, function (b) { ceiling = b; });
       } else steps.push(liveSurfaces);
     } else {
       kinds.forEach(function (k, i) { steps.push(liveTree(i)); });
@@ -349,20 +413,27 @@
     }
     sprites = slots;
     var pool = function (want) { return slots.filter(function (sp, i) { return want.indexOf(kinds[i]) > -1; }); };
-    var leafy = pool(["plane", "birch"]), spruces = pool(["spruce"]), patches = pool(["flowers"]);
+    var byKind = {}; ["birch", "aspen", "plane", "rowan", "pine", "spruce", "flowers", "fern"].forEach(function (k) { byKind[k] = pool([k]); });
+    var spruces = byKind.spruce, patches = byKind.flowers, ferns = byKind.fern;
+    var leafyKind = function () { var q = r(); return q < 0.4 ? "birch" : q < 0.65 ? "aspen" : q < 0.8 ? "plane" : "rowan"; };
+    var H_OF = { birch: [2.5, 0.9], aspen: [2.4, 1.0], plane: [2.4, 1.0], rowan: [1.8, 0.6], pine: [3.8, 1.0], spruce: [3.2, 1.4] };
     var r = K.rng(77);
     // a dense wood in depth, with a path of light down the middle
     for (var z = 0.8; z < Z_END - 1.0; z += 0.34) {
       var thin = 1 - smooth(Z_END - 2.4, Z_END - 1.0, z), count = Math.round((5 + Math.floor(r() * 3) + z * 0.75) * (0.2 + 0.8 * thin));
       for (var k = 0; k < count; k++) {
         var side = r() < 0.5 ? -1 : 1, x = side * (0.42 + z * 0.05 + Math.pow(r(), 1.1) * (4 + z * 1.5));
-        var isSpruce = r() < 0.12 + 0.18 * smooth(3, Z_END - 1, z);
-        trees.push({ x: x, z: z + r() * 0.3, h: isSpruce ? 3.2 + r() * 1.4 : 2.3 + r() * 1.3, sp: isSpruce ? spruces[Math.floor(r() * spruces.length)] : leafy[Math.floor(r() * leafy.length)], phase: r() * 6.28, stiff: 0.55 + r() * 0.8 });
+        var q2 = r(), kd = q2 < 0.12 + 0.18 * smooth(3, Z_END - 1, z) ? "spruce" : q2 > 0.9 ? "pine" : leafyKind(), list2 = byKind[kd];
+        trees.push({ x: x, z: z + r() * 0.3, h: H_OF[kd][0] + r() * H_OF[kd][1], sp: list2[Math.floor(r() * list2.length)], phase: r() * 6.28, stiff: 0.55 + r() * 0.8, flip: r() < 0.5 });
       }
     }
     // flowers along both edges of the path, all the way to the river
     for (var fz = 0.7; fz < Z_END - 0.4; fz += 0.22 + r() * 0.2) {
-      for (var sd2 = -1; sd2 <= 1; sd2 += 2) if (r() < 0.75) trees.push({ x: sd2 * (0.48 + r() * 0.36), z: fz + r() * 0.1, h: 0.3 + r() * 0.2, sp: patches[Math.floor(r() * patches.length)], phase: 0, stiff: 1 });
+      for (var sd2 = -1; sd2 <= 1; sd2 += 2) if (r() < 0.75) trees.push({ x: sd2 * (0.48 + r() * 0.36), z: fz + r() * 0.1, h: 0.3 + r() * 0.2, sp: patches[Math.floor(r() * patches.length)], phase: 0, stiff: 1, flip: r() < 0.5 });
+    }
+    // ferns between the trees and along the path
+    for (var gz = 0.6; gz < Z_END - 0.8; gz += 0.16 + r() * 0.18) {
+      for (var nf = 1 + Math.floor(r() * 3); nf > 0; nf--) { var sg = r() < 0.5 ? -1 : 1; trees.push({ x: sg * (0.8 + Math.pow(r(), 1.2) * 3.6), z: gz + r() * 0.12, h: 0.36 + r() * 0.3, sp: ferns[Math.floor(r() * ferns.length)], phase: 0, stiff: 1, flip: r() < 0.5 }); }
     }
     trees.sort(function (a, b) { return b.z - a.z; });
     // drifting gold: flakes, small spirals, leaves
@@ -481,12 +552,13 @@
       c.globalAlpha = a;
       c.save();
       c.translate(baseX, baseY);
+      if (tr.flip) c.scale(-1, 1);
       var twd = hgt * sp.TW / sp.TH;
       c.drawImage(pickSrc(sp, "trunk", hgt), -twd / 2, -hgt, twd, hgt);
       if (sp.hasCrown && ready(sp.crown)) {
-        c.translate(sp.lean / sp.TW * twd * 0.8, -hgt * 0.74);
-        var cw = hgt * (sp.kind === "birch" ? 0.78 : 1.0) * (0.92 + (tr.phase % 1) * 0.2), ch = cw * sp.CH / sp.CW;
-        c.drawImage(pickSrc(sp, "crown", ch), -cw / 2, -ch * 0.72, cw, ch);
+        c.translate(sp.lean / sp.TW * twd * 0.8, -hgt * (sp.at || 0.74));
+        var cw = hgt * (sp.cwk || 1) * (0.92 + (tr.phase % 1) * 0.2), ch = cw * sp.CH / sp.CW;
+        c.drawImage(pickSrc(sp, "crown", ch), -cw / 2, -ch * (sp.ay || 0.72), cw, ch);
       }
       c.restore();
     }
@@ -620,8 +692,8 @@
   if (EXPORT) {
     while (steps.length || queue.length) { if (steps.length) steps.shift()(); else pump(5000); }
     window.__klimtExport = {
-      trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.86), crown: sp.crown ? sp.crown.toDataURL("image/webp", 0.86) : null, TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, seed: sp.seed, kind: sp.kind }; }),
-      ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.86), ceiling: ceiling.toDataURL("image/webp", 0.84),
+      trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.8), crown: sp.crown ? sp.crown.toDataURL("image/webp", 0.8) : null, TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, cwk: sp.cwk, at: sp.at, ay: sp.ay, seed: sp.seed, kind: sp.kind }; }),
+      ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.8),
       valley: vista.img.toDataURL("image/webp", 0.84),
       glints: []
     };
