@@ -232,3 +232,4 @@ html:not(.js) .journey-final, .journey.is-still .journey-final { position: relat
 .journey-final .links { margin-top: auto; padding: .2rem 1.2rem; }
 .journey-final .links a { color: #1d2a26; text-shadow: 0 0 12px rgb(214 232 214 / .95), 0 0 3px rgb(214 232 214 / .9); }
 html:not(.js) .journey-final, .journey.is-still .journey-final { display: block; padding: 0; }
+img.painting.glade { display: block; height: auto; object-fit: cover; }

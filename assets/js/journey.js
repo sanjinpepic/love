@@ -291,7 +291,7 @@
       var a = -Math.PI / 2 + (b / (cfg.lobes - 1) - 0.5) * 2.5 + (r() - 0.5) * 0.3, reach = 0.55 + r() * 0.45;
       var tx = ax + Math.cos(a) * rx0 * reach, ty = cy0 + Math.sin(a) * ry0 * reach * 0.9 + ry0 * 0.15, lw = kind === "birch" || kind === "rowan" ? 5 : 9;
       tips.push([tx, ty]);
-      var sy0 = high ? cy0 + ry0 * 1.1 : ay, steps = Math.max(12, Math.round(Math.hypot(tx - ax, ty - sy0) / 3.5));
+      var sy0 = high ? cy0 + ry0 * 1.1 : ay - (ay - cy0) * (0.15 + r() * 0.7), steps = Math.max(12, Math.round(Math.hypot(tx - ax, ty - sy0) / 3.5));
       for (var s2 = 0; s2 <= steps; s2++) {
         var uu = s2 / steps, bx = ax + (tx - ax) * uu + Math.sin(uu * 3 + b) * 8, by = sy0 + (ty - sy0) * Math.pow(uu, 0.8);
         cl.push([bx / CH, by / CH, lw * (1 - uu * 0.7) / CH, lw * 0.55 * (1 - uu * 0.7) / CH, Math.atan2(ty - ay, tx - ax), K.jitter(limbCol, r, 12), 0.01 * uu]);
@@ -302,7 +302,7 @@
     var pals = LEAVES[cfg.leaf](), mids = pals[0], lights = pals[1], darks = K.P.dark;
     clumps.forEach(function (cm) {
       var R = cm[2], cnt = Math.round(R * R * 0.062 * (cfg.leaf === "rowan" ? 1.3 : 1));
-      cl.push([cm[0] / CH, (cm[1] + R * 0.12) / CH, R * 0.78 / CH, R * 0.62 / CH, 0, K.jitter(K.pick(darks, r, 0.8), r, 10), 0.02]); // shade inside the clump
+      cl.push([cm[0] / CH, (cm[1] + R * 0.12) / CH, R * 0.78 / CH, R * 0.62 / CH, 0, K.jitter(["#1f6a58", "#145a4c", "#2f6a4e"][Math.floor(r() * 3)], r, 10), 0.02]); // shade inside the clump
       for (var j = 0; j < cnt; j++) {
         var an = r() * 6.2832, dd = Math.pow(r(), 0.6), qx = cm[0] + Math.cos(an) * dd * R * 1.15, qy = cm[1] + Math.sin(an) * dd * R * 0.92;
         var lx = (qx - cm[0]) / R, ly = (qy - cm[1]) / R, light = -(lx * 0.55 + ly * 0.85) + (cy0 - qy) / ry0 * 0.4 + (r() - 0.5) * 0.5;
@@ -689,12 +689,58 @@
     if (window.console) console.error("journey:", err);
     return;
   }
+  // The glade for the wedding page's "Stay" section, composed once (export only) from the
+  // same painted trees as the walk: far wood, a few trees in the glade, ferns and flowers in front.
+  function composeGlade(S) {
+    var r = K.rng(3131), c = off(S, S), x = c.getContext("2d");
+    var of = function (k) { return sprites.filter(function (sp) { return sp.kind === k; }); };
+    var pickOf = function (ks) { var l = of(ks[Math.floor(r() * ks.length)]); return l[Math.floor(r() * l.length)]; };
+    var g = x.createLinearGradient(0, 0, 0, S);
+    g.addColorStop(0, "#1f4a3a"); g.addColorStop(0.5, "#2f6048"); g.addColorStop(0.68, "#3f7a52"); g.addColorStop(1, "#35603f");
+    x.fillStyle = g; x.fillRect(0, 0, S, S);
+    var dabs = [], gy = S * 0.68;
+    for (var t = 0; t < 120; t++) { // far trunks, pale against the shade
+      var tx = r() * S, tw = 2 + r() * 5, top = S * (0.1 + r() * 0.3), col = r() < 0.6 ? "#c9d2c6" : r() < 0.5 ? "#8fa098" : "#6a7a62";
+      for (var ty = top; ty < gy + 4; ty += 3) dabs.push([tx + (r() - 0.5) * tw, ty, 3.5, 1.6, 1.57 + (r() - 0.5) * 0.3, K.jitter(r() < 0.08 ? "#2a2a26" : col, r, 14)]);
+    }
+    for (var fy = -10; fy < S * 0.62; fy += 4) for (var fx = -10; fx < S + 10; fx += 5) { // the canopy of the wood behind
+      if (r() > 0.32 + Math.pow(1 - fy / (S * 0.62), 1.5) * 0.7) continue;
+      dabs.push([fx + (r() - 0.5) * 6, fy + (r() - 0.5) * 5, 4 + r() * 3, 2.2 + r() * 1.4, (r() - 0.5) * 2.8, K.jitter(K.pick(fy < S * 0.35 ? K.P.dark : K.P.leaf, r, 0.4), r, 20)]);
+    }
+    dabs.forEach(function (d) { dab(x, d[0], d[1], d[2], d[3], d[4], d[5]); });
+    for (var yy = gy, v = 0; yy < S; yy += 2) { // the floor in perspective: finer toward the back
+      var depth = (yy - gy) / (S - gy), sc = 0.12 + depth * 0.5, w = ground.width * sc;
+      v = (v + 2 / sc) % (ground.height - 4);
+      for (var gx = -((yy * 7) % w); gx < S; gx += w) x.drawImage(ground, 0, v, ground.width, 2 / sc, gx, yy, w + 1, 2.4);
+    }
+    var items = [];
+    for (var i = 0; i < 16; i++) items.push({ sp: pickOf(["birch", "aspen", "spruce", "spruce", "pine"]), x: r() * S, y: S * (0.69 + r() * 0.02), h: S * (0.32 + r() * 0.14), far: true });
+    [[0.2, 0.82, 0.74, "aspen"], [0.42, 0.79, 0.62, "birch"], [0.63, 0.81, 0.68, "rowan"], [0.86, 0.8, 0.72, "spruce"], [0.04, 0.97, 1.1, "birch"], [0.98, 0.99, 1.05, "aspen"]].forEach(function (t) {
+      var l = of(t[3]); items.push({ sp: l[Math.floor(r() * l.length)], x: t[0] * S, y: t[1] * S, h: t[2] * S });
+    });
+    for (i = 0; i < 9; i++) items.push({ sp: pickOf(["flowers", "flowers", "fern"]), x: r() * S, y: S * (0.86 + r() * 0.14), h: S * (0.09 + r() * 0.05) });
+    items.sort(function (a, b) { return a.y - b.y; });
+    var hazed = false;
+    items.forEach(function (it) {
+      if (!it.far && !hazed) { hazed = true; x.fillStyle = "rgba(46,92,70,.32)"; x.fillRect(0, 0, S, S * 0.75); }
+      var sp = it.sp, twd = it.h * sp.TW / sp.TH;
+      x.save(); x.translate(it.x, it.y); if (r() < 0.5) x.scale(-1, 1);
+      x.drawImage(sp.trunk, -twd / 2, -it.h, twd, it.h);
+      if (sp.hasCrown && sp.crown) {
+        x.translate(sp.lean / sp.TW * twd * 0.8, -it.h * (sp.at || 0.74));
+        var cw = it.h * (sp.cwk || 1), ch = cw * sp.CH / sp.CW;
+        x.drawImage(sp.crown, -cw / 2, -ch * (sp.ay || 0.72), cw, ch);
+      }
+      x.restore();
+    });
+    return c;
+  }
   if (EXPORT) {
     while (steps.length || queue.length) { if (steps.length) steps.shift()(); else pump(5000); }
     window.__klimtExport = {
       trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.8), crown: sp.crown ? sp.crown.toDataURL("image/webp", 0.8) : null, TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, cwk: sp.cwk, at: sp.at, ay: sp.ay, seed: sp.seed, kind: sp.kind }; }),
       ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.8),
-      valley: vista.img.toDataURL("image/webp", 0.84),
+      valley: vista.img.toDataURL("image/webp", 0.84), glade: composeGlade(1200).toDataURL("image/webp", 0.84),
       glints: []
     };
     return;
