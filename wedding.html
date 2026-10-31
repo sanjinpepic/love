@@ -17,28 +17,39 @@
 </head>
 <body data-page="wed">
   <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
-  <header class="top">
-    <nav class="top-start" aria-label="Sections" data-i18n-attr="aria-label: nav.label">
-      <a href="#day" data-i18n="nav.day">The day</a>
-      <a href="#travel" data-i18n="nav.travel">Getting there</a>
-      <a href="#stay" data-i18n="nav.stay">Stay</a>
-      <a href="#rsvp" data-i18n="nav.rsvp">RSVP</a>
-    </nav>
-    <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label: lang.label">
-      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
-      <button type="button" data-lang="sv" aria-pressed="false" lang="sv">SV</button>
-      <button type="button" data-lang="bs" aria-pressed="false" lang="bs">BS</button>
-    </div>
-  </header>
   <main id="main">
-    <section class="print" aria-labelledby="names">
-      <div class="painting" data-scene="jarvso" role="img" aria-label="A painting in small dabs of colour, after Klimt." data-i18n-attr="aria-label: k.alt"></div>
-      <div class="label">
-        <h1 id="names" class="names settle"><span>Sanjin</span> <span><span class="amp">&amp;</span> Alma</span></h1>
-        <p class="subtitle settle" data-i18n="k.year">Friday 27 August 2027</p>
-        <p class="place settle">Järvsö · Hälsingland</p>
+    <section class="journey" data-journey aria-labelledby="names">
+      <div class="journey-stage">
+        <canvas class="journey-canvas" role="img" aria-label="A walk through a birch forest painted in small dabs of colour, after Klimt, opening onto Järvsö dal." data-i18n-attr="aria-label: k.journey"></canvas>
+        <header class="top">
+          <nav class="top-start" aria-label="Sections" data-i18n-attr="aria-label: nav.label">
+            <a href="#day" data-i18n="nav.day">The day</a>
+            <a href="#travel" data-i18n="nav.travel">Getting there</a>
+            <a href="#stay" data-i18n="nav.stay">Stay</a>
+            <a href="#rsvp" data-i18n="nav.rsvp">RSVP</a>
+          </nav>
+          <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label: lang.label">
+            <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+            <button type="button" data-lang="sv" aria-pressed="false" lang="sv">SV</button>
+            <button type="button" data-lang="bs" aria-pressed="false" lang="bs">BS</button>
+          </div>
+        </header>
+        <div class="journey-intro" aria-hidden="true">
+          <p class="names"><span>Sanjin</span> <span><span class="amp">&amp;</span> Alma</span></p>
+          <p class="intro-line">27 · 08 · 2027 &nbsp;·&nbsp; Järvsö</p>
+        </div>
+        <div class="print journey-print">
+          <div class="painting-slot"></div>
+          <div class="label">
+            <h1 id="names" class="names"><span>Sanjin</span> <span><span class="amp">&amp;</span> Alma</span></h1>
+            <p class="subtitle" data-i18n="k.year">Friday 27 August 2027</p>
+            <p class="place">Järvsö · Hälsingland</p>
+          </div>
+        </div>
+        <p class="journey-cue" aria-hidden="true"><span data-i18n="k.cue">Scroll to walk through the forest</span></p>
       </div>
     </section>
+
 
     <section class="section" id="welcome" aria-labelledby="welcome-title">
       <div class="column reveal">
@@ -166,6 +177,7 @@
   <script>window.WEDDING.rsvpEndpoint = "/api/rsvp";</script>
   <script src="assets/js/site.js"></script>
   <script src="assets/js/klimt.js"></script>
+  <script src="assets/js/journey.js"></script>
   <script src="assets/js/rsvp.js"></script>
 </body>
 </html>

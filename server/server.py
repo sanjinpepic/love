@@ -12,7 +12,8 @@ couple a password-protected view of the answers. Standard library only.
 Environment:
     PORT            default 8000
     HOST            default 0.0.0.0
-    RSVP_DB         default <repo>/data/rsvp.sqlite3
+    RSVP_DB         default <repo>/data/rsvp.sqlite3, or <volume>/rsvp.sqlite3
+                    when a Railway volume is attached (RAILWAY_VOLUME_MOUNT_PATH)
     ADMIN_PASSWORD  required for /admin; without it /admin is closed
     ALLOWED_ORIGIN  optional; allow the RSVP form to post from another origin
                     (e.g. https://user.github.io when the pages live there)
@@ -356,7 +357,9 @@ def make_server(host: str, port: int, db_path: Path, admin_password: str | None,
 def main():
     port = int(os.environ.get("PORT", "8000"))
     host = os.environ.get("HOST", "0.0.0.0")
-    db = Path(os.environ.get("RSVP_DB", ROOT / "data" / "rsvp.sqlite3"))
+    volume = os.environ.get("RAILWAY_VOLUME_MOUNT_PATH")
+    default_db = Path(volume) / "rsvp.sqlite3" if volume else ROOT / "data" / "rsvp.sqlite3"
+    db = Path(os.environ.get("RSVP_DB") or default_db)
     pw = os.environ.get("ADMIN_PASSWORD")
     srv = make_server(host, port, db, pw, os.environ.get("ALLOWED_ORIGIN"))
     print(f"Serving on http://{host}:{port}  ·  RSVPs → {db}")

@@ -175,6 +175,9 @@
     },
   };
 
+  // shared with journey.js (the walk through the forest)
+  window.KlimtPaint = { rng: rng, noise2: noise2, pal: pal, pick: pick, jitter: jitter, fill: fill, crowns: crowns, scenes: SCENES };
+
   // ——— painter ————————————————————————————————————————————————————————————
   function Painting(el) {
     this.el = el;

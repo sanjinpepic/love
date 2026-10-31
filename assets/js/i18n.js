@@ -10,6 +10,8 @@ window.WEDDING = {
 
 window.I18N = {
   en: {
+    "k.cue": "Scroll to walk through the forest",
+    "k.journey": "A walk through a birch forest painted in small dabs of colour, after Klimt; the trees move in the wind, and as you scroll the wood opens onto Järvsö dal.",
     "k.credits": "Painted for Sanjin & Alma, after Gustav Klimt.",
     "k.alt": "A painting in small dabs of colour, after Klimt: the forested hill of Järvsöklack fills the square, crossed by a pale hay meadow; white and red farms and the white church stand along the shore, reflected in the river Ljusnan.",
     "k.orchard": "A painting in small dabs of colour, after Klimt: an orchard in late summer, a birch among the trunks, small pears in the leaves.",
@@ -97,6 +99,8 @@ window.I18N = {
   },
 
   sv: {
+    "k.cue": "Skrolla för att gå genom skogen",
+    "k.journey": "En promenad genom en björkskog målad i små penseldrag, efter Klimt; träden rör sig i vinden, och när du skrollar öppnar sig skogen mot Järvsö dal.",
     "k.credits": "Målat för Sanjin & Alma, efter Gustav Klimt.",
     "k.alt": "En målning i små penseldrag, efter Klimt: Järvsöklackens skogklädda sluttning fyller kvadraten, korsad av en ljus slåtteräng; vita och röda gårdar och den vita kyrkan står längs stranden och speglas i Ljusnan.",
     "k.orchard": "En målning i små penseldrag, efter Klimt: en fruktträdgård på sensommaren, en björk bland stammarna, små päron bland bladen.",
@@ -184,6 +188,8 @@ window.I18N = {
   },
 
   bs: {
+    "k.cue": "Skrolajte da prošetate kroz šumu",
+    "k.journey": "Šetnja kroz brezovu šumu naslikanu sitnim potezima boje, po uzoru na Klimta; drveće se njiše na vjetru, a dok skrolate, šuma se otvara prema dolini Järvsö.",
     "k.credits": "Naslikano za Sanjina i Almu, po uzoru na Gustava Klimta.",
     "k.alt": "Slika u sitnim potezima boje, po uzoru na Klimta: šumovita padina brda Järvsöklack ispunjava kvadrat, presječena svijetlom livadom; bijele i crvene kuće i bijela crkva stoje uz obalu i ogledaju se u rijeci Ljusnan.",
     "k.orchard": "Slika u sitnim potezima boje, po uzoru na Klimta: voćnjak krajem ljeta, breza među stablima, sitne kruške u lišću.",

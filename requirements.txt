@@ -1,0 +1,2 @@
+# No dependencies: the server uses only the Python standard library.
+# This file tells Railway this is a Python app.

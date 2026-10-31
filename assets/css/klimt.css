@@ -145,3 +145,35 @@ legend { padding: 0; margin-bottom: .6rem; }
 .close p { margin: .4rem 0 0; }
 .credits { font-style: italic; font-size: .92rem; color: var(--slate-soft); margin-top: 1.6rem !important; }
 @media (max-width: 760px) { .top nav { display: none; } .field-row { grid-template-columns: 1fr; } }
+
+/* ——— the walk through the forest ——— */
+.journey { position: relative; height: 400svh; background: #2f4a36; }
+.journey-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.journey-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.journey-stage .top { position: absolute; top: 0; left: 0; right: 0; z-index: 3; color: #f6f7f3; text-shadow: 0 1px 10px rgb(20 34 22 / .55); transition: color .8s var(--ease-out), text-shadow .8s; }
+.journey-stage .top .lang button { color: inherit; opacity: .78; }
+.journey-stage .top .lang button[aria-pressed="true"] { opacity: 1; }
+.journey-stage.is-paper .top { color: var(--slate); text-shadow: none; }
+.journey-stage .top a:hover { color: inherit; opacity: .8; }
+.journey-intro { position: absolute; z-index: 2; left: 50%; top: 44%; transform: translate(-50%, -50%); text-align: center; width: min(92vw, 40rem); color: #2c3a33; pointer-events: none; }
+.journey-intro .names { font-size: clamp(1.6rem, 1rem + 2.6vw, 3rem); }
+.journey-intro .names > span { display: inline; }
+.intro-line { margin: 1.1rem 0 0; font: .85rem/1.4 var(--caps); letter-spacing: .3em; }
+.journey-print { position: absolute; inset: 0; z-index: 2; min-height: 0; height: 100%; padding-top: clamp(3.5rem, 8vh, 5rem); }
+.journey-print .label { opacity: 0; }
+.painting-slot { width: min(76svh, 54vw); aspect-ratio: 1; }
+@media (max-width: 820px), (max-aspect-ratio: 1/1) {
+  .journey-print { align-content: center; }
+  .painting-slot { width: min(100%, 52svh); justify-self: center; }
+}
+.journey-cue { position: absolute; z-index: 2; left: 50%; bottom: clamp(1.2rem, 4vh, 2.2rem); transform: translateX(-50%); margin: 0; font: .72rem/1 var(--caps); letter-spacing: .28em; text-transform: uppercase; color: #fbf9ee; text-shadow: 0 1px 8px rgb(40 30 10 / .6); white-space: nowrap; pointer-events: none; }
+.journey-cue::after { content: ""; display: block; width: 1px; height: 2.2rem; margin: .8rem auto 0; background: currentColor; transform-origin: top; }
+@media (prefers-reduced-motion: no-preference) { .journey-cue::after { animation: walk 2.6s var(--ease-out) infinite; } }
+@keyframes walk { 0% { transform: scaleY(0); opacity: 1; } 70% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+/* reduced motion: no walk; the print is shown at once */
+.journey.is-still { height: auto; background: var(--ground); }
+.journey.is-still .journey-stage { position: relative; height: 100svh; }
+.journey.is-still .journey-intro, .journey.is-still .journey-cue { display: none; }
+/* the names stand in a pool of light between the trunks */
+.journey-intro::before { content: ""; position: absolute; z-index: -1; inset: -70% -30%; background: radial-gradient(closest-side, rgb(252 249 232 / .92), rgb(248 244 222 / .6) 50%, transparent); filter: blur(4px); }
+.journey-intro .names { color: #22302a; }

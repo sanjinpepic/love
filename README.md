@@ -41,13 +41,23 @@ struck through). Python 3.9+ standard library only, no installs.
 | `ADMIN_PASSWORD` | unset | `/admin` stays closed until set |
 | `ALLOWED_ORIGIN` | unset | set if the pages are hosted elsewhere (see below) |
 
-### Hosting
+### Hosting on Railway
 
-The simplest setup is one small server (any VPS, Fly.io or Railway with a
-volume) running `server/server.py`, which serves the pages and the RSVP API
-together. If you'd rather host the pages on GitHub Pages or Netlify, run the
-server somewhere else, set `rsvpEndpoint` in `assets/js/i18n.js` to its URL,
-and start it with `ALLOWED_ORIGIN=https://your-pages-domain`.
+The repo is ready for [Railway](https://railway.com): `railway.json` starts
+`server/server.py` and checks `/` for health; the server reads Railway's `PORT`.
+
+1. In Railway: **New Project → Deploy from GitHub repo →** `sanjinpepic/love`
+   (branch `main`).
+2. On the service: **Add Volume**, mount path `/data`. The RSVP database is
+   saved there (`/data/rsvp.sqlite3`), so it survives redeploys. Without a
+   volume, answers are lost on every deploy.
+3. **Variables:** add `ADMIN_PASSWORD` (anything you like; it guards `/admin`).
+4. **Settings → Networking → Generate Domain** (or add your own domain).
+5. Open the domain for the Save the Date, `/wedding.html` for the wedding
+   page, and `/admin` for the answers and the CSV download.
+
+Every push to `main` redeploys. GitHub Pages can show the pages but cannot
+save RSVPs, so Railway is the host.
 
 ## Edit the words
 
