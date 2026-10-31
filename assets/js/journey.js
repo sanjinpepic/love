@@ -121,6 +121,19 @@
     enqueue(c, list, W, H, true);
     return c;
   }
+  // The leaf ceiling as a tile, seen from below: leaves, shade, a few flecks of sky.
+  function ceilingTile(W, H) {
+    var r = K.rng(7311), n = K.noise2(K.rng(731)), c = off(W, H), x = c.getContext("2d"), list = [];
+    x.fillStyle = "#24503e"; x.fillRect(0, 0, W, H);
+    for (var i = 0; i < 30000; i++) {
+      var u = r(), v = r(), m = n(u * 7, v * 5), sky = r() < 0.022 + Math.max(0, m - 0.62) * 0.15;
+      var col = sky ? "#dfe8d6" : K.pick(m > 0.52 ? K.P.leaf : K.P.dark, r, 0);
+      var size = 0.004 + r() * 0.005;
+      tile(list, [u, v, size, size * (0.45 + r() * 0.2), (r() - 0.5) * 2.8, K.jitter(col, r, 22), r()]);
+    }
+    enqueue(c, list, W, H, true);
+    return c;
+  }
   // The leaf ceiling, seen from below: dense at the top, opening into a ragged edge.
   function canopyLayer(W, H) {
     var r = K.rng(1911), n = K.noise2(K.rng(191)), c = off(W, H), list = [], a = W / H;
@@ -192,16 +205,18 @@
       : kind === "life" ? K.pal([["#e8c96a", 1.6], ["#c9a043", 1.2], ["#a8d050", 2], ["#5a9e44", 2], ["#2f5a3a", 1.4], ["#5a60aa", 1]])
       : K.P.leaf;
     var lights = K.P.light;
-    for (var cI = 0; cI < 12; cI++) {
-      var ccx = CW * (0.26 + r() * 0.48), ccy = CH * (0.3 + r() * 0.36), rad2 = CH * (0.12 + r() * 0.09);
-      for (var j = 0; j < 1100; j++) {
+    var lobes = kind === "birch" ? 7 : 10;
+    for (var cI = 0; cI < lobes; cI++) {
+      var ang0 = (cI / lobes) * 6.283, ccx = CW * (0.5 + Math.cos(ang0) * 0.2 * r() * 1.2), ccy = CH * (0.53 + Math.sin(ang0) * 0.12 * r()), rad2 = CH * (0.14 + r() * 0.07);
+      for (var j = 0; j < 1300; j++) {
         var an = r() * 6.2832, dd = Math.sqrt(r()), qx = ccx + Math.cos(an) * dd * rad2 * 1.35, qy = ccy + Math.sin(an) * dd * rad2;
-        var rel = (qy - ccy) / rad2, c2 = rel < -0.2 && r() < 0.7 ? K.pick(lights, r, 0) : K.pick(leaves, r, Math.max(0, rel + 0.4));
+        var relC = (qy - CH * 0.53) / (CH * 0.28), rel = (qy - ccy) / rad2;
+        var c2 = relC < -0.35 && r() < 0.75 ? K.pick(lights, r, 0) : relC > 0.45 && r() < 0.7 ? K.pick(K.P.dark, r, 0) : K.pick(leaves, r, Math.max(0, rel + 0.4));
         cl.push([qx / CH, qy / CH, (4 + r() * 4) / CH, (2.2 + r() * 2) / CH, (r() - 0.5) * 2.8, K.jitter(c2, r, 22), r()]);
       }
     }
     enqueue(crown, cl, CH * RES, CH * RES, true);
-    var sp = { trunk: trunk, crown: crown, TW: TW, TH: TH, CW: CW, CH: CH, lean: lean, hasCrown: kind !== "birch" || r() < 0.75, seed: seed, kind: kind };
+    var sp = { trunk: trunk, crown: crown, TW: TW, TH: TH, CW: CW, CH: CH, lean: lean, hasCrown: true, seed: seed, kind: kind };
     // spirals go on after the bark is painted
     if (spirals.length) queue.splice(1, 0, { c: trunk.getContext("2d"), list: [], w: 0, h: 0, i: 0, after: function (tc) {
       tc.save(); tc.scale(RES, RES); tc.lineCap = "round";
@@ -234,7 +249,7 @@
   // ——— the world ——————————————————————————————————————————————————————————
   // the canvas renders at 1x: the brushwork is soft by nature and it keeps every frame light
   var dpr = EXPORT ? 1.5 : 1, VW = 0, VH = 0;
-  var ground = null, path = null, canopy = null, sprites = [], trees = [], motes = [], vista;
+  var ground = null, path = null, ceiling = null, sprites = [], trees = [], motes = [], vista;
   var Z_END = 9.4; // where the wood ends at the riverbank
   function layout() {
     VW = stage.clientWidth; VH = stage.clientHeight;
@@ -250,7 +265,7 @@
     var liveTree = function (i) { return function () { var t = tree(500 + i * 37, kinds[i]); for (var key in t) slots[i][key] = t[key]; }; };
     var liveSurfaces = function () {
       var G = EXPORT ? [2400, 1600] : [1200, 800], Pp = EXPORT ? [480, 1600] : [240, 800], C = EXPORT ? [3000, 1300] : [1600, 700];
-      ground = groundTile(G[0], G[1]); path = pathTile(Pp[0], Pp[1]); canopy = canopyLayer(C[0], C[1]);
+      ground = groundTile(G[0], G[1]); path = pathTile(Pp[0], Pp[1]); ceiling = ceilingTile(G[0], G[1]);
     };
     if (A) {
       // the painted assets: load them; any that fail are painted live instead
@@ -263,7 +278,7 @@
       if (A.ground) {
         asset(A.ground, liveSurfaces, function (b) { ground = b; });
         asset(A.path, null, function (b) { path = b; });
-        asset(A.canopy, null, function (b) { canopy = b; });
+        if (A.ceiling) asset(A.ceiling, null, function (b) { ceiling = b; });
       } else steps.push(liveSurfaces);
     } else {
       kinds.forEach(function (k, i) { steps.push(liveTree(i)); });
@@ -272,11 +287,11 @@
     sprites = slots;
     var r = K.rng(77);
     // a dense wood in depth, with a path of light down the middle
-    for (var z = 0.8; z < Z_END - 0.3; z += 0.34) {
-      var thin = 1 - smooth(Z_END - 1.8, Z_END - 0.3, z), count = Math.round((6 + Math.floor(r() * 4)) * (0.2 + 0.8 * thin));
+    for (var z = 0.8; z < Z_END - 1.0; z += 0.34) {
+      var thin = 1 - smooth(Z_END - 2.4, Z_END - 1.0, z), count = Math.round((6 + Math.floor(r() * 4)) * (0.2 + 0.8 * thin));
       for (var k = 0; k < count; k++) {
         var side = r() < 0.5 ? -1 : 1, x = side * (0.42 + z * 0.05 + Math.pow(r(), 1.2) * 5);
-        trees.push({ x: x, z: z + r() * 0.3, h: 2.8 + r() * 1.8, sp: sprites[Math.floor(r() * sprites.length)], phase: r() * 6.28, stiff: 0.55 + r() * 0.8 });
+        trees.push({ x: x, z: z + r() * 0.3, h: 2.3 + r() * 1.3, sp: sprites[Math.floor(r() * sprites.length)], phase: r() * 6.28, stiff: 0.55 + r() * 0.8 });
       }
     }
     trees.sort(function (a, b) { return b.z - a.z; });
@@ -395,9 +410,9 @@
       var twd = hgt * sp.TW / sp.TH;
       c.drawImage(sp.trunk, -twd / 2, -hgt, twd, hgt);
       if (sp.hasCrown && ready(sp.crown)) {
-        c.translate(sp.lean / sp.TW * twd, -hgt * 0.86);
-        var cw = hgt * 1.05, ch = cw * sp.CH / sp.CW;
-        c.drawImage(sp.crown, -cw / 2, -ch * 0.78, cw, ch);
+        c.translate(sp.lean / sp.TW * twd * 0.8, -hgt * 0.74);
+        var cw = hgt * (sp.kind === "birch" ? 0.78 : 1.0) * (0.92 + (tr.phase % 1) * 0.2), ch = cw * sp.CH / sp.CW;
+        c.drawImage(sp.crown, -cw / 2, -ch * 0.72, cw, ch);
       }
       c.restore();
     }
@@ -412,13 +427,6 @@
         c.moveTo(bx, top); c.lineTo(bx + bw, top); c.lineTo(bx + bw + VH * b[2] * -1.1, VH * 0.95); c.lineTo(bx + VH * b[2] * -0.7, VH * 0.95); c.closePath(); c.fill();
       });
       c.restore();
-    }
-    // the leaf ceiling overhead; it lifts away as the wood opens
-    if (ready(canopy) && exitC < 1) {
-      var cs = 1 + walk * 0.35, cwid = VW * 1.08 * cs, chei = cwid * canopy.height / canopy.width;
-      chei = Math.max(chei, VH * 0.62 * cs);
-      c.globalAlpha = 1 - smooth(0.3, 0.8, exitC);
-      c.drawImage(canopy, cx - cwid / 2, -exitC * chei * 0.95 - VH * 0.04, cwid, chei);
     }
     // drifting gold, spirals and leaves
     var ma = (1 - exitC) * (calm ? 0 : 1);
@@ -465,7 +473,7 @@
     for (var y = Math.max(horizon + 1, Math.floor(yEdge)); y < VH; y += step) {
       var dz = 0.95 * unit / (y + step * 0.5 - horizon), z = dz + camZ, sc = unit / dz * 1.15;
       var v = (((z % 4) + 4) % 4) / 4, sy = Math.min(gh - 3, v * gh), sh = Math.max(1, gh * 0.006);
-      c.globalAlpha = 1 - smooth(Z_END - 0.5, Z_END, z);
+      c.globalAlpha = 1 - smooth(Z_END - 0.3, Z_END, z);
       var w = 12 * sc, x0 = cx - 6 * sc;
       x0 -= Math.ceil(x0 / w) * w;
       for (var x = x0; x < VW; x += w) c.drawImage(ground, 0, sy, gw, sh, x, y, w + 1, step + 0.7);
@@ -475,6 +483,23 @@
       }
     }
     // a shadow under the trees near the horizon, lifting as you leave
+    c.globalAlpha = 1;
+  }
+  // The leaf ceiling in perspective, overhead: you walk under it, and it ends where the wood ends.
+  var CEIL = 2.1, C_END = Z_END - 0.6;
+  function drawCeiling(c, horizon, unit, cx, camZ) {
+    if (!ready(ceiling)) return;
+    var gw = ceiling.width, gh = ceiling.height, toEnd = C_END - camZ;
+    if (toEnd < 0.05) return;
+    var yEdge = horizon - CEIL * unit / toEnd, step = 3;
+    for (var y = 0; y < Math.min(yEdge, horizon - 2); y += step) {
+      var dz = CEIL * unit / (horizon - (y + step * 0.5)), z = dz + camZ, sc = unit / dz * 1.15;
+      var v = (((z % 4) + 4) % 4) / 4, sy = Math.min(gh - 3, v * gh), sh = Math.max(1, gh * 0.006);
+      c.globalAlpha = 1 - smooth(C_END - 0.7, C_END, z);
+      var w = 12 * sc, x0 = cx - 6 * sc;
+      x0 -= Math.ceil(x0 / w) * w;
+      for (var x = x0; x < VW; x += w) c.drawImage(ceiling, 0, sy, gw, sh, x, y, w + 1, step + 0.7);
+    }
     c.globalAlpha = 1;
   }
   var lastWater = 0;
@@ -523,7 +548,7 @@
     while (steps.length || queue.length) { if (steps.length) steps.shift()(); else pump(5000); }
     window.__klimtExport = {
       trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.86), crown: sp.crown.toDataURL("image/webp", 0.86), TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, seed: sp.seed, kind: sp.kind }; }),
-      ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.86), canopy: canopy.toDataURL("image/webp", 0.84),
+      ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.86), ceiling: ceiling.toDataURL("image/webp", 0.84),
       valley: vista.img.toDataURL("image/webp", 0.84),
       glints: []
     };
