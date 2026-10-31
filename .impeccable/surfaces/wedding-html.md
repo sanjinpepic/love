@@ -15,12 +15,12 @@ Content truth: Friday 27 August 2027, Järvsö. Venue, times, accommodation, dre
 
 THESIS: The guest walks from the painted garden into a book of Larsson-style vignettes: each section is text on paper beside a small watercolour. Refuses the card grid and the generic wedding template.
 
-OWN-WORLD: same as the Save the Date — paper, pale washes, ink lines, chair red, Klimt gold accents; RSVP on the pale pink of the garden path, the form on a paper card with a thin gold rule; a painted meadow closes the page.
+OWN-WORLD: same as the Save the Date — paper, pale washes, ink lines, chair red; text-only sections on paper with one painted vignette (the two chairs); RSVP on the pale pink of the garden path, the form on a paper card with a thin rule and a quiet underlined send link; a sparse painted meadow closes the page.
 
-STORY: welcome (peony vignette) → the day (two chairs vignette, preliminary schedule) → getting to Järvsö (railway line) → stay (red farmhouse vignette) → RSVP → close.
+STORY: welcome → the day (two chairs vignette, preliminary schedule) → getting to Järvsö (railway line, three short paragraphs) → stay → RSVP → close.
 
-FIRST VIEWPORT: the pop-up painting with nav and language in the sky, names/date lettered, RSVP button, scroll cue.
+FIRST VIEWPORT: the pop-up painting with nav and language in the sky, names/date/place lettered; no buttons.
 
-FORM: pinned by the couple; seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: the pop-up stage; sections rise gently into view; the RSVP thank-you letters in gold in the guest's language.
+FORM: pinned by the couple; seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: the pop-up stage; sections rise gently into view; the RSVP thank-you appears in the guest's language.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

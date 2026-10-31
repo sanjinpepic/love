@@ -40,11 +40,6 @@ const onlyLayer = process.argv[3];
         process.stdout.write(`${file} `);
       }
     }
-    const sp = sun(L.sun[2]);
-    await page.setViewportSize({ width: sp.W, height: sp.H });
-    await page.setContent(`<html><body style="margin:0;background:transparent">${sp.svg}</body></html>`);
-    await page.screenshot({ path: path.join(OUT, `${name}-sun.png`), omitBackground: true, clip: { x: 0, y: 0, width: sp.W, height: sp.H } });
-    manifest[name].sun = { file: `${name}-sun.png`, x: L.sun[0], y: L.sun[1], w: sp.W };
     await page.close();
   }
   if (!only) {

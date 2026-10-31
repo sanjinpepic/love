@@ -1,11 +1,19 @@
 # Sanjin & Alma — 27 August 2027, Järvsö
 
-Two pages, one painting:
+Two versions of the same two pages (Save the Date + wedding page), sharing the
+words, the language switch and the RSVP:
+
+| Version | Save the Date | Wedding page | Look |
+|---|---|---|---|
+| Larsson | `/` | `/wedding.html` | a watercolour garden by the Ljusnan, paper layers that fold up like a pop-up book |
+| Klimt | `/klimt/` | `/klimt/wedding.html` | a square painting of small dabs, after Klimt's *Litzlberg* and *Pear Tree*, labelled like a museum print |
+
+The Larsson pages:
 
 - **`index.html`**: the Save the Date. The page is a watercolour of a garden by
   the Ljusnan in Järvsö, built from paper layers that fold up like a pop-up
-  book and drift with depth as you move. Includes an *Add to calendar* button
-  (`.ics` file, plus a Google Calendar link).
+  book and drift with depth as you move. One quiet *Add to calendar* link
+  (an `.ics` file that Apple, Google and Outlook calendars all open).
 - **`wedding.html`**: the wedding page. The same painted opening, then the day,
   getting to Järvsö, where to stay, and an **RSVP form that saves to SQLite**.
 
@@ -17,8 +25,8 @@ English, Swedish and Bosnian throughout (switch at the top right).
 ADMIN_PASSWORD=choose-a-password python3 server/server.py
 ```
 
-- Save the Date: <http://localhost:8000/>
-- Wedding page: <http://localhost:8000/wedding.html>
+- Save the Date: <http://localhost:8000/> (Klimt: <http://localhost:8000/klimt/>)
+- Wedding page: <http://localhost:8000/wedding.html> (Klimt: <http://localhost:8000/klimt/wedding.html>)
 - RSVPs: <http://localhost:8000/admin>. The username can be anything; the
   password is `ADMIN_PASSWORD`. There's a CSV download there too.
 
@@ -61,7 +69,7 @@ lives in `tools/paint/`:
   ink wobble, gold leaf, cut-paper edges)
 - `scene.js`: the things in the picture (Järvsöklack, the church, the river,
   the white fence and gate, birches, two red chairs, peonies, poppies,
-  globeflowers, Klimt's mosaic meadow and the gold sun)
+  globeflowers)
 - `compose.js`: the composition for wide and tall screens, split into layers
 - `render.js` → `publish.py`: rasterise to WebP in `assets/paint/` and write
   `assets/js/scene-data.js`
@@ -71,6 +79,14 @@ node tools/paint/render.js && python3 tools/paint/publish.py
 ```
 
 (Needs Playwright with Chromium, and Pillow.)
+
+## The Klimt paintings
+
+`assets/js/klimt.js` paints both Klimt squares live in the browser: thousands
+of small, seeded dabs, laid down one by one when the page opens, with the
+river reflection drifting afterwards. Scenes are plain data in that file
+(`jarvso`: Järvsöklack across the river; `orchard`: a late-summer orchard
+with a birch), so no images are downloaded for them.
 
 ## Tests
 

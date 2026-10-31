@@ -52,15 +52,6 @@
     b.addEventListener("click", function () { lang = b.dataset.lang; store("lang", lang); apply(lang); });
   });
 
-  // Google Calendar link
-  var g = window.WEDDING.google, gl = document.querySelector("[data-google-cal]");
-  if (gl) {
-    gl.href = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-      "&text=" + encodeURIComponent(g.text) + "&dates=" + g.dates +
-      "&location=" + encodeURIComponent(g.location) +
-      "&details=" + encodeURIComponent(g.details + " " + location.origin + location.pathname.replace(/[^/]*$/, "") + "wedding.html");
-  }
-
   // Words settle once the paper has folded up (or straight away without motion).
   var settles = [].slice.call(document.querySelectorAll(".settle"));
   var settled = false;

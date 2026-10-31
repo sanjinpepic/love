@@ -347,3 +347,23 @@ legend { padding: 0; margin-bottom: .55rem; }
 @media (min-aspect-ratio: 4/5) and (min-width: 900px) {
   .names { white-space: nowrap; }
 }
+
+/* quiet links in place of buttons */
+.quiet-links { display: flex; flex-wrap: wrap; align-items: baseline; gap: .4rem 1.6rem; margin: clamp(1.1rem, 3vh, 1.8rem) 0 0; font-size: 1.05rem; }
+.quiet-links a { min-height: 44px; display: inline-flex; align-items: center; gap: .35rem; text-decoration-color: color-mix(in srgb, var(--falu) 70%, transparent); text-decoration-thickness: 1.5px; text-underline-offset: .3em; }
+.quiet-links a:hover { color: var(--falu); }
+@media (max-aspect-ratio: 4/5) { .quiet-links { justify-content: center; } }
+.send { font: 500 1.08rem/1.2 var(--font-text); color: var(--ink); background: none; border: 0; padding: .6rem 0; min-height: 44px; cursor: pointer;
+  text-decoration: underline; text-decoration-color: var(--falu); text-decoration-thickness: 1.5px; text-underline-offset: .32em; transition: color .3s; }
+.send:hover { color: var(--falu); }
+.send[disabled] { opacity: .6; cursor: progress; }
+.narrow { max-width: 38rem; margin: 0 auto; }
+.room .narrow p { max-width: none; }
+.stage-top { justify-content: flex-end; }
+body[data-page="wed"] .stage-top { justify-content: flex-end; }
+.close .date-letter { margin-top: 0; }
+.way h3 { display: block; }
+.choice span { border: 0; padding: .35rem 0; font-weight: 400; font-style: italic; }
+.choice input:checked + span { background: none; color: var(--ink); }
+.choice input:checked + span::before { background: var(--leaf-deep); border-color: var(--leaf-deep); box-shadow: inset 0 0 0 2.5px #fbf8f1; }
+.choices { gap: .4rem 1.8rem; }

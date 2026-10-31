@@ -18,7 +18,6 @@ for k, L in m.items():
         continue
     for layer in L["layers"]: layer["file"] = conv(layer["file"], 80 if layer["id"] == "sky" else 70)
     for s in L["sprites"]: s["file"] = conv(s["file"])
-    L["sun"]["file"] = conv(L["sun"]["file"], 90)
 # a flattened poster per layout: shown at once while the layers load
 for k, L in m.items():
     if k == "vignettes": continue

@@ -41,17 +41,6 @@
       track(img, ly.id === "sky" || ly.id === "hills");
       box.appendChild(img);
       parts.push({ node: img, depth: DEPTH[ly.id] });
-      if (ly.id === "sky") {
-        var s = L.sun, sun = el("div", "sun");
-        sun.style.left = ((s.x - s.w / 2) / L.W * 100) + "%";
-        sun.style.top = ((s.y - s.w / 2) / L.H * 100) + "%";
-        sun.style.width = (s.w / L.W * 100) + "%";
-        var simg = el("img", "", { src: BASE + s.file, alt: "", draggable: "false" });
-        track(simg);
-        sun.appendChild(simg);
-        box.appendChild(sun);
-        parts.push({ node: sun, depth: DEPTH.sun });
-      }
     });
     var sprites = el("div", "sprites pop");
     sprites.style.setProperty("--pop-delay", (0.18 * order) + "s");

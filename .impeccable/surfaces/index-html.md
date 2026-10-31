@@ -15,12 +15,12 @@ Content: Sanjin & Alma, Friday 27 August 2027, Järvsö, Hälsingland. Invitatio
 
 THESIS: The page is one watercolour in Carl Larsson's manner — Järvsö in late summer, seen from a garden by the Ljusnan — built as a pop-up book of paper layers. Calm, simple, grand. Refuses the framed-gallery page, the ivory card with a script font, and the photo hero with centred names.
 
-OWN-WORLD: bare watercolour paper and pale washes; ink contour lines with colour slightly off the line; a near-white sky; Järvsöklack and the white church soft across the water; white picket fence with an arched gate; two red chairs (the wedding, unspoken); peonies, red poppies, globeflowers. Klimt: a gold-leaf sun that turns, gold-leaf ampersand, mosaic flower dots in the meadow. Della Respira for names/numerals, Alegreya for words; chair-red primary action.
+OWN-WORLD: bare watercolour paper and pale washes; ink contour lines with colour slightly off the line; a near-white sky; Järvsöklack and the white church soft across the water; white picket fence with an arched gate; two red chairs (the wedding, unspoken); a few peonies, red poppies, globeflowers. Minimal: few elements, lots of paper. Della Respira for names/numerals, Alegreya for words. No buttons: two quiet underlined text links (Add to calendar, The wedding page).
 
-STORY: names, date and place lettered into open sky → Add to calendar → wedding page.
+STORY: names, "are getting married", date and place lettered into open sky → Add to calendar · The wedding page.
 
 FIRST VIEWPORT: full-bleed painting; words top-left in the unpainted sky (desktop) or centred at the top (phone); land below the words; flowers at the bottom edge.
 
-FORM: pinned by the couple (Larsson + Klimt, Järvsö, calm and grand); seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: paper layers fold up from the page back to front (pop-up book), then drift with depth on pointer/scroll; flowers sway; birds cross; the sun turns. Reduced motion: still painting.
+FORM: pinned by the couple (Larsson, Järvsö, calm, simple and grand; Klimt now has its own version under /klimt/); seed:ebf211c301f16672 (rolled for the record; the couple pinned the direction, which beats the roll). Signature interaction: paper layers fold up from the page back to front (pop-up book), then drift with depth on pointer/scroll; flowers sway; one bird crosses. Reduced motion: still painting.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

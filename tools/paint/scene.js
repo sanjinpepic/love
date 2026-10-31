@@ -92,7 +92,7 @@ function klack(L) {
   s += washOff(blob(x + w * 0.02, y + h * 0.12, w * 0.12, h * 0.08), C.rock, 0.65, "wc", 4);
   // tree texture
   const top = (xx) => { const t = (xx - (x - w * 0.55)) / (w * 1.15); return y + h * Math.pow(Math.abs(t - 0.5) * 2, 1.6) * 0.95; };
-  s += conifers(x - w * 0.45, x + w * 0.5, top, h * 0.05, 260, C.klackDark);
+  s += conifers(x - w * 0.45, x + w * 0.5, top, h * 0.05, 70, C.klackDark);
   s += ink(smooth(pts.slice(1, -1), false), 1.5, C.ink, 0.55);
   // lookout tower
   s += ink(line([[x + w * 0.03, y + 2], [x + w * 0.03, y - h * 0.08]]), 1.6, C.ink, 0.8);
@@ -233,7 +233,7 @@ function birch(x, yBase, h, lean = 0, spread = 1) {
     s += ink(smooth([[sx, sy], [sx + dir * len * 0.3, sy - len * 0.1], [sx + dir * len * 0.55, sy + len * 0.3], [sx + dir * len * 0.62, sy + len * 0.85]], false), 0.8, C.ink, 0.55);
   }
   // loop scribbles over the crown
-  for (let i = 0; i < 34; i++) {
+  for (let i = 0; i < 12; i++) {
     const [lx, ly] = inCrown();
     s += ink(loops(lx, ly, lx + rr(40, 90) * h / 900, ly + rr(-10, 25), rr(3.5, 5.5) * h / 900), 0.8, C.ink, 0.5);
   }
@@ -525,9 +525,9 @@ function gardenBed(x0, x1, yTop, yBot, opts = {}) {
   let s = "";
   const W = x1 - x0;
   s += wash(blob((x0 + x1) / 2, (yTop + yBot) / 2 + 40, W * 0.55, (yBot - yTop) * 0.55, 14, 0.18), "#9fb86a", 0.55);
-  for (let i = 0; i < 26; i++) s += washOff(blob(rr(x0, x1), rr(yTop + 60, yBot), rr(60, 140), rr(40, 90), 9, 0.3), pick(["#a8bf6c", "#86a24f", "#c3cf7f", "#6f8f45"]), rr(0.35, 0.6), "wc", 8);
+  for (let i = 0; i < 9; i++) s += washOff(blob(rr(x0, x1), rr(yTop + 60, yBot), rr(80, 160), rr(50, 100), 9, 0.3), pick(["#a8bf6c", "#86a24f", "#c3cf7f", "#6f8f45"]), rr(0.35, 0.6), "wc", 8);
   for (let i = 0; i < (opts.leaves || 60); i++) s += lobedLeaf(rr(x0, x1), rr(yTop + 40, yBot), rr(50, 110), rr(-170, -10), pick(["#7d9a52", "#93ad5a", "#a3b862", "#6a8a44"]));
-  for (let i = 0; i < 22; i++) { const lx = rr(x0, x1 - 80), ly = rr(yTop + 50, yBot - 20); s += ink(loops(lx, ly, lx + rr(50, 120), ly + rr(-25, 25), rr(5, 8)), 0.9, C.ink, 0.5); }
+  for (let i = 0; i < 6; i++) { const lx = rr(x0, x1 - 80), ly = rr(yTop + 50, yBot - 20); s += ink(loops(lx, ly, lx + rr(50, 120), ly + rr(-25, 25), rr(5, 8)), 0.9, C.ink, 0.5); }
   // tall stems first, then blooms
   (opts.poppies || []).forEach(([px, py, r, h]) => {
     s += stem(px + rr(-20, 20), py + h, px, py, rr(-25, 25), 2);

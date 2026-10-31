@@ -5,17 +5,15 @@ window.WEDDING = {
   // If the pages are hosted elsewhere, set this to the full URL of the server, e.g.
   // "https://rsvp.example.com/api/rsvp", and set ALLOWED_ORIGIN on the server.
   rsvpEndpoint: "/api/rsvp",
-  icsPath: "assets/sanjin-alma-2027-08-27.ics",
-  google: {
-    text: "Sanjin & Alma — wedding / bröllop / vjenčanje",
-    dates: "20270827/20270828",
-    location: "Järvsö, Sweden",
-    details: "Save the date — invitation to follow."
-  }
+  icsPath: "assets/sanjin-alma-2027-08-27.ics"
 };
 
 window.I18N = {
   en: {
+    "k.credits": "Painted for Sanjin & Alma, after Gustav Klimt.",
+    "k.alt": "A painting in small dabs of colour, after Klimt: the forested hill of Järvsöklack fills the square, crossed by a pale hay meadow; white and red farms and the white church stand along the shore, reflected in the river Ljusnan.",
+    "k.orchard": "A painting in small dabs of colour, after Klimt: an orchard in late summer, a birch among the trunks, small pears in the leaves.",
+    "k.year": "Friday 27 August 2027",
     "meta.std.title": "Save the date · Sanjin & Alma",
     "meta.wed.title": "Sanjin & Alma · 27 August 2027 · Järvsö",
     "skip": "Skip to content",
@@ -25,10 +23,9 @@ window.I18N = {
     "std.weekday": "Friday · Järvsö, Hälsingland",
     "std.save": "Please save the date — the invitation will follow.",
     "cta.calendar": "Add to calendar",
-    "cta.google": "or Google Calendar",
-    "cta.wedding": "Visit the wedding page",
+    "cta.wedding": "The wedding page",
 
-    "scene.alt": "A watercolour of a garden in Järvsö in late summer: peonies, poppies and buttercups in the foreground, two red chairs side by side on a pale path, a white fence along the river Ljusnan, and across the water the church and the green hill of Järvsöklack under a gold sun.",
+    "scene.alt": "A watercolour of a garden in Järvsö in late summer: peonies, poppies and buttercups in the foreground, two red chairs side by side on a pale path, a white fence along the river Ljusnan, and across the water the church and the green hill of Järvsöklack.",
     "cue": "Scroll down",
     "vig.peony": "Peonies, poppies and buttercups, painted in watercolour.",
     "vig.chairs": "Two red chairs side by side, a bouquet left on one of them.",
@@ -96,10 +93,14 @@ window.I18N = {
     "thanks.again": "Send another answer",
 
     "close.back": "Back to the Save the Date",
-    "close.credits": "Painted for Sanjin & Alma, after Carl Larsson — with a little of Klimt’s gold."
+    "close.credits": "Painted for Sanjin & Alma, after Carl Larsson."
   },
 
   sv: {
+    "k.credits": "Målat för Sanjin & Alma, efter Gustav Klimt.",
+    "k.alt": "En målning i små penseldrag, efter Klimt: Järvsöklackens skogklädda sluttning fyller kvadraten, korsad av en ljus slåtteräng; vita och röda gårdar och den vita kyrkan står längs stranden och speglas i Ljusnan.",
+    "k.orchard": "En målning i små penseldrag, efter Klimt: en fruktträdgård på sensommaren, en björk bland stammarna, små päron bland bladen.",
+    "k.year": "Fredag 27 augusti 2027",
     "meta.std.title": "Spara datumet · Sanjin & Alma",
     "meta.wed.title": "Sanjin & Alma · 27 augusti 2027 · Järvsö",
     "skip": "Hoppa till innehållet",
@@ -109,10 +110,9 @@ window.I18N = {
     "std.weekday": "Fredag · Järvsö, Hälsingland",
     "std.save": "Spara datumet — inbjudan kommer senare.",
     "cta.calendar": "Lägg till i kalendern",
-    "cta.google": "eller Google Kalender",
-    "cta.wedding": "Till bröllopssidan",
+    "cta.wedding": "Bröllopssidan",
 
-    "scene.alt": "En akvarell av en trädgård i Järvsö på sensommaren: pioner, vallmo och smörblommor i förgrunden, två röda stolar sida vid sida på en ljus gång, ett vitt staket längs Ljusnan och på andra sidan vattnet kyrkan och Järvsöklacken under en sol av guld.",
+    "scene.alt": "En akvarell av en trädgård i Järvsö på sensommaren: pioner, vallmo och smörblommor i förgrunden, två röda stolar sida vid sida på en ljus gång, ett vitt staket längs Ljusnan och på andra sidan vattnet kyrkan och Järvsöklacken.",
     "cue": "Skrolla ner",
     "vig.peony": "Pioner, vallmo och smörblommor i akvarell.",
     "vig.chairs": "Två röda stolar sida vid sida, en bukett kvarlämnad på den ena.",
@@ -180,10 +180,14 @@ window.I18N = {
     "thanks.again": "Skicka ett nytt svar",
 
     "close.back": "Tillbaka till Spara datumet",
-    "close.credits": "Målat för Sanjin & Alma, efter Carl Larsson — med lite av Klimts guld."
+    "close.credits": "Målat för Sanjin & Alma, efter Carl Larsson."
   },
 
   bs: {
+    "k.credits": "Naslikano za Sanjina i Almu, po uzoru na Gustava Klimta.",
+    "k.alt": "Slika u sitnim potezima boje, po uzoru na Klimta: šumovita padina brda Järvsöklack ispunjava kvadrat, presječena svijetlom livadom; bijele i crvene kuće i bijela crkva stoje uz obalu i ogledaju se u rijeci Ljusnan.",
+    "k.orchard": "Slika u sitnim potezima boje, po uzoru na Klimta: voćnjak krajem ljeta, breza među stablima, sitne kruške u lišću.",
+    "k.year": "Petak, 27. august 2027.",
     "meta.std.title": "Sačuvajte datum · Sanjin & Alma",
     "meta.wed.title": "Sanjin & Alma · 27. august 2027. · Järvsö",
     "skip": "Preskoči na sadržaj",
@@ -193,10 +197,9 @@ window.I18N = {
     "std.weekday": "Petak · Järvsö, Hälsingland",
     "std.save": "Sačuvajte datum — pozivnica slijedi.",
     "cta.calendar": "Dodaj u kalendar",
-    "cta.google": "ili Google kalendar",
-    "cta.wedding": "Posjetite stranicu vjenčanja",
+    "cta.wedding": "Stranica vjenčanja",
 
-    "scene.alt": "Akvarel vrta u Järvsöu krajem ljeta: božuri, makovi i ljutići u prvom planu, dvije crvene stolice jedna do druge na svijetloj stazi, bijela ograda uz rijeku Ljusnan, a preko vode crkva i zeleno brdo Järvsöklack pod zlatnim suncem.",
+    "scene.alt": "Akvarel vrta u Järvsöu krajem ljeta: božuri, makovi i ljutići u prvom planu, dvije crvene stolice jedna do druge na svijetloj stazi, bijela ograda uz rijeku Ljusnan, a preko vode crkva i zeleno brdo Järvsöklack.",
     "cue": "Skrolajte dolje",
     "vig.peony": "Božuri, makovi i ljutići naslikani akvarelom.",
     "vig.chairs": "Dvije crvene stolice jedna do druge, na jednoj ostavljen buket.",
@@ -264,6 +267,6 @@ window.I18N = {
     "thanks.again": "Pošalji novi odgovor",
 
     "close.back": "Nazad na Sačuvajte datum",
-    "close.credits": "Naslikano za Sanjina i Almu, po uzoru na Carla Larssona — uz malo Klimtovog zlata."
+    "close.credits": "Naslikano za Sanjina i Almu, po uzoru na Carla Larssona."
   }
 };
