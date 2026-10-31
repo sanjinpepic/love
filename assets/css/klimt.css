@@ -177,3 +177,18 @@ legend { padding: 0; margin-bottom: .6rem; }
 /* the names stand in a pool of light between the trunks */
 .journey-intro::before { content: ""; position: absolute; z-index: -1; inset: -70% -30%; background: radial-gradient(closest-side, rgb(252 249 232 / .92), rgb(248 244 222 / .6) 50%, transparent); filter: blur(4px); }
 .journey-intro .names { color: #22302a; }
+/* offered when the device asks for less motion */
+.journey-motion { position: absolute; z-index: 3; left: 50%; bottom: clamp(1rem, 3vh, 2rem); transform: translateX(-50%); font: .78rem/1 var(--caps); letter-spacing: .26em; text-transform: uppercase; color: var(--slate); background: none; border: 0; min-height: 44px; padding: 0 .4rem; cursor: pointer; text-decoration: underline; text-underline-offset: .6em; text-decoration-thickness: 1px; }
+.journey-motion:hover { color: var(--violet); }
+.journey-motion[hidden] { display: none; }
+/* lines that surface as you walk */
+.journey-lines { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.jl { position: absolute; left: 50%; top: 30%; margin: 0; opacity: 0; white-space: nowrap; font: 400 clamp(1rem, .8rem + .9vw, 1.55rem)/1.2 var(--caps); letter-spacing: .3em; text-transform: uppercase; color: #241d12; text-shadow: 0 0 14px rgb(255 248 222 / .95), 0 0 34px rgb(255 244 210 / .8); will-change: transform, opacity, filter; }
+.jl-big { top: 40%; font-size: clamp(2.6rem, 1.4rem + 5vw, 6rem); letter-spacing: .3em; color: #fbf9ee; text-shadow: 0 2px 30px rgb(30 50 30 / .45); }
+/* a thin rule that fills as you walk */
+.journey-rail { position: absolute; z-index: 3; right: clamp(.9rem, 2.4vw, 2rem); top: 50%; width: 1px; height: 22vh; transform: translateY(-50%); background: rgb(251 247 228 / .28); }
+.journey-rail span { position: absolute; inset: 0; background: #fbf7e4; transform-origin: top; transform: scaleY(0); }
+.journey-stage.is-paper .journey-rail { background: var(--line); }
+.journey-stage.is-paper .journey-rail span { background: var(--slate); }
+.journey.is-still .journey-lines, .journey.is-still .journey-rail { display: none; }
+@media (max-width: 600px) { .jl { white-space: normal; width: 86vw; text-align: center; } }

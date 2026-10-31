@@ -126,8 +126,13 @@
       function house(x0, x1, yb, h, wall, roof, roofH) {
         block(x0, x1, yb - h, yb, pal([[wall, 5], [wall === "#efeee6" ? "#ffffff" : "#c05a44", 1], ["#9a9a92", wall === "#efeee6" ? 0.6 : 0]]));
         fill(r, mid.dabs, function (x, y) { var t = (yb - h - y) / roofH; return y < yb - h + 0.002 && y > yb - h - roofH && x > x0 - 0.006 + t * (x1 - x0) * 0.12 && x < x1 + 0.006 - t * (x1 - x0) * 0.12; }, { size: s * 0.75, step: 0.42, palette: pal([[roof, 4], ["#6a6c78", 1.4], ["#383a46", 1]]), spread: 0.3, jit: 16, late: 0.13 });
-        var nw = (x1 - x0) > 0.1 ? 2 : 1;
-        for (var k = 0; k < nw; k++) mid.dabs.push([x0 + (x1 - x0) * (0.25 + k * 0.45 + (r() - 0.5) * 0.1), yb - h * (0.45 + r() * 0.15), s * (0.3 + r() * 0.15), s * (0.42 + r() * 0.15), (r() - 0.5) * 0.5, "rgb(52,56,66)", 0.95]);
+                // windows: small dark panes with a pale frame, never round
+        var nwin = Math.max(2, Math.round((x1 - x0) / 0.028));
+        for (var k = 0; k < nwin; k++) {
+          var wx = x0 + (x1 - x0) * ((k + 0.5) / nwin) + (r() - 0.5) * 0.004, wy = yb - h * 0.62, ww = 0.0075, wh = h * 0.34;
+          mid.shapes.push({ c: wall === "#efeee6" ? "#c9c6b8" : "#e8e2d4", p: [[wx - ww * 0.7, wy - wh * 0.12], [wx + ww * 0.7, wy - wh * 0.12], [wx + ww * 0.7, wy + wh * 1.08], [wx - ww * 0.7, wy + wh * 1.08]], late: true });
+          mid.shapes.push({ c: "#3e4658", p: [[wx - ww / 2, wy], [wx + ww / 2, wy], [wx + ww / 2, wy + wh], [wx - ww / 2, wy + wh]], late: true });
+        }
       }
       house(0.05, 0.22, shore - 0.008, 0.045, "#efeee6", "#5b5e6c", 0.03);
       house(0.26, 0.33, shore - 0.012, 0.035, "#a8402e", "#4a4c58", 0.026);
@@ -181,10 +186,13 @@
   // ——— painter ————————————————————————————————————————————————————————————
   function Painting(el) {
     this.el = el;
-    this.scene = SCENES[el.dataset.scene](0);
-    this.canvases = this.scene.layers.map(function (ly) {
+    var ids = { jarvso: ["hill", "village", "water"], orchard: ["canopy", "trunks"] }[el.dataset.scene];
+    var self = this;
+    // the scene is generated when it is first painted, not on page load
+    Object.defineProperty(this, "scene", { get: function () { return self._scene || (self._scene = SCENES[el.dataset.scene](0)); } });
+    this.canvases = ids.map(function (id) {
       var c = document.createElement("canvas");
-      c.className = "k-layer k-" + ly.id;
+      c.className = "k-layer k-" + id;
       c.setAttribute("aria-hidden", "true");
       el.appendChild(c);
       return c;
@@ -200,8 +208,9 @@
     this.canvases.forEach(function (c) { c.width = S; c.height = S; });
     return true;
   };
-  Painting.prototype.drawShapes = function (ctx, shapes, S) {
+  Painting.prototype.drawShapes = function (ctx, shapes, S, late) {
     shapes.forEach(function (sh) {
+      if (!!sh.late !== !!late) return;
       ctx.fillStyle = sh.c;
       ctx.beginPath();
       sh.p.forEach(function (p, i) { if (i) ctx.lineTo(p[0] * S, p[1] * S); else ctx.moveTo(p[0] * S, p[1] * S); });
@@ -220,7 +229,7 @@
     var ctxs = this.canvases.map(function (c) { var x = c.getContext("2d"); x.clearRect(0, 0, S, S); return x; });
     layers.forEach(function (ly, i) { self.drawShapes(ctxs[i], ly.shapes, S); });
     if (!ms) {
-      layers.forEach(function (ly, i) { ly.dabs.forEach(function (d) { self.drawDab(ctxs[i], d, S); }); });
+      layers.forEach(function (ly, i) { ly.dabs.forEach(function (d) { self.drawDab(ctxs[i], d, S); }); self.drawShapes(ctxs[i], ly.shapes, S, true); });
       if (done) done();
       return;
     }
@@ -231,7 +240,8 @@
     (function step(now) {
       var p = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - p, 2.2), until = Math.floor(e * all.length);
       for (; k < until; k++) self.drawDab(ctxs[all[k][1]], all[k][0], S);
-      if (p < 1) requestAnimationFrame(step); else if (done) done();
+      if (p < 1) requestAnimationFrame(step);
+      else { layers.forEach(function (ly, i) { self.drawShapes(ctxs[i], ly.shapes, S, true); }); if (done) done(); }
     })(t0);
   };
   // The river keeps moving: its dabs drift on a slow sine.

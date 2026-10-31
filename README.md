@@ -90,6 +90,24 @@ node tools/paint/render.js && python3 tools/paint/publish.py
 
 (Needs Playwright with Chromium, and Pillow.)
 
+## The Klimt walk and its assets
+
+The Klimt pages open with a walk through a birch forest (`assets/js/journey.js`).
+The trees, the deep wood and the valley are **painted once, offline**, with a
+fuller brush than a browser could afford, and saved in `assets/klimt/`. The site
+only places and moves those images, so it is light and looks the same everywhere.
+To repaint them after changing the painting code:
+
+```bash
+PORT=8077 python3 server/server.py &
+node tools/klimt/export.js http://localhost:8077
+```
+
+If an image ever fails to load, that piece is painted live instead.
+
+Devices set to reduce motion get the still print plus a quiet "Walk through the
+forest" link that turns the walk on.
+
 ## The Klimt paintings
 
 `assets/js/klimt.js` paints both Klimt squares live in the browser: thousands

@@ -10,6 +10,10 @@ window.WEDDING = {
 
 window.I18N = {
   en: {
+    "k.l1": "Hälsingland, late August",
+    "k.l2": "A path through the birches",
+    "k.l3": "Järvsö dal",
+    "k.motion": "Walk through the forest",
     "k.cue": "Scroll to walk through the forest",
     "k.journey": "A walk through a birch forest painted in small dabs of colour, after Klimt; the trees move in the wind, and as you scroll the wood opens onto Järvsö dal.",
     "k.credits": "Painted for Sanjin & Alma, after Gustav Klimt.",
@@ -99,6 +103,10 @@ window.I18N = {
   },
 
   sv: {
+    "k.l1": "Hälsingland, sensommar",
+    "k.l2": "En stig genom björkarna",
+    "k.l3": "Järvsö dal",
+    "k.motion": "Gå genom skogen",
     "k.cue": "Skrolla för att gå genom skogen",
     "k.journey": "En promenad genom en björkskog målad i små penseldrag, efter Klimt; träden rör sig i vinden, och när du skrollar öppnar sig skogen mot Järvsö dal.",
     "k.credits": "Målat för Sanjin & Alma, efter Gustav Klimt.",
@@ -188,6 +196,10 @@ window.I18N = {
   },
 
   bs: {
+    "k.l1": "Hälsingland, kraj augusta",
+    "k.l2": "Staza kroz breze",
+    "k.l3": "Dolina Järvsö",
+    "k.motion": "Prošetajte kroz šumu",
     "k.cue": "Skrolajte da prošetate kroz šumu",
     "k.journey": "Šetnja kroz brezovu šumu naslikanu sitnim potezima boje, po uzoru na Klimta; drveće se njiše na vjetru, a dok skrolate, šuma se otvara prema dolini Järvsö.",
     "k.credits": "Naslikano za Sanjina i Almu, po uzoru na Gustava Klimta.",
