@@ -461,7 +461,9 @@
     var opening = smooth(0.04, 0.42, p);
     if (opening < 1) {
       if (!wood) wood = deepWood(960, 600);
-      var ws = lerp(1.15, 2.4, opening), ww = VW * ws, wh = VH * ws, wvy = horizon - VH * 0.05;
+      // always larger than the screen, so its edges are never seen
+      var wvy = horizon - VH * 0.05, ws = lerp(1, 2.2, opening);
+      var ww = Math.max(VW * 1.3, 2 * Math.max(cx, VW - cx) + 40) * ws, wh = Math.max(VH * 1.3, 2 * Math.max(wvy, VH - wvy) + 40) * ws;
       c.globalAlpha = 1 - opening;
       c.drawImage(wood, cx - ww / 2, wvy - wh / 2, ww, wh);
       c.globalAlpha = 1;
@@ -510,7 +512,17 @@
     // words: the names in the light at the start, the label at the end
     if (intro) { var io = 1 - smooth(0.02, 0.16, p); intro.style.opacity = io.toFixed(3); intro.style.visibility = io < 0.01 ? "hidden" : "visible"; }
     if (cue) cue.style.opacity = (1 - smooth(0.0, 0.08, p)).toFixed(3);
-    if (label) { var lo = smooth(0.84, 0.98, p); label.style.opacity = lo.toFixed(3); label.style.transform = "translate3d(-50%," + ((1 - lo) * 18).toFixed(1) + "px,0)"; label.style.pointerEvents = lo > 0.5 ? "auto" : "none"; }
+    if (label) {
+      // at the end: the names first, then the rest, one after another
+      var lo = smooth(0.66, 0.8, p);
+      label.style.opacity = lo > 0 ? "1" : "0"; label.style.transform = "translate3d(-50%,0,0)";
+      for (var ci = 0; ci < label.children.length; ci++) {
+        var ch = label.children[ci], co = smooth(0.66 + ci * 0.035, 0.8 + ci * 0.035, p);
+        ch.style.opacity = co.toFixed(3);
+        ch.style.transform = "translate3d(0," + ((1 - co) * 14).toFixed(1) + "px,0)";
+      }
+      label.style.pointerEvents = lo > 0.5 ? "auto" : "none";
+    }
     // lines that surface and sink as you pass them
     for (var li = 0; li < lines.length; li++) {
       var L = lines[li], lt = clamp((p - L.a) / (L.b - L.a), 0, 1), lo2 = smooth(0, 0.3, lt) * (1 - smooth(0.7, 1, lt));
