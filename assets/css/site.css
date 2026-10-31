@@ -236,7 +236,7 @@ a:hover { text-decoration-color: currentColor; }
 .line-north { margin: clamp(2.5rem, 6vh, 4rem) 0; }
 .line-north ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, 1fr); position: relative; }
 .line-north ol::before { content: ""; position: absolute; left: calc(100% / 12); right: calc(100% / 12); top: 1.05rem; height: 7px;
-  background: linear-gradient(var(--ink), var(--ink)) top / 100% 1.5px no-repeat, linear-gradient(var(--ink), var(--ink)) bottom / 100% 1.5px no-repeat, repeating-linear-gradient(90deg, var(--ink-soft) 0 1.5px, transparent 1.5px 9px); opacity: .7; }
+  background: linear-gradient(var(--ink), var(--ink)) top / 100% 1px no-repeat, linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat; opacity: .6; }
 .line-north li { text-align: center; position: relative; padding-top: 2.6rem; font-size: .98rem; line-height: 1.25; }
 .line-north li::before { content: ""; position: absolute; left: 50%; top: .55rem; width: 1.15rem; height: 1.15rem; margin-left: -.575rem; border-radius: 50%; background: var(--paper); border: 2px solid var(--ink); }
 .line-north li.is-end::before { background: var(--falu); border-color: #8b2d22; width: 1.6rem; height: 1.6rem; margin-left: -.8rem; top: .32rem; box-shadow: 0 0 0 4px var(--paper), 0 0 0 5.5px var(--gold); }
@@ -319,7 +319,7 @@ legend { padding: 0; margin-bottom: .55rem; }
   .schedule li { grid-template-columns: 4.4rem 1fr; gap: 1rem; }
   .line-north ol { grid-template-columns: 1fr; }
   .line-north ol::before { left: 1.05rem; right: auto; top: 1.2rem; bottom: 1.6rem; width: 7px; height: auto;
-    background: linear-gradient(var(--ink), var(--ink)) left / 1.5px 100% no-repeat, linear-gradient(var(--ink), var(--ink)) right / 1.5px 100% no-repeat, repeating-linear-gradient(180deg, var(--ink-soft) 0 1.5px, transparent 1.5px 9px); }
+    background: linear-gradient(var(--ink), var(--ink)) left / 1px 100% no-repeat, linear-gradient(var(--ink), var(--ink)) right / 1px 100% no-repeat; }
   .line-north li { text-align: left; padding: .35rem 0 .9rem 3.2rem; }
   .line-north li::before { left: 1.4rem; top: .55rem; }
   .line-north li.is-end::before { top: .35rem; }

@@ -213,7 +213,7 @@ function birch(x, yBase, h, lean = 0, spread = 1) {
   const cx = x + lean * 0.8, cy = yBase - h * 0.72, cw = h * 0.26 * spread, ch = h * 0.4;
   const inCrown = () => { for (;;) { const u = rr(-1, 1), v = rr(-1, 1); if (u * u + v * v < 1) return [cx + u * cw, cy + v * ch]; } };
   for (let i = 0; i < 9; i++) { const [bx, by] = inCrown(); crown.push(wash(blob(bx, by, rr(50, 90) * h / 900, rr(40, 80) * h / 900, 10, 0.3), pick([C.leafLight, "#b9c97c", C.leafMid]), rr(0.75, 0.95), "wc")); }
-  for (let i = 0; i < 70; i++) {
+  for (let i = 0; i < 38; i++) {
     const [bx, by] = inCrown(), low = (by - cy) / ch;
     crown.push(washOff(blob(bx, by, rr(10, 22) * h / 900, rr(8, 16) * h / 900, 7, 0.35), low > 0.3 && rnd() < 0.3 ? C.leaf : pick([C.leafMid, "#a8bf6c", C.leafMid]), rr(0.5, 0.8), "wcfine", 3));
   }
@@ -233,7 +233,7 @@ function birch(x, yBase, h, lean = 0, spread = 1) {
     s += ink(smooth([[sx, sy], [sx + dir * len * 0.3, sy - len * 0.1], [sx + dir * len * 0.55, sy + len * 0.3], [sx + dir * len * 0.62, sy + len * 0.85]], false), 0.8, C.ink, 0.55);
   }
   // loop scribbles over the crown
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 6; i++) {
     const [lx, ly] = inCrown();
     s += ink(loops(lx, ly, lx + rr(40, 90) * h / 900, ly + rr(-10, 25), rr(3.5, 5.5) * h / 900), 0.8, C.ink, 0.5);
   }
@@ -545,9 +545,9 @@ function picketFence(x0, x1, yBase, h, gateAt) {
   const rail = (yy) => polyL([[x0, yy], [x1, yy], [x1, yy + h * 0.06], [x0, yy + h * 0.06]], 0.6);
   s += wash(rail(yBase - h * 0.78), G.picketShade, 0.9, "wcfine") + wash(rail(yBase - h * 0.3), G.picketShade, 0.9, "wcfine");
   const step = h * 0.17;
-  for (let x = x0; x < x1; x += step) {
+  for (let x = x0; x < x1; x += step * rr(0.85, 1.2)) {
     if (gateAt && Math.abs(x - gateAt) < h * 0.9) continue;
-    const big = Math.round((x - x0) / step) % 9 === 0, ph = big ? h * 1.12 : h, pw = big ? step * 0.7 : step * 0.42;
+    const big = rnd() < 0.08, ph = (big ? h * 1.12 : h) * rr(0.93, 1.05), pw = big ? step * 0.7 : step * rr(0.36, 0.48);
     const d = polyL([[x, yBase], [x, yBase - ph], [x + pw / 2, yBase - ph - pw * 0.4], [x + pw, yBase - ph], [x + pw, yBase]], 0.5);
     s += wash(d, G.picket, 1, "wcfine") + wash(polyL([[x + pw * 0.62, yBase], [x + pw * 0.62, yBase - ph], [x + pw, yBase - ph], [x + pw, yBase]], 0.3), G.picketShade, 0.7, "wcfine") + ink(d, 1, C.ink, 0.55);
   }

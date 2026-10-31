@@ -12,14 +12,14 @@ const LAYOUTS = {
   wide: {
     W: 2400, H: 1500,
     sun: [1300, 300, 52],
-    clouds: [[1750, 250, 520, 80]],
+    clouds: [],
     horizon: 880,
     klack: { x: 1660, y: 560, w: 980, h: 380 },
     ridges: [[0, 2400, 790, 940, "#c3d0cf", 5, 40], [0, 1400, 830, 940, "#b4c4c2", 4, 30]],
     church: { x: 1260, y: 922, s: 0.62 },
     farmsFar: [[2200, 916, 44]],
     river: [935, 1040],
-    fence: { y: 1120, h: 105, gate: 1180 },
+    fence: { y: 1120, h: 105, gate: 1180, x0: 760, x1: 1960 },
     birch: [2190, 1270, 1000, -40, 0.8],
     bush: null,
     tree: null,
@@ -34,14 +34,14 @@ const LAYOUTS = {
   tall: {
     W: 1200, H: 2400,
     sun: [1050, 1310, 34],
-    clouds: [[350, 1150, 420, 70]],
+    clouds: [],
     horizon: 1440,
     klack: { x: 820, y: 1230, w: 640, h: 260 },
     ridges: [[0, 1200, 1350, 1500, "#c3d0cf", 3, 36], [0, 700, 1390, 1500, "#b4c4c2", 2, 26]],
     church: { x: 300, y: 1482, s: 0.52 },
     farmsFar: [],
     river: [1500, 1615],
-    fence: { y: 1700, h: 100, gate: 420 },
+    fence: { y: 1700, h: 100, gate: 420, x0: 110, x1: 980 },
     birch: [1080, 1950, 720, -30, 0.8],
     bush: null,
     tree: [180, 1420, 160, 170],
@@ -112,7 +112,7 @@ const layers = {
     B.seed(404);
     const { W, H } = L;
     let s = "";
-    s += S.picketFence(-40, W + 40, L.fence.y, L.fence.h, L.fence.gate);
+    s += S.picketFence(L.fence.x0, L.fence.x1, L.fence.y, L.fence.h, L.fence.gate);
     s += wash(`M-40 ${L.fence.y - 6}H${W + 40}V${H + 40}H-40Z`, "#c2cf86", 1);
     s += B.washOff(blob(W * 0.5, L.fence.y + 120, W * 0.6, 90, 12, 0.2), "#d3db98", 0.6, "wc", 8);
     s += wash(B.poly(L.path, 2, 60), G.path, 1);
