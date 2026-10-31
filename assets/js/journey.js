@@ -79,43 +79,61 @@
 
   // ——— the deep wood (after Birch Forest, with the gold of the portraits) ——————
   var glints = [];
-  function forestBackdrop(W, H) {
-    // after Klimt's Park (1910): a ceiling of tiny leaves over most of the picture,
-    // a row of trunks with white light between them, and a band of lawn
-    var r = K.rng(1910), n = K.noise2(K.rng(19)), c = off(W, H), x = c.getContext("2d"), list = [];
-    var g = x.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, "#1f5a4a"); g.addColorStop(0.5, "#3f8a62"); g.addColorStop(0.64, "#9fbf8a"); g.addColorStop(0.72, "#eef0e6"); g.addColorStop(0.82, "#e4ead8"); g.addColorStop(0.86, "#78c874"); g.addColorStop(1, "#3d996f");
-    x.fillStyle = g; x.fillRect(0, 0, W, H);
-    var a = W / H;
-    var put = function (px, py, size, col, ang, ratio, order) { list.push([px / a, py, size * (0.42 + r() * 0.36) / a, size * (0.42 + r() * 0.36) * (ratio || 0.48) / a, ang, K.jitter(col, r, 22), order]); };
-    // the white light far off between the trunks
-    for (var y = 0.66; y < 0.85; y += 0.006) for (var xx = a * 0.18; xx < a * 0.82; xx += 0.007) {
-      var edge = Math.abs(xx / a - 0.5) / 0.32;
-      if (r() < edge * edge) continue;
-      put(xx + (r() - 0.5) * 0.006, y, 0.012, r() < 0.8 ? "#eef0e6" : "#dfe6d6", (r() - 0.5) * 0.4, 0.6, 0.05 + r() * 0.1);
+  // Tileable textures in unit space; dabs near an edge are repeated on the other side.
+  function tile(list, d) {
+    list.push(d);
+    var e = 0.04;
+    for (var ox = -1; ox <= 1; ox++) for (var oy = -1; oy <= 1; oy++) {
+      if (!ox && !oy) continue;
+      if ((ox && Math.abs((ox < 0 ? 1 - d[0] : d[0])) > e) || (oy && Math.abs((oy < 0 ? 1 - d[1] : d[1])) > e)) continue;
+      list.push([d[0] - ox, d[1] - oy, d[2], d[3], d[4], d[5], d[6]]);
     }
-    // the far row of trunks, dark against the light
-    for (var t = 0; t < 52; t++) {
-      var tx = r() * a, w = 0.004 + r() * 0.009, top = 0.6 + r() * 0.06, base = 0.86 + r() * 0.02;
-      var bark = r() < 0.6 ? ["#4a3428", "#6a4a32"] : ["#5a5a3a", "#3a3a2a"];
-      for (var ty = top; ty < base; ty += 0.004) {
-        put(tx - w * 0.25 + (r() - 0.5) * w * 0.3, ty, 0.009, bark[0], 1.57 + (r() - 0.5) * 0.3, 0.55, 0.2 + r() * 0.2);
-        put(tx + w * 0.25 + (r() - 0.5) * w * 0.3, ty, 0.009, bark[1], 1.57 + (r() - 0.5) * 0.3, 0.55, 0.2 + r() * 0.2);
-      }
+  }
+  // The forest floor: moss, fallen leaves, a little violet shade. World x period 12, z period 4.
+  function groundTile(W, H) {
+    var r = K.rng(4410), n = K.noise2(K.rng(441)), c = off(W, H), x = c.getContext("2d"), list = [];
+    x.fillStyle = "#35603f"; x.fillRect(0, 0, W, H);
+    var moss = K.pal([["#2f5a3a", 3], ["#3f6e42", 3], ["#4f7a3e", 2.4], ["#5f8a46", 1.6], ["#24483a", 1.6], ["#5a5c9e", 0.6]]);
+    var fallen = K.pal([["#a8964a", 2], ["#c2a85a", 1.4], ["#6a7a3a", 2.4], ["#8a7a42", 1.4], ["#5a4a32", 1], ["#b9d27a", 0.8]]);
+    for (var i = 0; i < 26000; i++) {
+      var u = r(), v = r(), m = n(u * 8, v * 5), leaf = m > 0.58 || r() < 0.12;
+      var size = 0.004 + r() * 0.005;
+      tile(list, [u, v, size, size * (0.4 + r() * 0.25), (r() - 0.5) * 1.2, K.jitter(K.pick(leaf ? fallen : moss, r, 0), r, 22), r()]);
     }
-    // the canopy: tiny leaves, lighter toward the middle, a few grey flecks of sky
-    var leaves = K.P.leaf;
-    var cs = 0.0075;
-    for (y = -0.02; y < 0.74; y += cs * 0.38) for (xx = -0.02; xx < a + 0.02; xx += cs * 0.46) {
-      var px = xx + (r() - 0.5) * cs, py = y + (r() - 0.5) * cs;
-      var light = Math.max(0, 1 - Math.hypot((px / a - 0.52) * 1.6, (py - 0.28) * 1.8));
-      var bottom = py > 0.6 ? (py - 0.6) / 0.14 : 0;          // the canopy thins above the trunk row
-      if (r() < bottom * 0.9) continue;
-      put(px, py, cs * (1 + r() * 0.6), K.pick(leaves, r, Math.max(0, (n(px * 6, py * 6) - 0.45) * 2.2 - light * 1.2)), (r() - 0.5) * 2.8, 0.55, 0.3 + r() * 0.7);
+    for (i = 0; i < 260; i++) { // small white and violet flowers in the moss
+      var fu = r(), fv = r(), fs = 0.0016 + r() * 0.0014;
+      tile(list, [fu, fv, fs, fs, 0, r() < 0.7 ? "#eef0e6" : "#8a8cc8", 1]);
     }
-    // lawn
-    var lawn = K.P.meadow;
-    for (y = 0.85; y < 1.02; y += 0.005) for (xx = -0.02; xx < a + 0.02; xx += 0.008) put(xx + (r() - 0.5) * 0.006, y, 0.012 + (y - 0.85) * 0.03, K.pick(lawn, r, 0), (r() - 0.5) * 0.25, 0.4, 0.3 + r() * 0.6);
+    enqueue(c, list, W, H, true);
+    return c;
+  }
+  // The path: pale trodden earth with moss at its edges. World x width 1.4, z period 4.
+  function pathTile(W, H) {
+    var r = K.rng(5120), c = off(W, H), list = [];
+    var earth = K.pal([["#c9c09a", 3], ["#b8b088", 3], ["#a89e78", 2], ["#d6cfae", 1.2], ["#8f8a66", 1]]);
+    for (var i = 0; i < 9000; i++) {
+      var u = r(), v = r(), edge = Math.abs(u - 0.5) * 2;
+      if (r() < Math.pow(edge, 3)) continue;
+      var col = edge > 0.7 && r() < 0.6 ? K.pick(K.pal([["#4f7a3e", 2], ["#6a7a3a", 2], ["#a8964a", 1]]), r, 0) : K.pick(earth, r, 0);
+      var size = 0.02 + r() * 0.025;
+      tile(list, [u, v, size, size * (0.18 + r() * 0.12), (r() - 0.5) * 0.4, K.jitter(col, r, 16), r()]);
+    }
+    enqueue(c, list, W, H, true);
+    return c;
+  }
+  // The leaf ceiling, seen from below: dense at the top, opening into a ragged edge.
+  function canopyLayer(W, H) {
+    var r = K.rng(1911), n = K.noise2(K.rng(191)), c = off(W, H), list = [], a = W / H;
+    var leaves = K.P.leaf, dark = K.P.dark;
+    for (var y = -0.02; y < 1; y += 0.0045) for (var xx = -0.02; xx < a + 0.02; xx += 0.0055) {
+      var px = xx + (r() - 0.5) * 0.007, py = y + (r() - 0.5) * 0.006;
+      var edge = 0.62 + 0.18 * Math.sin(px * 3.1) + 0.1 * Math.sin(px * 9.7 + 1) + (n(px * 3, 1) - 0.5) * 0.3;
+      if (py > edge || r() < Math.pow(py / edge, 4) * 0.8) continue;
+      var deep = 1 - py / edge, sky = r() < 0.025 * (1 - deep);
+      var col = sky ? "#dfe8d6" : K.pick(deep > 0.5 ? dark : leaves, r, 0);
+      var size = 0.008 + r() * 0.008 + (1 - deep) * 0.004;
+      list.push([px / a, py, size / a, size * (0.45 + r() * 0.2) / a, (r() - 0.5) * 2.8, K.jitter(col, r, 22), r()]);
+    }
     enqueue(c, list, W, H, true);
     return c;
   }
@@ -130,6 +148,13 @@
     var bark = kind === "plane" ? null : kind === "pear" ? K.pal([["#7a6450", 4], ["#8c7660", 2], ["#5e4c3e", 2], ["#8a9a6a", 1]])
       : kind === "life" ? K.pal([["#8a6a3a", 3], ["#a77d27", 2], ["#6a5030", 2], ["#c9a043", 1]])
       : K.pal([["#eef2e8", 4], ["#d8e0d6", 3], ["#b9c9c0", 1.5], ["#8fa8a8", 1]]);
+    var tc0 = trunk.getContext("2d"), sil = [], silR = [];
+    for (var sy = TH * 0.1; sy <= TH; sy += 20) {
+      var st = (TH - sy) / TH, scx = base + lean * st + (n(sy / 90, seed) - 0.5) * 10, sw = w0 * (1 - st * 0.45) * 0.42;
+      sil.push([(scx - sw) * RES, sy * RES]); silR.unshift([(scx + sw) * RES, sy * RES]);
+    }
+    tc0.fillStyle = kind === "birch" ? "#d8e0d6" : kind === "plane" ? "#4f5e44" : "#6a5844";
+    tc0.beginPath(); sil.concat(silR).forEach(function (q, i) { if (i) tc0.lineTo(q[0], q[1]); else tc0.moveTo(q[0], q[1]); }); tc0.closePath(); tc0.fill();
     for (var y = TH * 0.1; y < TH; y += 4) {
       var t = (TH - y) / TH, cx = base + lean * t + (n(y / 90, seed) - 0.5) * 10, w = w0 * (1 - t * 0.45);
       for (var k = 0; k < 3; k++) {
@@ -209,7 +234,8 @@
   // ——— the world ——————————————————————————————————————————————————————————
   // the canvas renders at 1x: the brushwork is soft by nature and it keeps every frame light
   var dpr = EXPORT ? 1.5 : 1, VW = 0, VH = 0;
-  var backdrop, sprites = [], trees = [], motes = [], vista, slotRect = null;
+  var ground = null, path = null, canopy = null, sprites = [], trees = [], motes = [], vista;
+  var Z_END = 9.4; // where the wood ends at the riverbank
   function layout() {
     VW = stage.clientWidth; VH = stage.clientHeight;
     canvas.width = Math.round(VW * dpr); canvas.height = Math.round(VH * dpr);
@@ -222,10 +248,9 @@
     var kinds = ["plane", "plane", "plane", "plane", "plane", "plane", "birch", "plane", "plane", "plane"];
     var slots = kinds.map(function () { return {}; });
     var liveTree = function (i) { return function () { var t = tree(500 + i * 37, kinds[i]); for (var key in t) slots[i][key] = t[key]; }; };
-    var liveBackdrop = function () {
-      var w = EXPORT ? 3000 : Math.round(1700 * dpr), h = EXPORT ? 1765 : Math.round(1000 * dpr);
-      if (!backdrop || backdrop.width !== w) { backdrop = off(w, h); var bx = backdrop.getContext("2d"); bx.fillStyle = "#3d4a2c"; bx.fillRect(0, 0, w, h); }
-      var b = forestBackdrop(w, h); backdrop.getContext("2d").drawImage(b, 0, 0); backdropSrc = b;
+    var liveSurfaces = function () {
+      var G = EXPORT ? [2400, 1600] : [1200, 800], Pp = EXPORT ? [480, 1600] : [240, 800], C = EXPORT ? [3000, 1300] : [1600, 700];
+      ground = groundTile(G[0], G[1]); path = pathTile(Pp[0], Pp[1]); canopy = canopyLayer(C[0], C[1]);
     };
     if (A) {
       // the painted assets: load them; any that fail are painted live instead
@@ -235,22 +260,22 @@
         asset(m.trunk, liveTree(i), function (b) { s2.trunk = b; });
         asset(m.crown, null, function (b) { s2.crown = b; });
       });
-      backdrop = null;
-      asset(A.backdrop, liveBackdrop, function (b) { backdrop = b; });
-      glints = A.glints;
+      if (A.ground) {
+        asset(A.ground, liveSurfaces, function (b) { ground = b; });
+        asset(A.path, null, function (b) { path = b; });
+        asset(A.canopy, null, function (b) { canopy = b; });
+      } else steps.push(liveSurfaces);
     } else {
-      backdrop = off(Math.round(1700 * dpr), Math.round(1000 * dpr));
-      backdrop.getContext("2d").fillStyle = "#3d4a2c"; backdrop.getContext("2d").fillRect(0, 0, backdrop.width, backdrop.height);
       kinds.forEach(function (k, i) { steps.push(liveTree(i)); });
-      steps.push(liveBackdrop);
+      steps.push(liveSurfaces);
     }
     sprites = slots;
     var r = K.rng(77);
     // a dense wood in depth, with a path of light down the middle
-    for (var z = 0.8; z < 10.5; z += 0.34) {
-      var count = 4 + Math.floor(r() * 4);
+    for (var z = 0.8; z < Z_END - 0.3; z += 0.34) {
+      var thin = 1 - smooth(Z_END - 1.8, Z_END - 0.3, z), count = Math.round((6 + Math.floor(r() * 4)) * (0.2 + 0.8 * thin));
       for (var k = 0; k < count; k++) {
-        var side = r() < 0.5 ? -1 : 1, x = side * (0.36 + z * 0.06 + Math.pow(r(), 1.3) * 4.2);
+        var side = r() < 0.5 ? -1 : 1, x = side * (0.42 + z * 0.05 + Math.pow(r(), 1.2) * 5);
         trees.push({ x: x, z: z + r() * 0.3, h: 2.8 + r() * 1.8, sp: sprites[Math.floor(r() * sprites.length)], phase: r() * 6.28, stiff: 0.55 + r() * 0.8 });
       }
     }
@@ -283,7 +308,6 @@
     img.src = base + file + (A && A.v ? "?v=" + A.v : "");
   }
   function ready(im) { return !!im && (im.getContext || (window.ImageBitmap && im instanceof ImageBitmap) || (im.complete && im.naturalWidth > 0)); }
-  var backdropSrc = null;
 
   // ——— drawing ——————————————————————————————————————————————————————————
   var p = 0, last = performance.now(), wind = 0, px = 0, py = 0, tpx = 0, tpy = 0, pointer = false;
@@ -312,7 +336,6 @@
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (steps.length) steps.shift()();
     else if (queue.length) pump(now < 4000 ? 12 : 8);
-    if (backdropSrc && !queue.some(function (q) { return q.c && q.c.canvas === backdropSrc; })) { backdrop = backdropSrc; backdropSrc = null; }
     var pt = progress();
     p += (pt - p) * (calm ? 1 : Math.min(1, dt * 7));
     var t = now / 1000;
@@ -322,66 +345,89 @@
     tpx = tpy = 0;
     px += (tpx - px) * 0.03; py += (tpy - py) * 0.03;
 
-    var walk = smooth(0, 0.72, p), open = smooth(0.48, 0.66, p), dock = smooth(0.7, 0.86, p);
-    var breathe = 0;
-    var camZ = walk * 10 + breathe, camX = px * 0.35, camY = py * 0.12;
+    var walk = smooth(0, 0.82, p), exitC = smooth(0.5, 0.8, p), dock = smooth(0.78, 0.92, p);
+    var camZ = walk * 10.6, camX = 0;
     var c = ctx;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
     c.clearRect(0, 0, VW, VH);
 
-    // the valley waits behind the wood; at the end it docks into the print
-    if (open > 0) {
-      c.globalAlpha = 1;
-      var R = cover(vista.W, vista.H, lerp(1.1, 1.0, smooth(0.48, 0.86, p)), 0.47, 0.5);
+    // Järvsö dal is there from the first frame, seen at the end of the path through the trunks
+    var R = cover(vista.W, vista.H, lerp(1.06, 1.0, walk), 0.47, 0.5);
+    c.globalAlpha = 1;
+    c.fillStyle = "#3f7a5a"; c.fillRect(0, 0, VW, VH);
+    if (ready(vista.img)) {
       c.save(); c.beginPath(); c.rect(R.x, R.y, R.w, R.h); c.clip();
-      if (ready(vista.img)) c.drawImage(vista.img, R.x, R.y, R.w, R.h);
+      c.drawImage(vista.img, R.x, R.y, R.w, R.h);
       if (vista.water) drawWater(c, R, calm ? 0 : t);
       c.restore();
     }
-    // the deep wood and its gold
-    var fa = 1 - open;
-    if (fa > 0 && ready(backdrop)) {
-      c.globalAlpha = fa;
-      var B = cover(backdrop.width, backdrop.height, 1.06 + walk * 0.14, 0.5 - px * 0.02, 0.45 - py * 0.02);
-      c.drawImage(backdrop, B.x, B.y, B.w, B.h);
-      for (var gI = 0; gI < glints.length; gI++) {
-        var gl = glints[gI], tw = Math.pow(Math.max(0, Math.sin(t * 1.6 + gl[3])), 6);
-        if (tw < 0.05) continue;
-        c.globalAlpha = fa * tw;
-        square(c, B.x + gl[0] * B.w, B.y + gl[1] * B.h, gl[2] * B.h * 1.1, 0.2, "#fff4c8");
-      }
+    // the far bank of the valley is the horizon of the wood
+    var horizon = R.y + R.h * 0.69, unit = VH * 0.5, cx = VW / 2;
+    var reveal = smooth(0.34, 0.66, p);
+    if (reveal < 1) {
+      var vx = cx, vy = horizon - VH * 0.06, rIn = lerp(VW * 0.03, VW * 0.5, smooth(0.15, 0.66, p)), rOut = rIn + VW * lerp(0.25, 0.6, reveal);
+      var hz = c.createRadialGradient(vx, vy, rIn, vx, vy, rOut);
+      hz.addColorStop(0, "rgba(214,232,200,0)"); hz.addColorStop(0.25, "rgba(150,190,150,.55)"); hz.addColorStop(1, "rgba(28,64,48,1)");
+      c.globalAlpha = 1 - reveal; c.fillStyle = hz; c.fillRect(0, 0, VW, VH);
+      // the light at the end of the path
+      var glow = c.createRadialGradient(vx, vy, 0, vx, vy, rIn * 1.6 + 40);
+      glow.addColorStop(0, "rgba(246,250,232,.9)"); glow.addColorStop(1, "rgba(246,250,232,0)");
+      c.globalAlpha = (1 - reveal) * 0.85; c.fillStyle = glow; c.fillRect(0, 0, VW, VH);
+    }
+    drawGround(c, horizon, unit, cx, camZ);
+    var mist = 1 - smooth(0.5, 0.75, p);
+    if (mist > 0) {
+      var mg = c.createLinearGradient(0, horizon - VH * 0.12, 0, horizon + VH * 0.2);
+      mg.addColorStop(0, "rgba(220,234,214,0)"); mg.addColorStop(0.45, "rgba(220,234,214,.38)"); mg.addColorStop(1, "rgba(220,234,214,0)");
+      c.globalAlpha = mist; c.fillStyle = mg; c.fillRect(0, horizon - VH * 0.12, VW, VH * 0.32);
     }
     // trees, far to near
-    var horizon = VH * 0.47 - camY * VH * 0.1, unit = VH * 0.5, cx = VW / 2;
     for (var i = 0; i < trees.length; i++) {
       var tr = trees[i], dz = tr.z - camZ;
-      if (dz < 0.2 || dz > 10.5 || !ready(tr.sp.trunk)) continue;
-      var sc = unit / dz, a = smooth(0.2, 0.5, dz) * (1 - smooth(8, 10.5, dz)) * (1 - dock);
+      if (dz < 0.2 || dz > 11 || !ready(tr.sp.trunk)) continue;
+      var sc = unit / dz, a = smooth(0.2, 0.5, dz) * (1 - smooth(9, 11, dz));
       if (a <= 0.01) continue;
       var baseX = cx + (tr.x - camX) * sc * 1.15, baseY = horizon + 0.95 * sc, hgt = tr.h * sc, sp = tr.sp;
       if (baseX < -hgt * 0.7 || baseX > VW + hgt * 0.7) continue;
-      var sway = 0;
-      c.globalAlpha = a * (open > 0 ? lerp(1, 0.85, open) : 1);
+      c.globalAlpha = a;
       c.save();
-      c.translate(baseX, baseY); c.rotate(sway);
+      c.translate(baseX, baseY);
       var twd = hgt * sp.TW / sp.TH;
       c.drawImage(sp.trunk, -twd / 2, -hgt, twd, hgt);
       if (sp.hasCrown && ready(sp.crown)) {
         c.translate(sp.lean / sp.TW * twd, -hgt * 0.86);
-
         var cw = hgt * 1.05, ch = cw * sp.CH / sp.CW;
         c.drawImage(sp.crown, -cw / 2, -ch * 0.78, cw, ch);
       }
       c.restore();
     }
+    var rays = (1 - exitC) * (calm ? 0.7 : 0.85 + 0.15 * Math.sin(t * 0.4));
+    if (rays > 0.02) {
+      c.save(); c.globalCompositeOperation = "screen";
+      [[0.3, 0.16, -0.32], [0.46, 0.08, -0.26], [0.58, 0.12, -0.2], [0.72, 0.1, -0.3]].forEach(function (b, k) {
+        var bx = VW * b[0] + Math.sin(t * 0.2 + k) * VW * 0.01, top = 0, bw = VW * b[1];
+        var lg = c.createLinearGradient(0, 0, 0, VH * 0.9);
+        lg.addColorStop(0, "rgba(240,246,214,.0)"); lg.addColorStop(0.25, "rgba(240,246,214,.16)"); lg.addColorStop(1, "rgba(240,246,214,0)");
+        c.globalAlpha = rays; c.fillStyle = lg; c.beginPath();
+        c.moveTo(bx, top); c.lineTo(bx + bw, top); c.lineTo(bx + bw + VH * b[2] * -1.1, VH * 0.95); c.lineTo(bx + VH * b[2] * -0.7, VH * 0.95); c.closePath(); c.fill();
+      });
+      c.restore();
+    }
+    // the leaf ceiling overhead; it lifts away as the wood opens
+    if (ready(canopy) && exitC < 1) {
+      var cs = 1 + walk * 0.35, cwid = VW * 1.08 * cs, chei = cwid * canopy.height / canopy.width;
+      chei = Math.max(chei, VH * 0.62 * cs);
+      c.globalAlpha = 1 - smooth(0.3, 0.8, exitC);
+      c.drawImage(canopy, cx - cwid / 2, -exitC * chei * 0.95 - VH * 0.04, cwid, chei);
+    }
     // drifting gold, spirals and leaves
-    var ma = (1 - dock) * (calm ? 0 : 1);
+    var ma = (1 - exitC) * (calm ? 0 : 1);
     if (ma > 0) {
       for (i = 0; i < motes.length; i++) {
         var m = motes[i];
         m.y += dt * (0.05 + m.s * 0.03); m.x += dt * (wind * 0.22 + Math.sin(t + m.ph) * 0.05); m.rot += dt * (0.8 + wind * 1.2);
         var mz = m.z - camZ;
-        if (mz < 0.3) { m.z += 10; mz = m.z - camZ; m.y = -0.4; }
+        if (mz < 0.3) { m.z += 9; mz = m.z - camZ; m.y = -0.4; }
         if (m.y > 1.7) { m.y = -0.5; m.x = (Math.random() - 0.5) * 7; }
         var ms = unit / mz, mx = cx + (m.x - camX) * ms, my = horizon + (m.y - 0.9) * ms;
         if (mx < -30 || mx > VW + 30 || my < -30 || my > VH + 30) continue;
@@ -407,8 +453,29 @@
       L.el.style.letterSpacing = (0.3 + (1 - lo2) * 0.25).toFixed(3) + "em";
     }
     if (rail) { rail.style.transform = "scaleY(" + p.toFixed(4) + ")"; rail.parentNode.style.opacity = (1 - dock).toFixed(3); }
-    if (shade) shade.style.opacity = (1 - open).toFixed(3);
+    if (shade) shade.style.opacity = (1 - exitC).toFixed(3);
     stage.classList.toggle("is-paper", p > 0.8);
+  }
+  // The forest floor in perspective: each screen row is the ground at one depth,
+  // so it moves under you as you walk, and ends at the riverbank.
+  function drawGround(c, horizon, unit, cx, camZ) {
+    if (!ready(ground)) return;
+    var gw = ground.width, gh = ground.height, toEnd = Z_END - camZ;
+    var yEdge = toEnd > 0.02 ? horizon + 0.95 * unit / toEnd : VH + 1, step = 3;
+    for (var y = Math.max(horizon + 1, Math.floor(yEdge)); y < VH; y += step) {
+      var dz = 0.95 * unit / (y + step * 0.5 - horizon), z = dz + camZ, sc = unit / dz * 1.15;
+      var v = (((z % 4) + 4) % 4) / 4, sy = Math.min(gh - 3, v * gh), sh = Math.max(1, gh * 0.006);
+      c.globalAlpha = 1 - smooth(Z_END - 0.5, Z_END, z);
+      var w = 12 * sc, x0 = cx - 6 * sc;
+      x0 -= Math.ceil(x0 / w) * w;
+      for (var x = x0; x < VW; x += w) c.drawImage(ground, 0, sy, gw, sh, x, y, w + 1, step + 0.7);
+      if (ready(path)) {
+        var pw = path.width, ph = path.height, psy = Math.min(ph - 3, v * ph);
+        c.drawImage(path, 0, psy, pw, Math.max(1, ph * 0.006), cx - 0.7 * sc, y, 1.4 * sc, step + 0.7);
+      }
+    }
+    // a shadow under the trees near the horizon, lifting as you leave
+    c.globalAlpha = 1;
   }
   var lastWater = 0;
   function drawWater(c, R, t) {
@@ -454,12 +521,11 @@
   }
   if (EXPORT) {
     while (steps.length || queue.length) { if (steps.length) steps.shift()(); else pump(5000); }
-    if (backdropSrc) backdrop = backdropSrc;
     window.__klimtExport = {
       trees: sprites.map(function (sp) { return { trunk: sp.trunk.toDataURL("image/webp", 0.86), crown: sp.crown.toDataURL("image/webp", 0.86), TW: sp.TW, TH: sp.TH, CW: sp.CW, CH: sp.CH, lean: sp.lean, hasCrown: sp.hasCrown, seed: sp.seed, kind: sp.kind }; }),
-      backdrop: backdrop.toDataURL("image/webp", 0.8),
+      ground: ground.toDataURL("image/webp", 0.84), path: path.toDataURL("image/webp", 0.86), canopy: canopy.toDataURL("image/webp", 0.84),
       valley: vista.img.toDataURL("image/webp", 0.84),
-      glints: glints
+      glints: []
     };
     return;
   }
