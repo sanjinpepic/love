@@ -1,6 +1,6 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Sanjin & Alma//Save the Date//EN
+PRODID:-//Alma & Sanjin//Save the Date//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
@@ -8,7 +8,7 @@ UID:sanjin-alma-wedding-20270827@sanjin-alma
 DTSTAMP:20261030T120000Z
 DTSTART;VALUE=DATE:20270827
 DTEND;VALUE=DATE:20270828
-SUMMARY:Sanjin & Alma — wedding / bröllop / vjenčanje
+SUMMARY:Alma & Sanjin — wedding / bröllop / vjenčanje
 LOCATION:Järvsö\, Hälsingland\, Sweden
 DESCRIPTION:Save the date — invitation to follow. / Spara datumet — inbjud
  an kommer senare. / Sačuvajte datum — pozivnica slijedi.

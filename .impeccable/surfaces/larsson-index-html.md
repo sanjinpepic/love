@@ -9,7 +9,7 @@ related_targets: []
 
 Scope: `larsson/index.html`. Mode: **Persuade/Experience** — the painting leads; the guest learns who/when/where in one glance and saves the date with a working "Add to calendar". Three languages (EN/SV/BS). Code-led (no image generation on this machine; the painting is authored by `tools/paint`).
 
-Content: Sanjin & Alma, Friday 27 August 2027, Järvsö, Hälsingland. Invitation to follow. No venue, no times.
+Content: Alma & Sanjin, Friday 27 August 2027, Järvsö, Hälsingland. Invitation to follow. No venue, no times.
 
 ## Direction contract
 

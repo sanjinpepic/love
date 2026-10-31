@@ -198,15 +198,17 @@
   // The deep wood, painted once in dabs: shaded foliage all round, an opening at the end of
   // the path. Drawn scaled up from that opening as you walk, so the opening widens.
   function deepWood(W, H) {
-    var r = K.rng(9101), c = off(W, H), x = c.getContext("2d");
+    // painted at screen size, a dab at a time through the queue, so it is never enlarged
+    var r = K.rng(9101), c = off(W, H), list = [];
     var pal = K.pal([["#1f4a3a", 3], ["#24503e", 3], ["#2f6048", 2.4], ["#3f7a52", 1.6], ["#3a4a7a", 0.9], ["#5f8a5a", 0.8]]);
-    var ox = W * 0.5, oy = H * 0.5, rx = W * 0.07, ry = H * 0.09;
-    for (var i = 0; i < 26000; i++) {
-      var px = r() * W, py = r() * H, d = Math.hypot((px - ox) / rx, (py - oy) / ry);
+    var ox = 0.5, oy = 0.5, rx = 0.07, ry = 0.09 * W / H, n = Math.round(W * H * 0.035);
+    for (var i = 0; i < n; i++) {
+      var px = r(), py = r(), d = Math.hypot((px - ox) / rx, (py - oy) / (ry * H / W));
       if (d < 1 || r() > (d - 1) / 1.6) continue;
-      var sz = 3 + r() * 4;
-      dab(x, px, py, sz, sz * 0.5, (r() - 0.5) * 2.8, K.jitter(K.pick(pal, r, 0), r, 20));
+      var sz = (3 + r() * 4) / W;
+      list.push([px, py, sz, sz * 0.5, (r() - 0.5) * 2.8, K.jitter(K.pick(pal, r, 0), r, 20), r()]);
     }
+    enqueue(c, list, W, H, true, true);
     return c;
   }
 
@@ -460,12 +462,11 @@
     // the deep wood closes round the path at first, and opens as you go
     var opening = smooth(0.04, 0.42, p);
     if (opening < 1) {
-      if (!wood) wood = deepWood(960, 600);
-      // always larger than the screen, so its edges are never seen
-      var wvy = horizon - VH * 0.05, ws = lerp(1, 2.2, opening);
-      var ww = Math.max(VW * 1.3, 2 * Math.max(cx, VW - cx) + 40) * ws, wh = Math.max(VH * 1.3, 2 * Math.max(wvy, VH - wvy) + 40) * ws;
+      // always larger than the screen, so its edges are never seen; drawn at 1:1
+      var wvy = horizon - VH * 0.05, ww = Math.round(VW + 40), wh = Math.round(2 * Math.max(wvy, VH - wvy) + 40);
+      if (!wood || wood.width !== ww || wood.height !== wh) wood = deepWood(ww, wh);
       c.globalAlpha = 1 - opening;
-      c.drawImage(wood, cx - ww / 2, wvy - wh / 2, ww, wh);
+      c.drawImage(wood, Math.round(cx - ww / 2), Math.round(wvy - wh / 2));
       c.globalAlpha = 1;
     }
     drawGround(c, horizon, unit, cx, camZ);

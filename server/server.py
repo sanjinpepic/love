@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sanjin & Alma — site + RSVP server.
+"""Alma & Sanjin — site + RSVP server.
 
 Serves the two pages and their assets, stores RSVPs in SQLite, and gives the
 couple a password-protected view of the answers. Standard library only.
@@ -213,7 +213,7 @@ class Handler(SimpleHTTPRequestHandler):
         else:
             body = b"Password required."
             self.send_response(HTTPStatus.UNAUTHORIZED)
-            self.send_header("WWW-Authenticate", 'Basic realm="Sanjin & Alma RSVPs", charset="UTF-8"')
+            self.send_header("WWW-Authenticate", 'Basic realm="Alma & Sanjin RSVPs", charset="UTF-8"')
         self.send_header("Content-Type", "text/plain; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -313,7 +313,7 @@ class Handler(SimpleHTTPRequestHandler):
         head = "".join(f"<th>{e(c.replace('_', ' '))}</th>" for c in COLUMNS[1:])
         page = f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
-<title>RSVPs · Sanjin &amp; Alma</title><link rel="icon" href="/favicon.svg">
+<title>RSVPs · Alma &amp; Sanjin</title><link rel="icon" href="/favicon.svg">
 <style>
 body{{margin:0;font:16px/1.45 Alegreya,Georgia,serif;background:#f7f1e6;color:#33231d}}
 header{{background:#a3372a;color:#f7f1e6;padding:1.5rem 1.25rem}}

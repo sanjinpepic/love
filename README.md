@@ -1,4 +1,4 @@
-# Sanjin & Alma — 27 August 2027, Järvsö
+# Alma & Sanjin — 27 August 2027, Järvsö
 
 Two versions of the same two pages (Save the Date + wedding page), sharing the
 words, the language switch and the RSVP:

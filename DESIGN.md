@@ -1,5 +1,5 @@
 ---
-name: Sanjin & Alma
+name: Alma & Sanjin
 description: Two paintings of Järvsö in late summer, one set of words. Klimt's landscapes at the root, a Carl Larsson pop-up watercolour at /larsson/.
 colors:
   # Klimt variant (main, `/`): assets/css/klimt.css
@@ -217,7 +217,7 @@ components:
     textColor: "{colors.ink}"
 ---
 
-# Design System: Sanjin & Alma
+# Design System: Alma & Sanjin
 
 ## Overview
 
@@ -290,7 +290,7 @@ The painting palettes are not UI tokens. Klimt's dab palettes (yellow-greens, gr
 **Character:** Klimt's label is a museum caption: open, evenly spaced capitals in one weight with an italic serif line beneath. Larsson's is hand-lettered: Della Respira for names and numbers, wide and calm, with Alegreya as a warm book serif.
 
 ### Hierarchy (Klimt)
-- **Names** (Tenor Sans 400, clamp 1.7rem to 2.9rem, 1.25, 0.3em): uppercase; "Sanjin" and "& Alma" stack as two lines when the label sits beside the painting. A negative right margin equal to the tracking keeps the centred line optically centred.
+- **Names** (Tenor Sans 400, clamp 1.7rem to 2.9rem, 1.25, 0.3em): uppercase; "Alma" and "& Sanjin" stack as two lines when the label sits beside the painting. A negative right margin equal to the tracking keeps the centred line optically centred.
 - **Heading** (Tenor Sans 400, clamp 1.15rem to 1.5rem, 1.3, 0.3em): uppercase, centred section titles (left-aligned beside a painting).
 - **Year** (Tenor Sans 400, 1.15rem, 0.32em): "27 · 08 · 2027".
 - **Place** (Tenor Sans 400, 0.9rem, 0.24em): "Järvsö · Hälsingland", uppercase, a step above the year.

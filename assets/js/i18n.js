@@ -16,12 +16,12 @@ window.I18N = {
     "k.motion": "Walk through the forest",
     "k.cue": "Scroll to walk through the forest",
     "k.journey": "A walk through a birch forest painted in small dabs of colour, after Klimt; the trees move in the wind, and as you scroll the wood opens onto Järvsö dal.",
-    "k.credits": "Painted for Sanjin & Alma, after Gustav Klimt.",
+    "k.credits": "Painted for Alma & Sanjin, after Gustav Klimt.",
     "k.alt": "A painting in small dabs of colour, after Klimt: the forested hill of Järvsöklack fills the square, crossed by a pale hay meadow; white and red farms and the white church stand along the shore, reflected in the river Ljusnan.",
     "k.orchard": "A painting in small dabs of colour, after Klimt: an orchard in late summer, a birch among the trunks, small pears in the leaves.",
     "k.year": "Friday 27 August 2027",
-    "meta.std.title": "Save the date · Sanjin & Alma",
-    "meta.wed.title": "Sanjin & Alma · 27 August 2027 · Järvsö",
+    "meta.std.title": "Save the date · Alma & Sanjin",
+    "meta.wed.title": "Alma & Sanjin · 27 August 2027 · Järvsö",
     "skip": "Skip to content",
     "lang.label": "Language",
 
@@ -99,7 +99,7 @@ window.I18N = {
     "thanks.again": "Send another answer",
 
     "close.back": "Back to the Save the Date",
-    "close.credits": "Painted for Sanjin & Alma, after Carl Larsson."
+    "close.credits": "Painted for Alma & Sanjin, after Carl Larsson."
   },
 
   sv: {
@@ -109,12 +109,12 @@ window.I18N = {
     "k.motion": "Gå genom skogen",
     "k.cue": "Skrolla för att gå genom skogen",
     "k.journey": "En promenad genom en björkskog målad i små penseldrag, efter Klimt; träden rör sig i vinden, och när du skrollar öppnar sig skogen mot Järvsö dal.",
-    "k.credits": "Målat för Sanjin & Alma, efter Gustav Klimt.",
+    "k.credits": "Målat för Alma & Sanjin, efter Gustav Klimt.",
     "k.alt": "En målning i små penseldrag, efter Klimt: Järvsöklackens skogklädda sluttning fyller kvadraten, korsad av en ljus slåtteräng; vita och röda gårdar och den vita kyrkan står längs stranden och speglas i Ljusnan.",
     "k.orchard": "En målning i små penseldrag, efter Klimt: en fruktträdgård på sensommaren, en björk bland stammarna, små päron bland bladen.",
     "k.year": "Fredag 27 augusti 2027",
-    "meta.std.title": "Spara datumet · Sanjin & Alma",
-    "meta.wed.title": "Sanjin & Alma · 27 augusti 2027 · Järvsö",
+    "meta.std.title": "Spara datumet · Alma & Sanjin",
+    "meta.wed.title": "Alma & Sanjin · 27 augusti 2027 · Järvsö",
     "skip": "Hoppa till innehållet",
     "lang.label": "Språk",
 
@@ -192,7 +192,7 @@ window.I18N = {
     "thanks.again": "Skicka ett nytt svar",
 
     "close.back": "Tillbaka till Spara datumet",
-    "close.credits": "Målat för Sanjin & Alma, efter Carl Larsson."
+    "close.credits": "Målat för Alma & Sanjin, efter Carl Larsson."
   },
 
   bs: {
@@ -202,12 +202,12 @@ window.I18N = {
     "k.motion": "Prošetajte kroz šumu",
     "k.cue": "Skrolajte da prošetate kroz šumu",
     "k.journey": "Šetnja kroz brezovu šumu naslikanu sitnim potezima boje, po uzoru na Klimta; drveće se njiše na vjetru, a dok skrolate, šuma se otvara prema dolini Järvsö.",
-    "k.credits": "Naslikano za Sanjina i Almu, po uzoru na Gustava Klimta.",
+    "k.credits": "Naslikano za Almu i Sanjina, po uzoru na Gustava Klimta.",
     "k.alt": "Slika u sitnim potezima boje, po uzoru na Klimta: šumovita padina brda Järvsöklack ispunjava kvadrat, presječena svijetlom livadom; bijele i crvene kuće i bijela crkva stoje uz obalu i ogledaju se u rijeci Ljusnan.",
     "k.orchard": "Slika u sitnim potezima boje, po uzoru na Klimta: voćnjak krajem ljeta, breza među stablima, sitne kruške u lišću.",
     "k.year": "Petak, 27. august 2027.",
-    "meta.std.title": "Sačuvajte datum · Sanjin & Alma",
-    "meta.wed.title": "Sanjin & Alma · 27. august 2027. · Järvsö",
+    "meta.std.title": "Sačuvajte datum · Alma & Sanjin",
+    "meta.wed.title": "Alma & Sanjin · 27. august 2027. · Järvsö",
     "skip": "Preskoči na sadržaj",
     "lang.label": "Jezik",
 
@@ -285,6 +285,6 @@ window.I18N = {
     "thanks.again": "Pošalji novi odgovor",
 
     "close.back": "Nazad na Sačuvajte datum",
-    "close.credits": "Naslikano za Sanjina i Almu, po uzoru na Carla Larssona."
+    "close.credits": "Naslikano za Almu i Sanjina, po uzoru na Carla Larssona."
   }
 };

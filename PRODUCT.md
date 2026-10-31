@@ -15,14 +15,14 @@ lists answers and exports CSV.
 
 ## Users
 
-- **Guests** of Sanjin Pepic and Alma Berggren Ek: family and friends from
+- **Guests** of Alma Berggren Ek and Sanjin Pepic: family and friends from
   Sweden, Bosnia and elsewhere, many on phones, opening a link from a message or
   email. Ages span grandparents to children's parents; three languages.
 - **The couple**, who read RSVPs and export them for planning.
 
 ## Product Purpose
 
-1. **Save the Date** — tell guests early that Sanjin & Alma marry on
+1. **Save the Date** — tell guests early that Alma & Sanjin marry on
    **Friday 27 August 2027** in **Järvsö** (Hälsingland, Sweden), let them put
    it in their calendar in one tap, and point to the wedding page.
 2. **Wedding page** — everything a guest needs: the day, getting to Järvsö,
@@ -62,7 +62,7 @@ than once (save the date months ahead, wedding page closer to the day).
   Carl-like painting as a webpage, with motion and movement", about Järvsö and
   the wedding — "calm, beautiful, Järvsö late summer, simple but grand", with
   layered pop-up-book depth. Both pages share one design language.
-- Names as written: Sanjin Pepic, Alma Berggren Ek.
+- Names as written: Alma Berggren Ek, Sanjin Pepic. Order on every surface: "Alma & Sanjin".
 
 ## Evidence on Hand
 
