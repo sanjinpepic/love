@@ -23,7 +23,7 @@ const out = path.join(__dirname, "..", "..", "assets", "klimt");
     fs.writeFileSync(path.join(out, name), buf);
     return name;
   };
-  const manifest = { trees: [], glints: data.glints.map((g) => g.map((v) => Math.round(v * 10000) / 10000)) };
+  const manifest = { v: new Date().toISOString().replace(/\D/g, "").slice(0, 12), trees: [], glints: data.glints.map((g) => g.map((v) => Math.round(v * 10000) / 10000)) };
   data.trees.forEach((t, i) => {
     const { trunk, crown, ...meta } = t;
     manifest.trees.push({ ...meta, trunk: save(`tree-${i}-trunk.webp`, trunk), crown: save(`tree-${i}-crown.webp`, crown) });

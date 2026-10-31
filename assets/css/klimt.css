@@ -192,3 +192,11 @@ legend { padding: 0; margin-bottom: .6rem; }
 .journey-stage.is-paper .journey-rail span { background: var(--slate); }
 .journey.is-still .journey-lines, .journey.is-still .journey-rail { display: none; }
 @media (max-width: 600px) { .jl { white-space: normal; width: 86vw; text-align: center; } }
+/* if the walk cannot run (no script, or an error), the print is shown plainly */
+html:not(.js) .journey, .journey.is-still { height: auto; background: var(--ground); }
+html:not(.js) .journey-stage, .journey.is-still .journey-stage { position: relative; height: auto; min-height: 100svh; }
+html:not(.js) .journey-intro, html:not(.js) .journey-cue, html:not(.js) .journey-lines, html:not(.js) .journey-rail,
+.journey.is-still .journey-intro, .journey.is-still .journey-cue { display: none; }
+html:not(.js) .journey-print, .journey.is-still .journey-print { position: relative; min-height: 100svh; }
+html:not(.js) .journey-print .label, .journey.is-still .journey-print .label { opacity: 1 !important; }
+html:not(.js) .journey-stage .top, .journey.is-still .journey-stage .top { color: var(--slate); text-shadow: none; }

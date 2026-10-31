@@ -51,6 +51,13 @@ class ServerTest(unittest.TestCase):
             self.assertEqual(self.req(p)[0], 200, p)
         self.assertIn("text/calendar", self.req("/assets/sanjin-alma-2027-08-27.ics")[1]["Content-Type"])
 
+    def test_code_is_revalidated_and_version_reported(self):
+        st, h, _ = self.req("/assets/js/journey.js")
+        self.assertEqual(h.get("Cache-Control"), "no-cache")
+        st, h, body = self.req("/version")
+        self.assertEqual(st, 200)
+        self.assertIn(b"commit", body)
+
     def test_private_files_not_served(self):
         for p in ("/server/server.py", "/PRODUCT.md", "/data/rsvp.sqlite3", "/.git/config", "/assets/../server/server.py"):
             self.assertEqual(self.req(p)[0], 404, p)

@@ -257,6 +257,16 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self, head: bool = False):
         path = urlsplit(self.path).path
+        if path == "/version":
+            body = json.dumps({"commit": os.environ.get("RAILWAY_GIT_COMMIT_SHA", "local")[:12]}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            if not head:
+                self.wfile.write(body)
+            return
         if path in ("/admin", "/admin/"):
             return self._admin() if self._authorized() else self._challenge()
         if path == "/admin/rsvps.csv":
@@ -276,8 +286,11 @@ class Handler(SimpleHTTPRequestHandler):
 
     def end_headers(self):
         p = urlsplit(self.path).path
-        if p.startswith("/assets/fonts/") or p.startswith("/assets/img/"):
+        if p.startswith(("/assets/fonts/", "/assets/img/", "/assets/paint/", "/assets/klimt/")) and not p.endswith(".js"):
             self.send_header("Cache-Control", "public, max-age=604800")
+        elif p.endswith((".html", ".js", ".css", ".json", ".ics")) or p in ("/", "/larsson/"):
+            # pages and code are re-checked on every visit, so a new deploy shows at once
+            self.send_header("Cache-Control", "no-cache")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "same-origin")
         super().end_headers()

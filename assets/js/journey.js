@@ -8,10 +8,9 @@
   "use strict";
   var K = window.KlimtPaint, section = document.querySelector("[data-journey]");
   if (!K || !section) return;
-  var osReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, optIn = false;
-  try { optIn = localStorage.getItem("k-motion") === "on"; } catch (e) { /* storage blocked */ }
-  if (/[?&]motion=on\b/.test(location.search)) optIn = true;
-  var reduce = osReduce && !optIn;
+  // Devices that ask for less motion still get the walk, driven only by their own
+  // scrolling: no drifting gold, no breathing camera, no pointer drift, no glide.
+  var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var stage = section.querySelector(".journey-stage");
   var canvas = section.querySelector(".journey-canvas"), ctx = canvas.getContext("2d");
   var slot = section.querySelector(".painting-slot");
@@ -286,14 +285,14 @@
       else if (img.decode) img.decode().then(function () { set(img); }, function () { set(img); });
       else set(img);
     };
-    img.src = base + file;
+    img.src = base + file + (A && A.v ? "?v=" + A.v : "");
   }
   function ready(im) { return !!im && (im.getContext || (window.ImageBitmap && im instanceof ImageBitmap) || (im.complete && im.naturalWidth > 0)); }
   var backdropSrc = null;
 
   // ——— drawing ——————————————————————————————————————————————————————————
   var p = 0, last = performance.now(), wind = 0, px = 0, py = 0, tpx = 0, tpy = 0, pointer = false;
-  window.addEventListener("pointermove", function (e) { if (e.pointerType === "touch") return; pointer = true; tpx = e.clientX / window.innerWidth * 2 - 1; tpy = e.clientY / window.innerHeight * 2 - 1; }, { passive: true });
+  window.addEventListener("pointermove", function (e) { if (e.pointerType === "touch" || calm) return; pointer = true; tpx = e.clientX / window.innerWidth * 2 - 1; tpy = e.clientY / window.innerHeight * 2 - 1; }, { passive: true });
   function progress() {
     var rect = section.getBoundingClientRect(), span = rect.height - VH;
     return span > 0 ? clamp(-rect.top / span, 0, 1) : 1;
@@ -307,22 +306,30 @@
     for (var i = 0; i <= 28; i++) { var u = i / 28, a = rot + u * 9.4, rr = rad * u; if (i) c.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); else c.moveTo(x, y); }
     c.stroke();
   }
+  var failures = 0;
   function frame(now) {
+    try { draw(now); } catch (err) {
+      if (window.console && failures < 3) console.error("journey frame:", err);
+      if (++failures > 30) { section.classList.add("is-still"); return; }
+    }
+    raf = visible ? requestAnimationFrame(frame) : 0;
+  }
+  function draw(now) {
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     if (steps.length) steps.shift()();
     else if (queue.length) pump(now < 4000 ? 12 : 8);
     if (backdropSrc && !queue.some(function (q) { return q.c && q.c.canvas === backdropSrc; })) { backdrop = backdropSrc; backdropSrc = null; }
     var pt = progress();
-    p += (pt - p) * (reduce ? 1 : Math.min(1, dt * 7));
+    p += (pt - p) * (calm ? 1 : Math.min(1, dt * 7));
     var t = now / 1000;
     // wind: a slow swell with gusts
     // no wind in the trees; only a faint drift for the falling gold
     wind = 0.12 + Math.sin(t * 0.3) * 0.08;
-    if (!pointer) { tpx = Math.sin(t * 0.17) * 0.35; tpy = Math.sin(t * 0.13) * 0.2; }
+    if (calm) { tpx = tpy = 0; } else if (!pointer) { tpx = Math.sin(t * 0.17) * 0.35; tpy = Math.sin(t * 0.13) * 0.2; }
     px += (tpx - px) * 0.03; py += (tpy - py) * 0.03;
 
     var walk = smooth(0, 0.7, p), open = smooth(0.56, 0.64, p), dock = smooth(0.8, 0.98, p);
-    var breathe = (Math.sin(t * 0.3) * 0.5 + 0.5) * 0.35 * (1 - walk);
+    var breathe = calm ? 0 : (Math.sin(t * 0.3) * 0.5 + 0.5) * 0.35 * (1 - walk);
     var camZ = walk * 10 + breathe, camX = px * 0.35, camY = py * 0.12;
     var c = ctx;
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -336,7 +343,7 @@
       if (dock > 0 && slotRect) R = { x: lerp(R.x, slotRect.x, dock), y: lerp(R.y, slotRect.y, dock), w: lerp(R.w, slotRect.w, dock), h: lerp(R.h, slotRect.h, dock) };
       c.save(); c.beginPath(); c.rect(R.x, R.y, R.w, R.h); c.clip();
       if (ready(vista.img)) c.drawImage(vista.img, R.x, R.y, R.w, R.h);
-      if (vista.water) drawWater(c, R, reduce ? 0 : t);
+      if (vista.water) drawWater(c, R, calm ? 0 : t);
       c.restore();
     }
     // the deep wood and its gold
@@ -376,7 +383,7 @@
       c.restore();
     }
     // drifting gold, spirals and leaves
-    var ma = (1 - dock) * (reduce ? 0 : 1);
+    var ma = (1 - dock) * (calm ? 0 : 1);
     if (ma > 0) {
       for (i = 0; i < motes.length; i++) {
         var m = motes[i];
@@ -416,7 +423,6 @@
     }
     if (rail) { rail.style.transform = "scaleY(" + p.toFixed(4) + ")"; rail.parentNode.style.opacity = (1 - dock).toFixed(3); }
     stage.classList.toggle("is-paper", dock > 0.5);
-    raf = visible ? requestAnimationFrame(frame) : 0;
   }
   var lastWater = 0;
   function drawWater(c, R, t) {
@@ -433,9 +439,9 @@
   var raf = 0, visible = true;
   // keyboard: tabbing into the label takes you to the end of the walk
   if (label) label.addEventListener("focusin", function () {
-    if (progress() < 0.99) window.scrollTo({ top: section.offsetTop + section.offsetHeight - window.innerHeight, behavior: reduce ? "auto" : "smooth" });
+    if (progress() < 0.99) window.scrollTo({ top: section.offsetTop + section.offsetHeight - window.innerHeight, behavior: calm ? "auto" : "smooth" });
   });
-  if (!reduce) {
+  if (!calm) {
     var target = window.scrollY, current = window.scrollY, gliding = false;
     var maxY = function () { return document.documentElement.scrollHeight - window.innerHeight; };
     window.addEventListener("wheel", function (e) {
@@ -454,24 +460,12 @@
     };
     window.addEventListener("scroll", function () { if (!gliding) target = current = window.scrollY; }, { passive: true });
   }
-  var motionBtn = section.querySelector(".journey-motion");
-  if (reduce) {
-    // the device asks for less motion: show the print at once, painted in quietly,
-    // and offer the walk as a choice
+  try { build(); } catch (err) {
+    // never leave a blank stage: show the print without the walk
     section.classList.add("is-still");
-    layout();
-    var VS = Math.round(Math.min(2048, Math.max(VW, VH) * dpr * 1.05));
-    vista = { img: off(VS, VS), S: VS };
-    steps.push(function () { var v = valley(VS); vista.img = v.img; vista.water = v.water; vista.waterDabs = v.waterDabs; });
-    backdrop = off(2, 2); p = 1;
-    if (motionBtn) {
-      motionBtn.hidden = false;
-      motionBtn.addEventListener("click", function () {
-        try { localStorage.setItem("k-motion", "on"); } catch (e) { /* storage blocked */ }
-        location.search = location.search ? location.search + "&motion=on" : "?motion=on";
-      });
-    }
-  } else build();
+    if (window.console) console.error("journey:", err);
+    return;
+  }
   if (EXPORT) {
     while (steps.length || queue.length) { if (steps.length) steps.shift()(); else pump(5000); }
     if (backdropSrc) backdrop = backdropSrc;
